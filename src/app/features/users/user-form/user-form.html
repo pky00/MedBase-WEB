@@ -1,0 +1,88 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <h1>{{ isEditMode() ? (isViewMode() ? 'View User' : 'Edit User') : 'New User' }}</h1>
+      <p class="page-subtitle">{{ isEditMode() ? (isViewMode() ? 'User information' : 'Update user information') : 'Create a new system user' }}</p>
+    </div>
+    @if (isEditMode() && isViewMode()) {
+      <button type="button" class="btn-primary" (click)="toggleEditMode()">
+        <span class="material-symbols-outlined">edit</span>
+        Edit
+      </button>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span class="material-symbols-outlined">error</span>
+      {{ error() }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <span>Loading user...</span>
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="entity-form">
+      <div class="form-section">
+        <h2 class="section-title">Account Information</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="username" class="form-label">Username *</label>
+            <input type="text" id="username" formControlName="username" class="form-input" [class.error]="isFieldInvalid('username')" placeholder="Enter username" />
+            @if (isFieldInvalid('username')) { <span class="form-error">Username is required</span> }
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">Email *</label>
+            <input type="email" id="email" formControlName="email" class="form-input" [class.error]="isFieldInvalid('email')" placeholder="user@example.com" />
+            @if (isFieldInvalid('email')) { <span class="form-error">Valid email is required</span> }
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="form-label">Password {{ isEditMode() ? '(leave blank to keep current)' : '*' }}</label>
+            <input type="password" id="password" formControlName="password" class="form-input" [class.error]="isFieldInvalid('password')" placeholder="Enter password" />
+            @if (isFieldInvalid('password')) { <span class="form-error">Password must be at least 6 characters</span> }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="is_active" />
+              <span>Active</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="section-title">Personal Information</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="first_name" class="form-label">First Name</label>
+            <input type="text" id="first_name" formControlName="first_name" class="form-input" placeholder="First name" />
+          </div>
+
+          <div class="form-group">
+            <label for="last_name" class="form-label">Last Name</label>
+            <input type="text" id="last_name" formControlName="last_name" class="form-input" placeholder="Last name" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="cancel()">
+          {{ isEditMode() && !isViewMode() ? 'Cancel' : 'Back' }}
+        </button>
+        @if (!isViewMode()) {
+          <button type="submit" class="btn-primary" [disabled]="saving()">
+            @if (saving()) { <span class="spinner-sm"></span> Saving... } @else { {{ isEditMode() ? 'Update User' : 'Create User' }} }
+          </button>
+        }
+      </div>
+    </form>
+  }
+</div>
+

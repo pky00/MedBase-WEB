@@ -1,0 +1,117 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <h1>{{ isEditMode() ? (isViewMode() ? 'View Medical Device' : 'Edit Medical Device') : 'New Medical Device' }}</h1>
+      <p class="page-subtitle">{{ isEditMode() ? (isViewMode() ? 'Device information' : 'Update device details') : 'Add a new prescribable device' }}</p>
+    </div>
+    @if (isEditMode() && isViewMode()) {
+      <button type="button" class="btn-primary" (click)="toggleEditMode()">
+        <span class="material-symbols-outlined">edit</span>
+        Edit
+      </button>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span class="material-symbols-outlined">error</span>
+      {{ error() }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <span>Loading device...</span>
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="entity-form">
+      <div class="form-section">
+        <h2 class="section-title">Basic Information</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name" class="form-label">Device Name *</label>
+            <input type="text" id="name" formControlName="name" class="form-input" [class.error]="isFieldInvalid('name')" placeholder="Enter device name" />
+            @if (isFieldInvalid('name')) { <span class="form-error">Name is required</span> }
+          </div>
+
+          <div class="form-group">
+            <label for="code" class="form-label">Code</label>
+            <input type="text" id="code" formControlName="code" class="form-input" placeholder="e.g., DEV-001" />
+          </div>
+
+          <div class="form-group">
+            <label for="category_id" class="form-label">Category</label>
+            <select id="category_id" formControlName="category_id" class="form-input">
+              <option value="">Select category</option>
+              @for (cat of categories(); track cat.id) { <option [value]="cat.id">{{ cat.name }}</option> }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="manufacturer" class="form-label">Manufacturer</label>
+            <input type="text" id="manufacturer" formControlName="manufacturer" class="form-input" placeholder="Manufacturer name" />
+          </div>
+
+          <div class="form-group">
+            <label for="model" class="form-label">Model</label>
+            <input type="text" id="model" formControlName="model" class="form-input" placeholder="Model number" />
+          </div>
+
+          <div class="form-group">
+            <label for="size" class="form-label">Size</label>
+            <input type="text" id="size" formControlName="size" class="form-input" placeholder="e.g., Small, Medium, Large" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="section-title">Details</h2>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" formControlName="description" class="form-input" rows="3" placeholder="Device description..."></textarea>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="specifications" class="form-label">Specifications</label>
+            <textarea id="specifications" formControlName="specifications" class="form-input" rows="3" placeholder="Technical specifications..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="is_reusable" />
+              <span>Reusable Device</span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="requires_fitting" />
+              <span>Requires Fitting</span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="is_active" />
+              <span>Active</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="cancel()">
+          {{ isEditMode() && !isViewMode() ? 'Cancel' : 'Back' }}
+        </button>
+        @if (!isViewMode()) {
+          <button type="submit" class="btn-primary" [disabled]="saving()">
+            @if (saving()) { <span class="spinner-sm"></span> Saving... } @else { {{ isEditMode() ? 'Update Device' : 'Create Device' }} }
+          </button>
+        }
+      </div>
+    </form>
+  }
+</div>
+

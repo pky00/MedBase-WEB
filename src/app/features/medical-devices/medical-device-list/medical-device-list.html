@@ -1,0 +1,102 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <h1>Medical Devices</h1>
+      <p class="page-subtitle">Prescribable devices (wheelchairs, walkers, braces)</p>
+    </div>
+    <button class="btn-primary" (click)="createDevice()">
+      <span class="material-symbols-outlined">add</span>
+      Add Device
+    </button>
+  </div>
+
+  <div class="filters-bar">
+    <div class="search-box">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search by name or code..."
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        (keyup.enter)="onSearch()"
+      />
+    </div>
+
+    <select
+      class="filter-select"
+      [ngModel]="filterCategory()"
+      (ngModelChange)="filterCategory.set($event); onFilterChange()"
+    >
+      <option value="">All Categories</option>
+      @for (cat of categories(); track cat.id) {
+        <option [value]="cat.id">{{ cat.name }}</option>
+      }
+    </select>
+
+    <select
+      class="filter-select"
+      [ngModel]="filterStatus()"
+      (ngModelChange)="filterStatus.set($event); onFilterChange()"
+    >
+      <option value="">All Status</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span class="material-symbols-outlined">error</span>
+      {{ error() }}
+    </div>
+  }
+
+  <app-data-table
+    [columns]="columns"
+    [data]="devices()"
+    [loading]="loading()"
+    [pagination]="pagination()"
+    [sort]="sort()"
+    [emptyMessage]="'No medical devices found'"
+    [emptyIcon]="'accessible'"
+    (sortChange)="onSortChange($event)"
+    (pageChange)="onPageChange($event)"
+  >
+    <ng-template #cellTemplate let-device let-column="column">
+      @switch (column.key) {
+        @case ('code') {
+          <span class="code-cell">{{ device.code || '-' }}</span>
+        }
+        @case ('name') {
+          <span class="name-cell">{{ device.name }}</span>
+        }
+        @case ('is_reusable') {
+          @if (device.is_reusable) {
+            <span class="badge-yes">Yes</span>
+          } @else {
+            <span class="badge-no">No</span>
+          }
+        }
+        @case ('is_active') {
+          <span class="status-badge" [class.active]="device.is_active" [class.inactive]="!device.is_active">
+            {{ device.is_active ? 'Active' : 'Inactive' }}
+          </span>
+        }
+        @default {
+          {{ device[column.key] || '-' }}
+        }
+      }
+    </ng-template>
+
+    <ng-template #actionsTemplate let-device>
+      <button class="action-btn" title="View" (click)="viewDevice(device)">
+        <span class="material-symbols-outlined">visibility</span>
+      </button>
+      <button class="action-btn delete" title="Delete" (click)="deleteDevice(device)">
+        <span class="material-symbols-outlined">delete</span>
+      </button>
+    </ng-template>
+  </app-data-table>
+</div>
+

@@ -1,0 +1,23 @@
+@use '../../../../styles/variables' as *;
+
+.page-container { padding: $spacing-lg; }
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: $spacing-lg; }
+.page-title {
+  h1 { margin: 0; font-size: 1.75rem; font-weight: 600; color: $text-primary; }
+  .page-subtitle { margin: $spacing-xs 0 0; color: $text-secondary; font-size: 0.875rem; }
+}
+.btn-primary {
+  display: inline-flex; align-items: center; gap: $spacing-sm; padding: $spacing-sm $spacing-md;
+  background: $primary; color: white; border: none; border-radius: $radius-md;
+  font-size: 0.875rem; font-weight: 500; cursor: pointer;
+  &:hover { background: $primary-dark; }
+}
+.alert { display: flex; align-items: center; gap: $spacing-sm; padding: $spacing-md; border-radius: $radius-md; margin-bottom: $spacing-lg;
+  &.alert-error { background: rgba($error, 0.1); color: $error; border: 1px solid rgba($error, 0.2); }
+}
+.code-cell { font-family: monospace; font-size: 0.8rem; color: $primary; background: rgba($primary, 0.1); padding: 2px 6px; border-radius: $radius-sm; }
+.action-btn { padding: $spacing-xs; background: transparent; border: none; border-radius: $radius-sm; cursor: pointer; color: $text-secondary;
+  &:hover { background: $bg-secondary; color: $primary; }
+  &.delete:hover { background: rgba($error, 0.1); color: $error; }
+}
+

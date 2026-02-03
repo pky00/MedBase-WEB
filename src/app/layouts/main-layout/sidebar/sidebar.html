@@ -1,0 +1,32 @@
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">
+      <span class="material-symbols-outlined">favorite</span>
+    </div>
+    <span class="logo-text">MedBase</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    @for (group of navGroups; track group.title) {
+      <div class="nav-group">
+        @if (group.title) {
+          <div class="nav-group-title">{{ group.title }}</div>
+        }
+        <ul class="nav-list">
+          @for (item of group.items; track item.route) {
+            <li>
+              <a
+                [routerLink]="item.route"
+                routerLinkActive="active"
+                class="nav-item"
+              >
+                <span class="material-symbols-outlined nav-icon">{{ item.icon }}</span>
+                <span class="nav-label">{{ item.label }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </nav>
+</aside>

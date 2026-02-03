@@ -1,0 +1,38 @@
+<header class="header">
+  <div class="header-left">
+    <h1 class="header-title">Welcome to MedBase</h1>
+  </div>
+
+  <div class="header-right">
+    <div class="user-menu-container">
+      <button
+        class="user-menu-trigger"
+        (click)="toggleUserMenu()"
+        [attr.aria-expanded]="showUserMenu()"
+        aria-haspopup="true"
+      >
+        <div class="user-avatar">{{ getUserInitials() }}</div>
+        <span class="user-name">{{ getUserDisplayName() }}</span>
+        <span class="material-symbols-outlined chevron">expand_more</span>
+      </button>
+
+      @if (showUserMenu()) {
+        <div class="user-menu-dropdown" role="menu">
+          <div class="user-menu-header">
+            <div class="user-avatar-lg">{{ getUserInitials() }}</div>
+            <div class="user-info">
+              <span class="user-name-lg">{{ getUserDisplayName() }}</span>
+              <span class="user-email">{{ currentUser()?.email }}</span>
+            </div>
+          </div>
+          <div class="user-menu-divider"></div>
+          <button class="user-menu-item" role="menuitem" (click)="logout()">
+            <span class="material-symbols-outlined">logout</span>
+            <span>Sign Out</span>
+          </button>
+        </div>
+        <div class="user-menu-backdrop" (click)="closeUserMenu()"></div>
+      }
+    </div>
+  </div>
+</header>

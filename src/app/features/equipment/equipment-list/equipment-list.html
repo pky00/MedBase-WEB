@@ -1,0 +1,107 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <h1>Equipment</h1>
+      <p class="page-subtitle">Manage clinic equipment and assets</p>
+    </div>
+    <button class="btn-primary" (click)="createEquipment()">
+      <span class="material-symbols-outlined">add</span>
+      Add Equipment
+    </button>
+  </div>
+
+  <div class="filters-bar">
+    <div class="search-box">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search by name or code..."
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        (keyup.enter)="onSearch()"
+      />
+    </div>
+
+    <select
+      class="filter-select"
+      [ngModel]="filterCategory()"
+      (ngModelChange)="filterCategory.set($event); onFilterChange()"
+    >
+      <option value="">All Categories</option>
+      @for (cat of categories(); track cat.id) {
+        <option [value]="cat.id">{{ cat.name }}</option>
+      }
+    </select>
+
+    <select
+      class="filter-select"
+      [ngModel]="filterStatus()"
+      (ngModelChange)="filterStatus.set($event); onFilterChange()"
+    >
+      <option value="">All Status</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span class="material-symbols-outlined">error</span>
+      {{ error() }}
+    </div>
+  }
+
+  <app-data-table
+    [columns]="columns"
+    [data]="equipment()"
+    [loading]="loading()"
+    [pagination]="pagination()"
+    [sort]="sort()"
+    [emptyMessage]="'No equipment found'"
+    [emptyIcon]="'devices'"
+    (sortChange)="onSortChange($event)"
+    (pageChange)="onPageChange($event)"
+  >
+    <ng-template #cellTemplate let-item let-column="column">
+      @switch (column.key) {
+        @case ('asset_code') {
+          <span class="code-cell">{{ item.asset_code || '-' }}</span>
+        }
+        @case ('name') {
+          <span class="name-cell">{{ item.name }}</span>
+        }
+        @case ('equipment_condition') {
+          <span class="condition-badge" [class]="item.equipment_condition">
+            {{ getConditionLabel(item.equipment_condition) }}
+          </span>
+        }
+        @case ('is_donation') {
+          @if (item.is_donation) {
+            <span class="donation-badge">Donated</span>
+          } @else {
+            <span>-</span>
+          }
+        }
+        @case ('is_active') {
+          <span class="status-badge" [class.active]="item.is_active" [class.inactive]="!item.is_active">
+            {{ item.is_active ? 'Active' : 'Inactive' }}
+          </span>
+        }
+        @default {
+          {{ item[column.key] || '-' }}
+        }
+      }
+    </ng-template>
+
+    <ng-template #actionsTemplate let-item>
+      <button class="action-btn" title="View" (click)="viewEquipment(item)">
+        <span class="material-symbols-outlined">visibility</span>
+      </button>
+      <button class="action-btn delete" title="Delete" (click)="deleteEquipment(item)">
+        <span class="material-symbols-outlined">delete</span>
+      </button>
+    </ng-template>
+  </app-data-table>
+</div>
+

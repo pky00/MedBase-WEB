@@ -1,0 +1,103 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <h1>Donors</h1>
+      <p class="page-subtitle">Manage donor organizations and individuals</p>
+    </div>
+    <button class="btn-primary" (click)="createDonor()">
+      <span class="material-symbols-outlined">add</span>
+      Add Donor
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search by name or code..."
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        (keyup.enter)="onSearch()"
+      />
+    </div>
+
+    <select
+      class="filter-select"
+      [ngModel]="filterType()"
+      (ngModelChange)="filterType.set($event); onFilterChange()"
+    >
+      @for (type of donorTypes; track type.value) {
+        <option [value]="type.value">{{ type.label }}</option>
+      }
+    </select>
+
+    <select
+      class="filter-select"
+      [ngModel]="filterStatus()"
+      (ngModelChange)="filterStatus.set($event); onFilterChange()"
+    >
+      <option value="">All Status</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select>
+  </div>
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="alert alert-error">
+      <span class="material-symbols-outlined">error</span>
+      {{ error() }}
+    </div>
+  }
+
+  <!-- Data Table -->
+  <app-data-table
+    [columns]="columns"
+    [data]="donors()"
+    [loading]="loading()"
+    [pagination]="pagination()"
+    [sort]="sort()"
+    [emptyMessage]="'No donors found'"
+    [emptyIcon]="'volunteer_activism'"
+    (sortChange)="onSortChange($event)"
+    (pageChange)="onPageChange($event)"
+  >
+    <!-- Custom cell template -->
+    <ng-template #cellTemplate let-donor let-column="column">
+      @switch (column.key) {
+        @case ('donor_code') {
+          <span class="code-cell">{{ donor.donor_code || '-' }}</span>
+        }
+        @case ('name') {
+          <span class="name-cell">{{ donor.name }}</span>
+        }
+        @case ('donor_type') {
+          <span class="type-badge" [class]="donor.donor_type">
+            {{ getDonorTypeLabel(donor.donor_type) }}
+          </span>
+        }
+        @case ('is_active') {
+          <span class="status-badge" [class.active]="donor.is_active" [class.inactive]="!donor.is_active">
+            {{ donor.is_active ? 'Active' : 'Inactive' }}
+          </span>
+        }
+        @default {
+          {{ donor[column.key] || '-' }}
+        }
+      }
+    </ng-template>
+
+    <!-- Actions template -->
+    <ng-template #actionsTemplate let-donor>
+      <button class="action-btn" title="View" (click)="viewDonor(donor)">
+        <span class="material-symbols-outlined">visibility</span>
+      </button>
+      <button class="action-btn delete" title="Delete" (click)="deleteDonor(donor)">
+        <span class="material-symbols-outlined">delete</span>
+      </button>
+    </ng-template>
+  </app-data-table>
+</div>

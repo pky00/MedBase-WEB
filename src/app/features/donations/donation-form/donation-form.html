@@ -1,0 +1,96 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <h1>{{ isEditMode() ? (isViewMode() ? 'View Donation' : 'Edit Donation') : 'Record Donation' }}</h1>
+      <p class="page-subtitle">{{ isEditMode() ? (isViewMode() ? 'Donation information' : 'Update donation details') : 'Record a new donation' }}</p>
+    </div>
+    @if (isEditMode() && isViewMode()) {
+      <button type="button" class="btn-primary" (click)="toggleEditMode()">
+        <span class="material-symbols-outlined">edit</span>
+        Edit
+      </button>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span class="material-symbols-outlined">error</span>
+      {{ error() }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <span>Loading donation...</span>
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="entity-form">
+      <div class="form-section">
+        <h2 class="section-title">Donation Details</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="donor_id" class="form-label">Donor *</label>
+            <select id="donor_id" formControlName="donor_id" class="form-input" [class.error]="isFieldInvalid('donor_id')">
+              <option value="">Select donor</option>
+              @for (donor of donors(); track donor.id) {
+                <option [value]="donor.id">{{ donor.name }}</option>
+              }
+            </select>
+            @if (isFieldInvalid('donor_id')) { <span class="form-error">Donor is required</span> }
+          </div>
+
+          <div class="form-group">
+            <label for="donation_type" class="form-label">Donation Type *</label>
+            <select id="donation_type" formControlName="donation_type" class="form-input">
+              @for (option of typeOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="donation_date" class="form-label">Donation Date *</label>
+            <input type="date" id="donation_date" formControlName="donation_date" class="form-input" [class.error]="isFieldInvalid('donation_date')" />
+            @if (isFieldInvalid('donation_date')) { <span class="form-error">Date is required</span> }
+          </div>
+
+          <div class="form-group">
+            <label for="received_date" class="form-label">Received Date</label>
+            <input type="date" id="received_date" formControlName="received_date" class="form-input" />
+          </div>
+
+          <div class="form-group">
+            <label for="total_items_count" class="form-label">Total Items Count</label>
+            <input type="number" id="total_items_count" formControlName="total_items_count" class="form-input" min="0" />
+          </div>
+
+          <div class="form-group">
+            <label for="total_estimated_value" class="form-label">Estimated Value ($)</label>
+            <input type="number" id="total_estimated_value" formControlName="total_estimated_value" class="form-input" min="0" step="0.01" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="section-title">Additional Information</h2>
+        <div class="form-group full-width">
+          <label for="notes" class="form-label">Notes</label>
+          <textarea id="notes" formControlName="notes" class="form-input" rows="4" placeholder="Additional notes about this donation..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="cancel()">
+          {{ isEditMode() && !isViewMode() ? 'Cancel' : 'Back' }}
+        </button>
+        @if (!isViewMode()) {
+          <button type="submit" class="btn-primary" [disabled]="saving()">
+            @if (saving()) { <span class="spinner-sm"></span> Saving... } @else { {{ isEditMode() ? 'Update Donation' : 'Record Donation' }} }
+          </button>
+        }
+      </div>
+    </form>
+  }
+</div>
+

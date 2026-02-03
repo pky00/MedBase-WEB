@@ -1,0 +1,81 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <h1>Users</h1>
+      <p class="page-subtitle">Manage system users and access</p>
+    </div>
+    <button class="btn-primary" (click)="createUser()">
+      <span class="material-symbols-outlined">add</span>
+      Add User
+    </button>
+  </div>
+
+  <div class="filters-bar">
+    <div class="search-box">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search by username or email..."
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        (keyup.enter)="onSearch()"
+      />
+    </div>
+
+    <select
+      class="filter-select"
+      [ngModel]="filterStatus()"
+      (ngModelChange)="filterStatus.set($event); onFilterChange()"
+    >
+      <option value="">All Status</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span class="material-symbols-outlined">error</span>
+      {{ error() }}
+    </div>
+  }
+
+  <app-data-table
+    [columns]="columns"
+    [data]="users()"
+    [loading]="loading()"
+    [pagination]="pagination()"
+    [sort]="sort()"
+    [emptyMessage]="'No users found'"
+    [emptyIcon]="'group'"
+    (sortChange)="onSortChange($event)"
+    (pageChange)="onPageChange($event)"
+  >
+    <ng-template #cellTemplate let-user let-column="column">
+      @switch (column.key) {
+        @case ('username') {
+          <span class="username-cell">{{ user.username }}</span>
+        }
+        @case ('is_active') {
+          <span class="status-badge" [class.active]="user.is_active" [class.inactive]="!user.is_active">
+            {{ user.is_active ? 'Active' : 'Inactive' }}
+          </span>
+        }
+        @default {
+          {{ user[column.key] || '-' }}
+        }
+      }
+    </ng-template>
+
+    <ng-template #actionsTemplate let-user>
+      <button class="action-btn" title="View" (click)="viewUser(user)">
+        <span class="material-symbols-outlined">visibility</span>
+      </button>
+      <button class="action-btn delete" title="Delete" (click)="deleteUser(user)">
+        <span class="material-symbols-outlined">delete</span>
+      </button>
+    </ng-template>
+  </app-data-table>
+</div>
+

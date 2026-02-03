@@ -1,0 +1,86 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <h1>Prescriptions</h1>
+      <p class="page-subtitle">Manage patient prescriptions</p>
+    </div>
+    <button class="btn-primary" (click)="createPrescription()">
+      <span class="material-symbols-outlined">add</span>
+      New Prescription
+    </button>
+  </div>
+
+  <div class="filters-bar">
+    <select
+      class="filter-select"
+      [ngModel]="filterStatus()"
+      (ngModelChange)="filterStatus.set($event); onFilterChange()"
+    >
+      @for (option of statusOptions; track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+      }
+    </select>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span class="material-symbols-outlined">error</span>
+      {{ error() }}
+    </div>
+  }
+
+  <app-data-table
+    [columns]="columns"
+    [data]="prescriptions()"
+    [loading]="loading()"
+    [pagination]="pagination()"
+    [sort]="sort()"
+    [emptyMessage]="'No prescriptions found'"
+    [emptyIcon]="'receipt_long'"
+    (sortChange)="onSortChange($event)"
+    (pageChange)="onPageChange($event)"
+  >
+    <ng-template #cellTemplate let-prescription let-column="column">
+      @switch (column.key) {
+        @case ('prescription_number') {
+          <span class="code-cell">{{ prescription.prescription_number }}</span>
+        }
+        @case ('prescription_date') {
+          <span>{{ formatDate(prescription.prescription_date) }}</span>
+        }
+        @case ('patient') {
+          @if (prescription.patient) {
+            <span>{{ prescription.patient.first_name }} {{ prescription.patient.last_name }}</span>
+          } @else {
+            <span>-</span>
+          }
+        }
+        @case ('doctor') {
+          @if (prescription.doctor) {
+            <span>Dr. {{ prescription.doctor.first_name }} {{ prescription.doctor.last_name }}</span>
+          } @else {
+            <span>-</span>
+          }
+        }
+        @case ('status') {
+          <span class="status-badge" [class]="prescription.status">
+            {{ getStatusLabel(prescription.status) }}
+          </span>
+        }
+        @default {
+          {{ prescription[column.key] || '-' }}
+        }
+      }
+    </ng-template>
+
+    <ng-template #actionsTemplate let-prescription>
+      <button class="action-btn" title="View" (click)="viewPrescription(prescription)">
+        <span class="material-symbols-outlined">visibility</span>
+      </button>
+      <button class="action-btn delete" title="Delete" (click)="deletePrescription(prescription)">
+        <span class="material-symbols-outlined">delete</span>
+      </button>
+    </ng-template>
+  </app-data-table>
+</div>
+

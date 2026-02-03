@@ -1,0 +1,98 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <h1>Patients</h1>
+      <p class="page-subtitle">Manage patient records and information</p>
+    </div>
+    <button class="btn-primary" (click)="createPatient()">
+      <span class="material-symbols-outlined">add</span>
+      Add Patient
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search by name, patient number..."
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        (keyup.enter)="onSearch()"
+      />
+    </div>
+
+    <select
+      class="filter-select"
+      [ngModel]="filterGender()"
+      (ngModelChange)="filterGender.set($event); onFilterChange()"
+    >
+      @for (option of genderOptions; track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+      }
+    </select>
+  </div>
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="alert alert-error">
+      <span class="material-symbols-outlined">error</span>
+      {{ error() }}
+    </div>
+  }
+
+  <!-- Data Table -->
+  <app-data-table
+    [columns]="columns"
+    [data]="patients()"
+    [loading]="loading()"
+    [pagination]="pagination()"
+    [sort]="sort()"
+    [emptyMessage]="'No patients found'"
+    [emptyIcon]="'person_search'"
+    (sortChange)="onSortChange($event)"
+    (pageChange)="onPageChange($event)"
+  >
+    <!-- Custom cell template -->
+    <ng-template #cellTemplate let-patient let-column="column">
+      @switch (column.key) {
+        @case ('patient_number') {
+          <span class="code-cell">{{ patient.patient_number }}</span>
+        }
+        @case ('last_name') {
+          <span class="name-cell">{{ patient.last_name }}</span>
+        }
+        @case ('first_name') {
+          <span>{{ patient.first_name }}</span>
+        }
+        @case ('date_of_birth') {
+          <span>{{ formatDate(patient.date_of_birth) }} ({{ calculateAge(patient.date_of_birth) }} yrs)</span>
+        }
+        @case ('gender') {
+          <span class="gender-badge" [class]="patient.gender">
+            {{ getGenderLabel(patient.gender) }}
+          </span>
+        }
+        @case ('blood_type') {
+          <span class="blood-type-badge">{{ getBloodTypeLabel(patient.blood_type) }}</span>
+        }
+        @default {
+          {{ patient[column.key] || '-' }}
+        }
+      }
+    </ng-template>
+
+    <!-- Actions template -->
+    <ng-template #actionsTemplate let-patient>
+      <button class="action-btn" title="View" (click)="viewPatient(patient)">
+        <span class="material-symbols-outlined">visibility</span>
+      </button>
+      <button class="action-btn delete" title="Delete" (click)="deletePatient(patient)">
+        <span class="material-symbols-outlined">delete</span>
+      </button>
+    </ng-template>
+  </app-data-table>
+</div>
+

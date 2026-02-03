@@ -1,0 +1,96 @@
+@if (loading()) {
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <span>Loading...</span>
+  </div>
+} @else {
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          @for (col of columns(); track trackByKey($index, col)) {
+            <th
+              [class.sortable]="col.sortable"
+              [class.sorted]="isSorted(col)"
+              (click)="onHeaderClick(col)"
+            >
+              <div class="th-content">
+                <span>{{ col.label }}</span>
+                @if (col.sortable) {
+                  <span class="sort-icon material-symbols-outlined">
+                    {{ getSortIcon(col) }}
+                  </span>
+                }
+              </div>
+            </th>
+          }
+          @if (hasActions()) {
+            <th class="actions-header">Actions</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of data(); track trackById($index, item)) {
+          <tr>
+            @for (col of columns(); track trackByKey($index, col)) {
+              <td>
+                @if (cellTemplate()) {
+                  <ng-container
+                    [ngTemplateOutlet]="cellTemplate()!"
+                    [ngTemplateOutletContext]="{ $implicit: item, column: col }"
+                  />
+                } @else {
+                  {{ getCellValue(item, col) ?? '-' }}
+                }
+              </td>
+            }
+            @if (hasActions()) {
+              <td class="actions-cell">
+                <ng-container
+                  [ngTemplateOutlet]="actionsTemplate()!"
+                  [ngTemplateOutletContext]="{ $implicit: item }"
+                />
+              </td>
+            }
+          </tr>
+        } @empty {
+          <tr>
+            <td [attr.colspan]="columns().length + (hasActions() ? 1 : 0)" class="empty-state">
+              <span class="material-symbols-outlined">{{ emptyIcon() }}</span>
+              <p>{{ emptyMessage() }}</p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (pagination() && pagination()!.total > 0) {
+    <div class="pagination">
+      <span class="pagination-info">
+        Showing {{ showingFrom() }} - {{ showingTo() }} of {{ pagination()!.total }}
+      </span>
+      <div class="pagination-controls">
+        <button
+          class="pagination-btn"
+          [disabled]="!hasPrevPage()"
+          (click)="prevPage()"
+          aria-label="Previous page"
+        >
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <span class="pagination-page">
+          Page {{ pagination()!.page }} of {{ totalPages() }}
+        </span>
+        <button
+          class="pagination-btn"
+          [disabled]="!hasNextPage()"
+          (click)="nextPage()"
+          aria-label="Next page"
+        >
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
+    </div>
+  }
+}

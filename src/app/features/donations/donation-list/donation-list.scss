@@ -1,0 +1,44 @@
+@use '../../../../styles/variables' as *;
+
+.page-container { padding: $spacing-lg; }
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: $spacing-lg; }
+.page-title {
+  h1 { margin: 0; font-size: 1.75rem; font-weight: 600; color: $text-primary; }
+  .page-subtitle { margin: $spacing-xs 0 0; color: $text-secondary; font-size: 0.875rem; }
+}
+.btn-primary {
+  display: inline-flex; align-items: center; gap: $spacing-sm; padding: $spacing-sm $spacing-md;
+  background: $primary; color: white; border: none; border-radius: $radius-md;
+  font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background-color 0.2s;
+  &:hover { background: $primary-dark; }
+}
+.filters-bar { display: flex; gap: $spacing-md; margin-bottom: $spacing-lg; flex-wrap: wrap; }
+.filter-select {
+  padding: $spacing-sm $spacing-md; border: 1px solid $border-color; border-radius: $radius-md;
+  font-size: 0.875rem; background: white; cursor: pointer; min-width: 150px;
+  &:focus { outline: none; border-color: $primary; }
+}
+.alert {
+  display: flex; align-items: center; gap: $spacing-sm; padding: $spacing-md;
+  border-radius: $radius-md; margin-bottom: $spacing-lg;
+  &.alert-error { background: rgba($error, 0.1); color: $error; border: 1px solid rgba($error, 0.2); }
+}
+.code-cell {
+  font-family: monospace; font-size: 0.8rem; color: $primary;
+  background: rgba($primary, 0.1); padding: 2px 6px; border-radius: $radius-sm;
+}
+.name-cell { font-weight: 500; color: $text-primary; }
+.type-badge {
+  display: inline-block; padding: 2px 8px; border-radius: $radius-sm; font-size: 0.75rem; font-weight: 500;
+  &.medicine { background: rgba(#10b981, 0.1); color: #10b981; }
+  &.equipment { background: rgba(#3b82f6, 0.1); color: #3b82f6; }
+  &.medical_device { background: rgba(#8b5cf6, 0.1); color: #8b5cf6; }
+  &.mixed { background: rgba(#f59e0b, 0.1); color: #f59e0b; }
+}
+.action-btn {
+  padding: $spacing-xs; background: transparent; border: none; border-radius: $radius-sm;
+  cursor: pointer; color: $text-secondary; transition: all 0.2s;
+  &:hover { background: $bg-secondary; color: $primary; }
+  &.delete:hover { background: rgba($error, 0.1); color: $error; }
+}
+

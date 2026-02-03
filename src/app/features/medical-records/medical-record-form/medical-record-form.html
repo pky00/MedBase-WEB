@@ -1,0 +1,125 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <h1>{{ isEditMode() ? (isViewMode() ? 'View Medical Record' : 'Edit Medical Record') : 'New Medical Record' }}</h1>
+      <p class="page-subtitle">{{ isEditMode() ? (isViewMode() ? 'Visit record information' : 'Update visit record') : 'Create a new patient visit record' }}</p>
+    </div>
+    @if (isEditMode() && isViewMode()) {
+      <button type="button" class="btn-primary" (click)="toggleEditMode()">
+        <span class="material-symbols-outlined">edit</span>
+        Edit
+      </button>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span class="material-symbols-outlined">error</span>
+      {{ error() }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <span>Loading record...</span>
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="entity-form">
+      <div class="form-section">
+        <h2 class="section-title">Visit Information</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="patient_id" class="form-label">Patient *</label>
+            <select id="patient_id" formControlName="patient_id" class="form-input" [class.error]="isFieldInvalid('patient_id')">
+              <option value="">Select patient</option>
+              @for (patient of patients(); track patient.id) {
+                <option [value]="patient.id">{{ patient.first_name }} {{ patient.last_name }}</option>
+              }
+            </select>
+            @if (isFieldInvalid('patient_id')) { <span class="form-error">Patient is required</span> }
+          </div>
+
+          <div class="form-group">
+            <label for="doctor_id" class="form-label">Doctor *</label>
+            <select id="doctor_id" formControlName="doctor_id" class="form-input" [class.error]="isFieldInvalid('doctor_id')">
+              <option value="">Select doctor</option>
+              @for (doctor of doctors(); track doctor.id) {
+                <option [value]="doctor.id">Dr. {{ doctor.first_name }} {{ doctor.last_name }}</option>
+              }
+            </select>
+            @if (isFieldInvalid('doctor_id')) { <span class="form-error">Doctor is required</span> }
+          </div>
+
+          <div class="form-group">
+            <label for="visit_date" class="form-label">Visit Date *</label>
+            <input type="date" id="visit_date" formControlName="visit_date" class="form-input" [class.error]="isFieldInvalid('visit_date')" />
+            @if (isFieldInvalid('visit_date')) { <span class="form-error">Date is required</span> }
+          </div>
+
+          <div class="form-group full-width">
+            <label for="chief_complaint" class="form-label">Chief Complaint</label>
+            <textarea id="chief_complaint" formControlName="chief_complaint" class="form-input" rows="2" placeholder="Main reason for the visit"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="section-title">Clinical Notes</h2>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="history_of_present_illness" class="form-label">History of Present Illness</label>
+            <textarea id="history_of_present_illness" formControlName="history_of_present_illness" class="form-input" rows="3"></textarea>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="physical_examination" class="form-label">Physical Examination</label>
+            <textarea id="physical_examination" formControlName="physical_examination" class="form-input" rows="3"></textarea>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="assessment" class="form-label">Assessment</label>
+            <textarea id="assessment" formControlName="assessment" class="form-input" rows="2"></textarea>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="treatment_plan" class="form-label">Treatment Plan</label>
+            <textarea id="treatment_plan" formControlName="treatment_plan" class="form-input" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="section-title">Follow-up</h2>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="follow_up_instructions" class="form-label">Follow-up Instructions</label>
+            <textarea id="follow_up_instructions" formControlName="follow_up_instructions" class="form-input" rows="2"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="follow_up_date" class="form-label">Follow-up Date</label>
+            <input type="date" id="follow_up_date" formControlName="follow_up_date" class="form-input" />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="notes" class="form-label">Additional Notes</label>
+            <textarea id="notes" formControlName="notes" class="form-input" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="cancel()">
+          {{ isEditMode() && !isViewMode() ? 'Cancel' : 'Back' }}
+        </button>
+        @if (!isViewMode()) {
+          <button type="submit" class="btn-primary" [disabled]="saving()">
+            @if (saving()) { <span class="spinner-sm"></span> Saving... } @else { {{ isEditMode() ? 'Update Record' : 'Create Record' }} }
+          </button>
+        }
+      </div>
+    </form>
+  }
+</div>
+

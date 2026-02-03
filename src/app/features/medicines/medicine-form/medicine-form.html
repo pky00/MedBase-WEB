@@ -1,0 +1,144 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <h1>{{ isEditMode() ? (isViewMode() ? 'View Medicine' : 'Edit Medicine') : 'New Medicine' }}</h1>
+      <p class="page-subtitle">{{ isEditMode() ? (isViewMode() ? 'Medicine information' : 'Update medicine information') : 'Add a new medicine to the catalog' }}</p>
+    </div>
+    @if (isEditMode() && isViewMode()) {
+      <button type="button" class="btn-primary" (click)="toggleEditMode()">
+        <span class="material-symbols-outlined">edit</span>
+        Edit
+      </button>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span class="material-symbols-outlined">error</span>
+      {{ error() }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <span>Loading medicine...</span>
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="entity-form">
+      <div class="form-section">
+        <h2 class="section-title">Basic Information</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name" class="form-label">Medicine Name *</label>
+            <input type="text" id="name" formControlName="name" class="form-input" [class.error]="isFieldInvalid('name')" placeholder="Enter medicine name" />
+            @if (isFieldInvalid('name')) { <span class="form-error">Name is required</span> }
+          </div>
+
+          <div class="form-group">
+            <label for="code" class="form-label">Code</label>
+            <input type="text" id="code" formControlName="code" class="form-input" placeholder="e.g., MED-001" />
+          </div>
+
+          <div class="form-group">
+            <label for="generic_name" class="form-label">Generic Name</label>
+            <input type="text" id="generic_name" formControlName="generic_name" class="form-input" placeholder="Generic name" />
+          </div>
+
+          <div class="form-group">
+            <label for="brand_name" class="form-label">Brand Name</label>
+            <input type="text" id="brand_name" formControlName="brand_name" class="form-input" placeholder="Brand name" />
+          </div>
+
+          <div class="form-group">
+            <label for="category_id" class="form-label">Category</label>
+            <select id="category_id" formControlName="category_id" class="form-input">
+              <option value="">Select category</option>
+              @for (cat of categories(); track cat.id) {
+                <option [value]="cat.id">{{ cat.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="manufacturer" class="form-label">Manufacturer</label>
+            <input type="text" id="manufacturer" formControlName="manufacturer" class="form-input" placeholder="Manufacturer name" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="section-title">Dosage Information</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="dosage_form" class="form-label">Dosage Form *</label>
+            <select id="dosage_form" formControlName="dosage_form" class="form-input">
+              @for (option of dosageFormOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="strength" class="form-label">Strength</label>
+            <input type="text" id="strength" formControlName="strength" class="form-input" placeholder="e.g., 500" />
+          </div>
+
+          <div class="form-group">
+            <label for="unit" class="form-label">Unit *</label>
+            <input type="text" id="unit" formControlName="unit" class="form-input" [class.error]="isFieldInvalid('unit')" placeholder="e.g., mg, ml" />
+            @if (isFieldInvalid('unit')) { <span class="form-error">Unit is required</span> }
+          </div>
+
+          <div class="form-group">
+            <label for="package_size" class="form-label">Package Size</label>
+            <input type="text" id="package_size" formControlName="package_size" class="form-input" placeholder="e.g., 30 tablets" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="section-title">Additional Details</h2>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" formControlName="description" class="form-input" rows="3" placeholder="Medicine description..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="requires_prescription" />
+              <span>Requires Prescription</span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="is_controlled_substance" />
+              <span>Controlled Substance</span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="is_active" />
+              <span>Active</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="cancel()">
+          {{ isEditMode() && !isViewMode() ? 'Cancel' : 'Back' }}
+        </button>
+        @if (!isViewMode()) {
+          <button type="submit" class="btn-primary" [disabled]="saving()">
+            @if (saving()) { <span class="spinner-sm"></span> Saving... } @else { {{ isEditMode() ? 'Update Medicine' : 'Create Medicine' }} }
+          </button>
+        }
+      </div>
+    </form>
+  }
+</div>
+

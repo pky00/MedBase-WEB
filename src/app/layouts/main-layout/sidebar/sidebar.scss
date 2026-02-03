@@ -1,0 +1,103 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: $sidebar-width;
+  height: 100vh;
+  background: $background-white;
+  border-right: 1px solid $border-light;
+  display: flex;
+  flex-direction: column;
+  z-index: $z-fixed;
+  overflow-y: auto;
+  @include custom-scrollbar;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $border-light;
+}
+
+.logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, $primary-500, $primary-700);
+  border-radius: $radius-md;
+
+  .material-symbols-outlined {
+    font-size: 20px;
+    color: $text-on-primary;
+  }
+}
+
+.logo-text {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $primary-700;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: $spacing-md 0;
+}
+
+.nav-group {
+  margin-bottom: $spacing-sm;
+}
+
+.nav-group-title {
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: $text-hint;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-lg;
+  margin: 0 $spacing-sm;
+  color: $text-secondary;
+  text-decoration: none;
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: $background-hover;
+    color: $text-primary;
+    text-decoration: none;
+  }
+
+  &.active {
+    background: $primary-50;
+    color: $primary-700;
+  }
+}
+
+.nav-icon {
+  font-size: 20px;
+}
+
+.nav-label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+

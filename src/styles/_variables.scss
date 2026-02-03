@@ -1,0 +1,111 @@
+// =============================================================================
+// MedBase Theme Variables - Blue & White
+// =============================================================================
+
+// Primary Colors (Blue)
+$primary-50: #E3F2FD;
+$primary-100: #BBDEFB;
+$primary-200: #90CAF9;
+$primary-300: #64B5F6;
+$primary-400: #42A5F5;
+$primary-500: #2196F3;
+$primary-600: #1E88E5;
+$primary-700: #1976D2;
+$primary-800: #1565C0;
+$primary-900: #0D47A1;
+
+$primary: $primary-700;
+$primary-light: $primary-400;
+$primary-dark: $primary-800;
+
+// Background Colors
+$background-white: #FFFFFF;
+$background-light: #F5F7FA;
+$background-hover: #EEF2F6;
+$background-blue-tint: #E3F2FD;
+
+// Text Colors
+$text-primary: #212121;
+$text-secondary: #757575;
+$text-disabled: #BDBDBD;
+$text-hint: #9E9E9E;
+$text-on-primary: #FFFFFF;
+
+// Status Colors
+$success: #4CAF50;
+$success-light: #E8F5E9;
+$success-dark: #388E3C;
+
+$warning: #FF9800;
+$warning-light: #FFF3E0;
+$warning-dark: #F57C00;
+
+$error: #F44336;
+$error-light: #FFEBEE;
+$error-dark: #D32F2F;
+
+$info: #2196F3;
+$info-light: #E3F2FD;
+$info-dark: #1976D2;
+
+// Border Colors
+$border-light: #E0E0E0;
+$border-default: #BDBDBD;
+$border-focus: $primary-500;
+$border-color: $border-light; // Alias for convenience
+
+// Background aliases
+$bg-secondary: $background-light;
+
+// Shadows
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+$shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+
+// Spacing
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-2xl: 3rem;
+
+// Border Radius
+$radius-sm: 0.25rem;
+$radius-md: 0.5rem;
+$radius-lg: 0.75rem;
+$radius-xl: 1rem;
+$radius-full: 9999px;
+
+// Typography
+$font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-base: 1rem;
+$font-size-lg: 1.125rem;
+$font-size-xl: 1.25rem;
+$font-size-2xl: 1.5rem;
+$font-size-3xl: 1.875rem;
+
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+$line-height-tight: 1.25;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.75;
+
+// Transitions
+$transition-fast: 150ms ease-in-out;
+$transition-normal: 250ms ease-in-out;
+
+// Layout
+$sidebar-width: 260px;
+$header-height: 64px;
+
+// Z-Index
+$z-fixed: 100;
+$z-modal: 200;
+

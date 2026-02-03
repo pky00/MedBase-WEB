@@ -1,0 +1,67 @@
+<div class="dashboard">
+  <div class="dashboard-header">
+    <h1 class="welcome-title">{{ getGreeting() }}, {{ getUserFirstName() }}!</h1>
+    <p class="welcome-subtitle">Here's an overview of your clinic management system.</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon blue">
+        <span class="material-symbols-outlined">people</span>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Patients</span>
+        <span class="stat-value">--</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">
+        <span class="material-symbols-outlined">calendar_today</span>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Today's Appointments</span>
+        <span class="stat-value">--</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon orange">
+        <span class="material-symbols-outlined">medication</span>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Pending Prescriptions</span>
+        <span class="stat-value">--</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon purple">
+        <span class="material-symbols-outlined">inventory_2</span>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Low Stock Items</span>
+        <span class="stat-value">--</span>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Quick Access</h2>
+  <div class="cards-grid">
+    @for (card of cards; track card.title) {
+      <div class="feature-card">
+        <div class="card-header">
+          <div class="card-icon" [class]="card.color">
+            <span class="material-symbols-outlined">{{ card.icon }}</span>
+          </div>
+          <h3 class="card-title">{{ card.title }}</h3>
+        </div>
+        <p class="card-description">{{ card.description }}</p>
+        <div class="card-actions">
+          @for (action of card.actions; track action.label) {
+            <button class="card-action-btn" (click)="navigate(action.route)">
+              {{ action.label }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

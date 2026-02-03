@@ -1,0 +1,98 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <h1>Medicines</h1>
+      <p class="page-subtitle">Manage medicine catalog and inventory</p>
+    </div>
+    <button class="btn-primary" (click)="createMedicine()">
+      <span class="material-symbols-outlined">add</span>
+      Add Medicine
+    </button>
+  </div>
+
+  <div class="filters-bar">
+    <div class="search-box">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search by name or code..."
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        (keyup.enter)="onSearch()"
+      />
+    </div>
+
+    <select
+      class="filter-select"
+      [ngModel]="filterCategory()"
+      (ngModelChange)="filterCategory.set($event); onFilterChange()"
+    >
+      <option value="">All Categories</option>
+      @for (cat of categories(); track cat.id) {
+        <option [value]="cat.id">{{ cat.name }}</option>
+      }
+    </select>
+
+    <select
+      class="filter-select"
+      [ngModel]="filterStatus()"
+      (ngModelChange)="filterStatus.set($event); onFilterChange()"
+    >
+      <option value="">All Status</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span class="material-symbols-outlined">error</span>
+      {{ error() }}
+    </div>
+  }
+
+  <app-data-table
+    [columns]="columns"
+    [data]="medicines()"
+    [loading]="loading()"
+    [pagination]="pagination()"
+    [sort]="sort()"
+    [emptyMessage]="'No medicines found'"
+    [emptyIcon]="'medication'"
+    (sortChange)="onSortChange($event)"
+    (pageChange)="onPageChange($event)"
+  >
+    <ng-template #cellTemplate let-medicine let-column="column">
+      @switch (column.key) {
+        @case ('code') {
+          <span class="code-cell">{{ medicine.code || '-' }}</span>
+        }
+        @case ('name') {
+          <span class="name-cell">{{ medicine.name }}</span>
+        }
+        @case ('dosage_form') {
+          <span class="form-badge">{{ getDosageFormLabel(medicine.dosage_form) }}</span>
+        }
+        @case ('is_active') {
+          <span class="status-badge" [class.active]="medicine.is_active" [class.inactive]="!medicine.is_active">
+            {{ medicine.is_active ? 'Active' : 'Inactive' }}
+          </span>
+        }
+        @default {
+          {{ medicine[column.key] || '-' }}
+        }
+      }
+    </ng-template>
+
+    <ng-template #actionsTemplate let-medicine>
+      <button class="action-btn" title="View" (click)="viewMedicine(medicine)">
+        <span class="material-symbols-outlined">visibility</span>
+      </button>
+      <button class="action-btn delete" title="Delete" (click)="deleteMedicine(medicine)">
+        <span class="material-symbols-outlined">delete</span>
+      </button>
+    </ng-template>
+  </app-data-table>
+</div>
+

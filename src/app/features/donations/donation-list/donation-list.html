@@ -1,0 +1,82 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <h1>Donations</h1>
+      <p class="page-subtitle">Track donations received from donors</p>
+    </div>
+    <button class="btn-primary" (click)="createDonation()">
+      <span class="material-symbols-outlined">add</span>
+      Record Donation
+    </button>
+  </div>
+
+  <div class="filters-bar">
+    <select
+      class="filter-select"
+      [ngModel]="filterType()"
+      (ngModelChange)="filterType.set($event); onFilterChange()"
+    >
+      @for (option of typeOptions; track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+      }
+    </select>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span class="material-symbols-outlined">error</span>
+      {{ error() }}
+    </div>
+  }
+
+  <app-data-table
+    [columns]="columns"
+    [data]="donations()"
+    [loading]="loading()"
+    [pagination]="pagination()"
+    [sort]="sort()"
+    [emptyMessage]="'No donations found'"
+    [emptyIcon]="'volunteer_activism'"
+    (sortChange)="onSortChange($event)"
+    (pageChange)="onPageChange($event)"
+  >
+    <ng-template #cellTemplate let-donation let-column="column">
+      @switch (column.key) {
+        @case ('donation_number') {
+          <span class="code-cell">{{ donation.donation_number }}</span>
+        }
+        @case ('donation_date') {
+          <span>{{ formatDate(donation.donation_date) }}</span>
+        }
+        @case ('donor') {
+          @if (donation.donor) {
+            <span class="name-cell">{{ donation.donor.name }}</span>
+          } @else {
+            <span>-</span>
+          }
+        }
+        @case ('donation_type') {
+          <span class="type-badge" [class]="donation.donation_type">
+            {{ getTypeLabel(donation.donation_type) }}
+          </span>
+        }
+        @case ('total_estimated_value') {
+          <span>{{ formatCurrency(donation.total_estimated_value) }}</span>
+        }
+        @default {
+          {{ donation[column.key] || '-' }}
+        }
+      }
+    </ng-template>
+
+    <ng-template #actionsTemplate let-donation>
+      <button class="action-btn" title="View" (click)="viewDonation(donation)">
+        <span class="material-symbols-outlined">visibility</span>
+      </button>
+      <button class="action-btn delete" title="Delete" (click)="deleteDonation(donation)">
+        <span class="material-symbols-outlined">delete</span>
+      </button>
+    </ng-template>
+  </app-data-table>
+</div>
+
