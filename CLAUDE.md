@@ -107,6 +107,12 @@ Build these once, use everywhere:
 
 ---
 
+## CLI Tools
+
+- **Always use CLI tools to autogenerate files when possible** (e.g. `ng generate` for components, services, modules, guards, pipes, etc.). Only write files manually when no CLI tool can do it for you.
+
+---
+
 ## Important Rules
 
 1. **Never skip features** — Complete in order
