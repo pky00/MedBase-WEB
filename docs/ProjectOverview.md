@@ -71,6 +71,25 @@ MedBase is a clinic management application designed for small medical clinics. I
 | `is_deleted` | Yes | Soft delete flag |
 | `is_active` | Optional | For resources that can be deactivated (e.g., doctors) |
 
+**Unique Names**
+- In general, entity names should be unique across the system
+- Add unique constraints on name fields in models to prevent duplicates
+- Validate uniqueness in the service layer when creating or updating entities
+
+**Third Parties**
+- A `third_parties` table serves as the base identity record for all persons/entities in the system
+- Every user, doctor, patient, and partner has a corresponding `third_party` record
+- When creating a doctor, patient, or partner: if no `third_party_id` is provided, the system automatically creates a third_party record; if a `third_party_id` is provided, it links to the existing one
+- `inventory_transactions` links to `third_party_id` to identify who is involved in the transaction:
+  - **Donations**: `third_party_id` must point to a donor (partner with `partner_type` of `donor` or `both`)
+  - **Prescriptions**: `third_party_id` must point to a doctor
+  - **Other types** (purchase, loss, breakage, expiration, destruction): `third_party_id` is set to the logged-in user's `third_party_id`
+
+**Business Rules**
+- Only doctors can make prescriptions
+- Only donors (partners with `partner_type` of `donor` or `both`) can make donations
+- For non-donation/non-prescription transactions, the system automatically uses the current user's `third_party_id`
+
 **Authentication**
 - JWT Bearer tokens
 - Token expiry: 1 hour
@@ -99,6 +118,24 @@ result = await self.db.execute(
     .options(contains_eager(Donation.medicine_items))
     .where(Donation.id == donation_id, Donation.is_deleted == False)
 )
+```
+
+**Limited Option Fields (Enums)**
+- Fields with limited options should be stored as `String` type in the database model
+- Create a corresponding `StrEnum` class to define the allowed values in code
+- Each enum should be defined in its relative resource's file (e.g., `AppointmentType` in `appointment.py`)
+- This provides type safety and validation while maintaining database flexibility
+
+```python
+from enum import StrEnum
+
+class AppointmentType(StrEnum):
+    SCHEDULED = "scheduled"
+    WALK_IN = "walk_in"
+
+class Appointment(Base):
+    __tablename__ = "appointments"
+    type = Column(String, nullable=False)  # Stores enum values as strings
 ```
 
 **API Endpoints (Get All)**
@@ -185,12 +222,14 @@ result = await self.db.execute(
   - Sometimes: treatment only (no vitals/record)
 
 ### Prescriptions
-- Prescribe medicine and medical devices (automatically decreases inventory)
+- Prescriptions are handled as inventory transactions with `transaction_type = prescription`
+- Only doctors can make prescriptions (third_party_id must point to a doctor)
+- Prescribing automatically decreases inventory
 
 ### Partners
 - Track partners (NGO, organization, individual, hospital, medical center)
 - Partner types: donor, referral, or both
-- **Donations**: Record what items were donated per donation
+- **Donations**: Handled as inventory transactions with type `donation` — only donors can make donations
 - **Treatments**: Track treatments/operations sent to referral partners
 
 ### Doctors
@@ -199,9 +238,10 @@ result = await self.db.execute(
 ### Users & Authentication
 - User system for data entry staff
 - Admin role to manage users (CRUD)
+- Each user has a `third_party` record used to track their involvement in transactions
 
 ### Dashboard
-- Summary statistics: inventory, appointments, donations, donors
+- Summary statistics: inventory, appointments, transactions, partners
 
 ### UI & Navigation
 - Sidebar for quick access to all sections
@@ -211,8 +251,7 @@ result = await self.db.execute(
 
 ### View Page Layout
 - Two-section layout: left side shows general data, right side shows related items/sub-items (where applicable)
-- **Donor view**: Donor details + donation cards with summarized data
-- **Donation view**: Donation details + table of donated items (can include any mix of medicines, equipment, medical devices)
+- **Donor view**: Donor details + donation transaction cards with summarized data
 - **Referral Partner view**: Partner details + list of treatments
 
 ### Treatments
