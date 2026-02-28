@@ -138,6 +138,7 @@ Build these once, use everywhere:
 - Open a PR when all features in the phase are complete
 - Phase ends only when the PR is merged
 - PR will be merged after owner approval
+- **Always run tests before pushing to GitHub** — never push code that fails tests
 
 ---
 
