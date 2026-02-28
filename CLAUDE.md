@@ -113,6 +113,34 @@ Build these once, use everywhere:
 
 ---
 
+## Development Flow
+
+**Approach**
+- Features developed independently in sequential order
+- Frontend and Backend developed separately
+- Backend order per feature: Endpoints → Tests → Postman requests → Dummy Data (seed script in `scripts/` folder)
+
+**Progress Tracking**
+- `BE.PROGRESS.md` — backend progress
+- `FE.PROGRESS.md` — frontend progress
+- `plan.md` — feature list and development sequence
+- **Rule**: Update progress file before finishing each feature
+
+**Documentation Files**
+- `database.sql` — database schema (Backend)
+- `endpoints.md` — API endpoints list (Backend, copied to Frontend)
+- `Postman collection` — (Backend, copied to Frontend)
+- `pages.md` — page layouts and functionality (Frontend)
+- `README.md` — project description, setup instructions, and how to run (in each repo root)
+
+**PR Workflow**
+- Each phase requires a Pull Request (PR)
+- Open a PR when all features in the phase are complete
+- Phase ends only when the PR is merged
+- PR will be merged after owner approval
+
+---
+
 ## Important Rules
 
 1. **Never skip features** — Complete in order
