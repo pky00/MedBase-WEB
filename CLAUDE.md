@@ -107,6 +107,12 @@ Build these once, use everywhere:
 
 ---
 
+## Code Style
+
+- **All imports at the top of the file** — no inline or mid-file imports
+
+---
+
 ## CLI Tools
 
 - **Always use CLI tools to autogenerate files when possible** (e.g. `ng generate` for components, services, modules, guards, pipes, etc.). Only write files manually when no CLI tool can do it for you.
