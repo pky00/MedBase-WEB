@@ -1,0 +1,132 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: var(--sidebar-width);
+  right: 0;
+  height: var(--header-height);
+  background: var(--bg-white);
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-lg);
+  z-index: var(--z-fixed);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: var(--font-2xl);
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: var(--space-xs);
+}
+
+.header-title {
+  font-size: var(--font-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.user-menu {
+  position: relative;
+}
+
+.avatar-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  color: var(--text-on-primary);
+  font-size: var(--font-sm);
+  font-weight: 600;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 280px;
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-modal);
+  overflow: hidden;
+}
+
+.user-info {
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.user-name {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.user-email {
+  font-size: var(--font-xs);
+  color: var(--text-secondary);
+}
+
+.user-role {
+  width: fit-content;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: var(--border-light);
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: var(--space-sm) var(--space-lg);
+  background: none;
+  border: none;
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--bg-hover);
+  }
+}
+
+@media (max-width: 1200px) {
+  .header {
+    left: 0;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+}

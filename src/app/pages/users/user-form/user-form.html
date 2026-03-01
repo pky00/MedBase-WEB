@@ -1,0 +1,86 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ isEdit() ? 'Edit User' : 'Create User' }}</h1>
+    <p class="page-subtitle">{{ isEdit() ? 'Update user information' : 'Add a new system user' }}</p>
+  </div>
+</div>
+
+@if (loading()) {
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <span>Loading...</span>
+  </div>
+} @else {
+  <div class="form-card">
+    @if (errorMessage()) {
+      <div class="alert-error">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-section">
+        <h3 class="form-section-title">User Information</h3>
+        <div class="form-grid">
+          <app-input
+            label="Username"
+            placeholder="Enter username"
+            inputId="username"
+            [required]="true"
+            [(ngModel)]="username"
+            name="username"
+          />
+          <app-input
+            label="Name"
+            placeholder="Enter full name"
+            inputId="name"
+            [required]="true"
+            [(ngModel)]="name"
+            name="name"
+          />
+          <app-input
+            label="Email"
+            type="email"
+            placeholder="Enter email address"
+            inputId="email"
+            [required]="true"
+            [(ngModel)]="email"
+            name="email"
+          />
+          <app-input
+            label="Password"
+            type="password"
+            [placeholder]="isEdit() ? 'Leave blank to keep current' : 'Enter password'"
+            inputId="password"
+            [required]="!isEdit()"
+            [(ngModel)]="password"
+            name="password"
+          />
+          <div class="form-field">
+            <label class="form-label" for="role">
+              Role <span class="required">*</span>
+            </label>
+            <select id="role" class="form-select" [value]="role" (change)="onRoleChange($event)">
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="is_active">Status</label>
+            <select id="is_active" class="form-select" [value]="isActive" (change)="onActiveChange($event)">
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <app-button variant="secondary" (clicked)="cancel()">Cancel</app-button>
+        <app-button type="submit" variant="primary" [loading]="saving()">
+          {{ isEdit() ? 'Update User' : 'Create User' }}
+        </app-button>
+      </div>
+    </form>
+  </div>
+}

@@ -1,0 +1,45 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-logo">
+        <div class="logo-icon">M</div>
+        <h1 class="logo-text">MedBase</h1>
+      </div>
+      <p class="login-subtitle">Sign in to your account</p>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="alert-error">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form (ngSubmit)="onSubmit()" class="login-form">
+      <app-input
+        label="Username"
+        placeholder="Enter your username"
+        inputId="username"
+        [required]="true"
+        [(ngModel)]="username"
+        name="username"
+      />
+      <app-input
+        label="Password"
+        type="password"
+        placeholder="Enter your password"
+        inputId="password"
+        [required]="true"
+        [(ngModel)]="password"
+        name="password"
+      />
+      <app-button
+        type="submit"
+        variant="primary"
+        [loading]="loading()"
+        [disabled]="loading()"
+      >
+        Sign In
+      </app-button>
+    </form>
+  </div>
+</div>

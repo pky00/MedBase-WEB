@@ -1,0 +1,38 @@
+<div class="form-field">
+  @if (label()) {
+    <label class="form-label" [attr.for]="inputId()">
+      {{ label() }}
+      @if (required()) {
+        <span class="required">*</span>
+      }
+    </label>
+  }
+  @if (type() === 'textarea') {
+    <textarea
+      class="form-input form-textarea"
+      [class.form-input-error]="errorMessage()"
+      [id]="inputId()"
+      [placeholder]="placeholder()"
+      [disabled]="isDisabled()"
+      [value]="value()"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+      rows="4"
+    ></textarea>
+  } @else {
+    <input
+      class="form-input"
+      [class.form-input-error]="errorMessage()"
+      [type]="type()"
+      [id]="inputId()"
+      [placeholder]="placeholder()"
+      [disabled]="isDisabled()"
+      [value]="value()"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+    />
+  }
+  @if (errorMessage()) {
+    <span class="form-error">{{ errorMessage() }}</span>
+  }
+</div>

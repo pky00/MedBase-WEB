@@ -1,0 +1,47 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Users</h1>
+    <p class="page-subtitle">Manage system users</p>
+  </div>
+  <app-button variant="primary" (clicked)="createUser()">+ New User</app-button>
+</div>
+
+<div class="filters-bar">
+  <select class="filter-select" (change)="onFilterRole($event)">
+    <option value="">All Roles</option>
+    <option value="admin">Admin</option>
+    <option value="user">User</option>
+  </select>
+  <select class="filter-select" (change)="onFilterActive($event)">
+    <option value="">All Status</option>
+    <option value="true">Active</option>
+    <option value="false">Inactive</option>
+  </select>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [data]="users()"
+  [actions]="actions"
+  [loading]="loading()"
+  [totalItems]="totalItems()"
+  [currentPage]="currentPage()"
+  [pageSize]="pageSize"
+  [sortColumn]="sortColumn()"
+  [sortOrder]="sortOrder()"
+  (sorted)="onSort($event)"
+  (pageChanged)="onPageChange($event)"
+  (actionClicked)="onAction($event)"
+/>
+
+<app-modal
+  title="Delete User"
+  [isOpen]="deleteModalOpen()"
+  (closed)="cancelDelete()"
+>
+  <p>Are you sure you want to delete user <strong>{{ userToDelete()?.['username'] }}</strong>?</p>
+  <div class="modal-actions">
+    <app-button variant="secondary" (clicked)="cancelDelete()">Cancel</app-button>
+    <app-button variant="danger" [loading]="deleting()" (clicked)="confirmDelete()">Delete</app-button>
+  </div>
+</app-modal>

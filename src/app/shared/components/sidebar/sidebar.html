@@ -1,0 +1,25 @@
+<aside class="sidebar" [class.sidebar-collapsed]="isCollapsed()">
+  <div class="sidebar-logo">
+    <div class="logo-icon">M</div>
+    <span class="logo-text">MedBase</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    @for (group of navGroups; track group.title) {
+      <div class="nav-group">
+        <span class="nav-group-title">{{ group.title }}</span>
+        @for (item of group.items; track item.route) {
+          <a
+            class="nav-item"
+            [routerLink]="item.route"
+            routerLinkActive="nav-item-active"
+            (click)="onNavClick()"
+          >
+            <span class="nav-icon">{{ item.icon }}</span>
+            <span class="nav-label">{{ item.label }}</span>
+          </a>
+        }
+      </div>
+    }
+  </nav>
+</aside>

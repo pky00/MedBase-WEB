@@ -1,0 +1,20 @@
+<div class="layout">
+  <app-sidebar [isCollapsed]="sidebarOpen()" (closeSidebar)="closeSidebar()" />
+  <div class="layout-main">
+    <app-header (toggleSidebar)="toggleSidebar()" />
+    <main class="layout-content">
+      <!-- Notifications -->
+      @for (notification of notificationService.notifications(); track notification.id) {
+        <div class="toast" [class]="'toast-' + notification.type" (click)="notificationService.remove(notification.id)">
+          {{ notification.message }}
+        </div>
+      }
+      <router-outlet />
+    </main>
+  </div>
+
+  <!-- Mobile overlay -->
+  @if (sidebarOpen()) {
+    <div class="sidebar-overlay" (click)="closeSidebar()"></div>
+  }
+</div>

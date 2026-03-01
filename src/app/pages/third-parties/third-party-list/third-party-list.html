@@ -1,0 +1,35 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Third Parties</h1>
+    <p class="page-subtitle">View all third party records (auto-created from users, doctors, patients, partners)</p>
+  </div>
+</div>
+
+<div class="filters-bar">
+  <select class="filter-select" (change)="onFilterType($event)">
+    <option value="">All Types</option>
+    <option value="user">User</option>
+    <option value="doctor">Doctor</option>
+    <option value="patient">Patient</option>
+    <option value="partner">Partner</option>
+  </select>
+  <select class="filter-select" (change)="onFilterActive($event)">
+    <option value="">All Status</option>
+    <option value="true">Active</option>
+    <option value="false">Inactive</option>
+  </select>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [data]="thirdParties()"
+  [actions]="[]"
+  [loading]="loading()"
+  [totalItems]="totalItems()"
+  [currentPage]="currentPage()"
+  [pageSize]="pageSize"
+  [sortColumn]="sortColumn()"
+  [sortOrder]="sortOrder()"
+  (sorted)="onSort($event)"
+  (pageChanged)="onPageChange($event)"
+/>
