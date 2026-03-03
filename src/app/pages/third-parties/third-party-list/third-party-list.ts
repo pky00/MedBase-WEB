@@ -5,7 +5,7 @@ import { PaginatedResponse, QueryParams } from '../../../core/models/api.model';
 import { ThirdParty } from '../../../core/models/third-party.model';
 import { ApiService } from '../../../core/services/api';
 import { NotificationService } from '../../../core/services/notification';
-import { DataTableComponent, SortEvent, TableColumn } from '../../../shared/components/data-table/data-table';
+import { DataTableComponent, TableColumn } from '../../../shared/components/data-table/data-table';
 import { ListPageHelper } from '../../../shared/components/data-table/list-page.helper';
 
 @Component({
@@ -61,19 +61,4 @@ export class ThirdPartyListComponent implements OnInit {
     });
   }
 
-  onSort(event: SortEvent): void {
-    this.table.onSort(event, () => this.loadThirdParties());
-  }
-
-  onPageChange(event: { page: number }): void {
-    this.table.onPageChange(event, () => this.loadThirdParties());
-  }
-
-  onFilterType(event: Event): void {
-    this.table.onFilterChange(this.filterType, event, () => this.loadThirdParties());
-  }
-
-  onFilterActive(event: Event): void {
-    this.table.onFilterChange(this.filterActive, event, () => this.loadThirdParties());
-  }
 }

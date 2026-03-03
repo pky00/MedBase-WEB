@@ -6,14 +6,14 @@
 </div>
 
 <div class="filters-bar">
-  <select class="filter-select" (change)="onFilterType($event)">
+  <select class="filter-select" (change)="table.onFilterChange(filterType, $event); loadThirdParties()">
     <option value="">All Types</option>
     <option value="user">User</option>
     <option value="doctor">Doctor</option>
     <option value="patient">Patient</option>
     <option value="partner">Partner</option>
   </select>
-  <select class="filter-select" (change)="onFilterActive($event)">
+  <select class="filter-select" (change)="table.onFilterChange(filterActive, $event); loadThirdParties()">
     <option value="">All Status</option>
     <option value="true">Active</option>
     <option value="false">Inactive</option>
@@ -30,6 +30,6 @@
   [pageSize]="table.pageSize"
   [sortColumn]="table.sortColumn()"
   [sortOrder]="table.sortOrder()"
-  (sorted)="onSort($event)"
-  (pageChanged)="onPageChange($event)"
+  (sorted)="table.onSort($event); loadThirdParties()"
+  (pageChanged)="table.onPageChange($event); loadThirdParties()"
 />

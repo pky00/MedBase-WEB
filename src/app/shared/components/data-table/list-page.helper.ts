@@ -16,20 +16,17 @@ export class ListPageHelper {
     this.sortColumn = signal(defaultSortColumn);
   }
 
-  onSort(event: SortEvent, reload: () => void): void {
+  onSort(event: SortEvent): void {
     this.sortColumn.set(event.column);
     this.sortOrder.set(event.order);
-    reload();
   }
 
-  onPageChange(event: { page: number }, reload: () => void): void {
+  onPageChange(event: { page: number }): void {
     this.currentPage.set(event.page);
-    reload();
   }
 
-  onFilterChange(filterSignal: ReturnType<typeof signal<string>>, event: Event, reload: () => void): void {
+  onFilterChange(filterSignal: ReturnType<typeof signal<string>>, event: Event): void {
     filterSignal.set((event.target as HTMLSelectElement).value);
     this.currentPage.set(1);
-    reload();
   }
 }

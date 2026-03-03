@@ -7,12 +7,12 @@
 </div>
 
 <div class="filters-bar">
-  <select class="filter-select" (change)="onFilterRole($event)">
+  <select class="filter-select" (change)="table.onFilterChange(filterRole, $event); loadUsers()">
     <option value="">All Roles</option>
     <option value="admin">Admin</option>
     <option value="user">User</option>
   </select>
-  <select class="filter-select" (change)="onFilterActive($event)">
+  <select class="filter-select" (change)="table.onFilterChange(filterActive, $event); loadUsers()">
     <option value="">All Status</option>
     <option value="true">Active</option>
     <option value="false">Inactive</option>
@@ -29,8 +29,8 @@
   [pageSize]="table.pageSize"
   [sortColumn]="table.sortColumn()"
   [sortOrder]="table.sortOrder()"
-  (sorted)="onSort($event)"
-  (pageChanged)="onPageChange($event)"
+  (sorted)="table.onSort($event); loadUsers()"
+  (pageChanged)="table.onPageChange($event); loadUsers()"
   (actionClicked)="onAction($event)"
 />
 

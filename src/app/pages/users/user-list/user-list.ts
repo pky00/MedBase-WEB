@@ -7,7 +7,7 @@ import { User } from '../../../core/models/user.model';
 import { ApiService } from '../../../core/services/api';
 import { NotificationService } from '../../../core/services/notification';
 import { ButtonComponent } from '../../../shared/components/button/button';
-import { DataTableComponent, SortEvent, TableAction, TableColumn } from '../../../shared/components/data-table/data-table';
+import { DataTableComponent, TableAction, TableColumn } from '../../../shared/components/data-table/data-table';
 import { ListPageHelper } from '../../../shared/components/data-table/list-page.helper';
 import { ModalComponent } from '../../../shared/components/modal/modal';
 
@@ -76,14 +76,6 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  onSort(event: SortEvent): void {
-    this.table.onSort(event, () => this.loadUsers());
-  }
-
-  onPageChange(event: { page: number }): void {
-    this.table.onPageChange(event, () => this.loadUsers());
-  }
-
   onAction(event: { action: string; item: Record<string, unknown> }): void {
     const id = event.item['id'];
     switch (event.action) {
@@ -98,14 +90,6 @@ export class UserListComponent implements OnInit {
         this.deleteModalOpen.set(true);
         break;
     }
-  }
-
-  onFilterRole(event: Event): void {
-    this.table.onFilterChange(this.filterRole, event, () => this.loadUsers());
-  }
-
-  onFilterActive(event: Event): void {
-    this.table.onFilterChange(this.filterActive, event, () => this.loadUsers());
   }
 
   createUser(): void {
