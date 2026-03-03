@@ -157,7 +157,8 @@ Build these once, use everywhere:
 **Syncing from Backend**
 - When BE changes affect endpoints, these files should be updated in `docs/`:
   1. `MedBase API.postman_collection.json` — copied from `MedBase-API/docs/`
-  2. `openapi.json` — fetched from `https://dev-api.medbaseclinic.com/api/v1/openapi.json`
+  2. `openapi.json` — fetched from `https://dev-api.medbaseclinic.com/openapi.json`
+- When the user says "refresh the openapi", fetch the latest `openapi.json` and sync it to all repos. This should also be done automatically whenever syncing docs across repos.
 
 **PR Workflow**
 - Each phase requires a Pull Request (PR)
