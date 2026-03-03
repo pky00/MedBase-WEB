@@ -1,12 +1,14 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { API, ROUTES, formatActiveStatus } from '../../../core/constants/app.constants';
 import { PaginatedResponse, QueryParams } from '../../../core/models/api.model';
 import { User } from '../../../core/models/user.model';
 import { ApiService } from '../../../core/services/api';
 import { NotificationService } from '../../../core/services/notification';
 import { ButtonComponent } from '../../../shared/components/button/button';
 import { DataTableComponent, SortEvent, TableAction, TableColumn } from '../../../shared/components/data-table/data-table';
+import { ListPageHelper } from '../../../shared/components/data-table/list-page.helper';
 import { ModalComponent } from '../../../shared/components/modal/modal';
 
 @Component({
@@ -17,12 +19,7 @@ import { ModalComponent } from '../../../shared/components/modal/modal';
 })
 export class UserListComponent implements OnInit {
   users = signal<Record<string, unknown>[]>([]);
-  loading = signal(false);
-  totalItems = signal(0);
-  currentPage = signal(1);
-  pageSize = 10;
-  sortColumn = signal('id');
-  sortOrder = signal<'asc' | 'desc'>('asc');
+  table = new ListPageHelper();
   filterRole = signal('');
   filterActive = signal('');
 
@@ -35,7 +32,7 @@ export class UserListComponent implements OnInit {
     { key: 'name', label: 'Name', sortable: true },
     { key: 'email', label: 'Email', sortable: true },
     { key: 'role', label: 'Role', sortable: true },
-    { key: 'is_active', label: 'Status', sortable: true },
+    { key: 'is_active', label: 'Status', sortable: true, format: formatActiveStatus },
   ];
 
   actions: TableAction[] = [
@@ -55,49 +52,46 @@ export class UserListComponent implements OnInit {
   }
 
   loadUsers(): void {
-    this.loading.set(true);
+    this.table.loading.set(true);
     const params: QueryParams = {
-      page: this.currentPage(),
-      size: this.pageSize,
-      sort: this.sortColumn(),
-      order: this.sortOrder(),
+      page: this.table.currentPage(),
+      size: this.table.pageSize,
+      sort: this.table.sortColumn(),
+      order: this.table.sortOrder(),
     };
 
     if (this.filterRole()) params['role'] = this.filterRole();
     if (this.filterActive()) params['is_active'] = this.filterActive();
 
-    this.api.getList<User>('users', params).subscribe({
+    this.api.getList<User>(API.USERS, params).subscribe({
       next: (response: PaginatedResponse<User>) => {
         this.users.set(response.items as unknown as Record<string, unknown>[]);
-        this.totalItems.set(response.total);
-        this.loading.set(false);
+        this.table.totalItems.set(response.total);
+        this.table.loading.set(false);
       },
       error: () => {
-        this.loading.set(false);
+        this.table.loading.set(false);
         this.notification.error('Failed to load users.');
       },
     });
   }
 
   onSort(event: SortEvent): void {
-    this.sortColumn.set(event.column);
-    this.sortOrder.set(event.order);
-    this.loadUsers();
+    this.table.onSort(event, () => this.loadUsers());
   }
 
   onPageChange(event: { page: number }): void {
-    this.currentPage.set(event.page);
-    this.loadUsers();
+    this.table.onPageChange(event, () => this.loadUsers());
   }
 
   onAction(event: { action: string; item: Record<string, unknown> }): void {
     const id = event.item['id'];
     switch (event.action) {
       case 'view':
-        this.router.navigate(['/users', id]);
+        this.router.navigate([ROUTES.USERS, id]);
         break;
       case 'edit':
-        this.router.navigate(['/users', id, 'edit']);
+        this.router.navigate([ROUTES.USERS, id, 'edit']);
         break;
       case 'delete':
         this.userToDelete.set(event.item);
@@ -107,19 +101,15 @@ export class UserListComponent implements OnInit {
   }
 
   onFilterRole(event: Event): void {
-    this.filterRole.set((event.target as HTMLSelectElement).value);
-    this.currentPage.set(1);
-    this.loadUsers();
+    this.table.onFilterChange(this.filterRole, event, () => this.loadUsers());
   }
 
   onFilterActive(event: Event): void {
-    this.filterActive.set((event.target as HTMLSelectElement).value);
-    this.currentPage.set(1);
-    this.loadUsers();
+    this.table.onFilterChange(this.filterActive, event, () => this.loadUsers());
   }
 
   createUser(): void {
-    this.router.navigate(['/users/new']);
+    this.router.navigate([ROUTES.USERS_NEW]);
   }
 
   confirmDelete(): void {
@@ -127,7 +117,7 @@ export class UserListComponent implements OnInit {
     if (!user) return;
 
     this.deleting.set(true);
-    this.api.delete(`users/${user['id']}`).subscribe({
+    this.api.delete(`${API.USERS}/${user['id']}`).subscribe({
       next: () => {
         this.deleting.set(false);
         this.deleteModalOpen.set(false);

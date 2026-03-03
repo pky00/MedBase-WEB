@@ -1,10 +1,12 @@
 import { Component, OnInit, signal } from '@angular/core';
 
+import { API, formatActiveStatus } from '../../../core/constants/app.constants';
 import { PaginatedResponse, QueryParams } from '../../../core/models/api.model';
 import { ThirdParty } from '../../../core/models/third-party.model';
 import { ApiService } from '../../../core/services/api';
 import { NotificationService } from '../../../core/services/notification';
 import { DataTableComponent, SortEvent, TableColumn } from '../../../shared/components/data-table/data-table';
+import { ListPageHelper } from '../../../shared/components/data-table/list-page.helper';
 
 @Component({
   selector: 'app-third-party-list',
@@ -14,12 +16,7 @@ import { DataTableComponent, SortEvent, TableColumn } from '../../../shared/comp
 })
 export class ThirdPartyListComponent implements OnInit {
   thirdParties = signal<Record<string, unknown>[]>([]);
-  loading = signal(false);
-  totalItems = signal(0);
-  currentPage = signal(1);
-  pageSize = 10;
-  sortColumn = signal('id');
-  sortOrder = signal<'asc' | 'desc'>('asc');
+  table = new ListPageHelper();
   filterType = signal('');
   filterActive = signal('');
 
@@ -27,7 +24,7 @@ export class ThirdPartyListComponent implements OnInit {
     { key: 'id', label: 'ID', sortable: true },
     { key: 'name', label: 'Name', sortable: true },
     { key: 'type', label: 'Type', sortable: true },
-    { key: 'is_active', label: 'Status', sortable: true },
+    { key: 'is_active', label: 'Status', sortable: true, format: formatActiveStatus },
   ];
 
   constructor(
@@ -40,50 +37,43 @@ export class ThirdPartyListComponent implements OnInit {
   }
 
   loadThirdParties(): void {
-    this.loading.set(true);
+    this.table.loading.set(true);
     const params: QueryParams = {
-      page: this.currentPage(),
-      size: this.pageSize,
-      sort: this.sortColumn(),
-      order: this.sortOrder(),
+      page: this.table.currentPage(),
+      size: this.table.pageSize,
+      sort: this.table.sortColumn(),
+      order: this.table.sortOrder(),
     };
 
     if (this.filterType()) params['type'] = this.filterType();
     if (this.filterActive()) params['is_active'] = this.filterActive();
 
-    this.api.getList<ThirdParty>('third-parties', params).subscribe({
+    this.api.getList<ThirdParty>(API.THIRD_PARTIES, params).subscribe({
       next: (response: PaginatedResponse<ThirdParty>) => {
         this.thirdParties.set(response.items as unknown as Record<string, unknown>[]);
-        this.totalItems.set(response.total);
-        this.loading.set(false);
+        this.table.totalItems.set(response.total);
+        this.table.loading.set(false);
       },
       error: () => {
-        this.loading.set(false);
+        this.table.loading.set(false);
         this.notification.error('Failed to load third parties.');
       },
     });
   }
 
   onSort(event: SortEvent): void {
-    this.sortColumn.set(event.column);
-    this.sortOrder.set(event.order);
-    this.loadThirdParties();
+    this.table.onSort(event, () => this.loadThirdParties());
   }
 
   onPageChange(event: { page: number }): void {
-    this.currentPage.set(event.page);
-    this.loadThirdParties();
+    this.table.onPageChange(event, () => this.loadThirdParties());
   }
 
   onFilterType(event: Event): void {
-    this.filterType.set((event.target as HTMLSelectElement).value);
-    this.currentPage.set(1);
-    this.loadThirdParties();
+    this.table.onFilterChange(this.filterType, event, () => this.loadThirdParties());
   }
 
   onFilterActive(event: Event): void {
-    this.filterActive.set((event.target as HTMLSelectElement).value);
-    this.currentPage.set(1);
-    this.loadThirdParties();
+    this.table.onFilterChange(this.filterActive, event, () => this.loadThirdParties());
   }
 }

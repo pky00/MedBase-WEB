@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 
+import { ROUTES } from '../constants/app.constants';
 import { AuthService } from '../services/auth';
 
 export const adminGuard: CanActivateFn = () => {
@@ -11,6 +12,6 @@ export const adminGuard: CanActivateFn = () => {
     return true;
   }
 
-  router.navigate(['/']);
+  router.navigate([ROUTES.DASHBOARD]);
   return false;
 };

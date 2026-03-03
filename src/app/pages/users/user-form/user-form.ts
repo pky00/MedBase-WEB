@@ -3,15 +3,17 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { API, ROUTES } from '../../../core/constants/app.constants';
 import { User, UserCreate, UserUpdate } from '../../../core/models/user.model';
 import { ApiService } from '../../../core/services/api';
 import { NotificationService } from '../../../core/services/notification';
 import { ButtonComponent } from '../../../shared/components/button/button';
 import { InputComponent } from '../../../shared/components/input/input';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-user-form',
-  imports: [FormsModule, InputComponent, ButtonComponent],
+  imports: [FormsModule, InputComponent, ButtonComponent, LoadingSpinnerComponent],
   templateUrl: './user-form.html',
   styleUrl: './user-form.scss',
 })
@@ -47,7 +49,7 @@ export class UserFormComponent implements OnInit {
 
   loadUser(): void {
     this.loading.set(true);
-    this.api.get<User>(`users/${this.userId}`).subscribe({
+    this.api.get<User>(`${API.USERS}/${this.userId}`).subscribe({
       next: (user) => {
         this.username = user.username;
         this.name = user.name;
@@ -59,7 +61,7 @@ export class UserFormComponent implements OnInit {
       error: () => {
         this.loading.set(false);
         this.notification.error('Failed to load user.');
-        this.router.navigate(['/users']);
+        this.router.navigate([ROUTES.USERS]);
       },
     });
   }
@@ -90,11 +92,11 @@ export class UserFormComponent implements OnInit {
         data.password = this.password;
       }
 
-      this.api.put<User>(`users/${this.userId}`, data).subscribe({
+      this.api.put<User>(`${API.USERS}/${this.userId}`, data).subscribe({
         next: () => {
           this.saving.set(false);
           this.notification.success('User updated successfully.');
-          this.router.navigate(['/users', this.userId]);
+          this.router.navigate([ROUTES.USERS, this.userId]);
         },
         error: (error: HttpErrorResponse) => {
           this.saving.set(false);
@@ -111,11 +113,11 @@ export class UserFormComponent implements OnInit {
         is_active: this.isActive,
       };
 
-      this.api.post<User>('users', data).subscribe({
+      this.api.post<User>(API.USERS, data).subscribe({
         next: (user) => {
           this.saving.set(false);
           this.notification.success('User created successfully.');
-          this.router.navigate(['/users', user.id]);
+          this.router.navigate([ROUTES.USERS, user.id]);
         },
         error: (error: HttpErrorResponse) => {
           this.saving.set(false);
@@ -134,6 +136,6 @@ export class UserFormComponent implements OnInit {
   }
 
   cancel(): void {
-    this.router.navigate(['/users']);
+    this.router.navigate([ROUTES.USERS]);
   }
 }

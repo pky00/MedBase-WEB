@@ -5,6 +5,7 @@ export interface TableColumn {
   label: string;
   sortable?: boolean;
   template?: string;
+  format?: (value: unknown) => string;
 }
 
 export interface TableAction {
@@ -83,12 +84,13 @@ export class DataTableComponent {
     this.actionClicked.emit({ action, item });
   }
 
-  getCellValue(item: Record<string, unknown>, key: string): unknown {
-    return key.split('.').reduce((obj: unknown, k) => {
+  getCellValue(item: Record<string, unknown>, column: TableColumn): unknown {
+    const value = column.key.split('.').reduce((obj: unknown, k) => {
       if (obj && typeof obj === 'object') {
         return (obj as Record<string, unknown>)[k];
       }
       return undefined;
     }, item);
+    return column.format ? column.format(value) : value;
   }
 }

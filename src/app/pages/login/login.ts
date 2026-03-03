@@ -3,6 +3,7 @@ import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
+import { ROUTES } from '../../core/constants/app.constants';
 import { AuthService } from '../../core/services/auth';
 import { ButtonComponent } from '../../shared/components/button/button';
 import { InputComponent } from '../../shared/components/input/input';
@@ -24,7 +25,7 @@ export class LoginComponent {
     private router: Router
   ) {
     if (authService.getToken()) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate([ROUTES.DASHBOARD]);
     }
   }
 
@@ -39,7 +40,7 @@ export class LoginComponent {
 
     this.authService.login(this.username, this.password).subscribe({
       next: () => {
-        this.router.navigate(['/dashboard']);
+        this.router.navigate([ROUTES.DASHBOARD]);
       },
       error: (error: HttpErrorResponse) => {
         this.loading.set(false);

@@ -47,7 +47,7 @@
         @for (item of data(); track $index) {
           <tr>
             @for (col of columns(); track col.key) {
-              <td>{{ getCellValue(item, col.key) }}</td>
+              <td>{{ getCellValue(item, col) }}</td>
             }
             @if (actions().length > 0) {
               <td class="actions-cell">

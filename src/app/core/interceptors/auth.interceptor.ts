@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 
+import { ROUTES, TOKEN_KEY } from '../constants/app.constants';
 import { AuthService } from '../services/auth';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
@@ -21,10 +22,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
-        localStorage.removeItem('medbase_token');
+        localStorage.removeItem(TOKEN_KEY);
         authService.isLoggedIn.set(false);
         authService.currentUser.set(null);
-        router.navigate(['/login']);
+        router.navigate([ROUTES.LOGIN]);
       }
       return throwError(() => error);
     })

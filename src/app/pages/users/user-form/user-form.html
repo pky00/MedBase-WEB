@@ -6,10 +6,7 @@
 </div>
 
 @if (loading()) {
-  <div class="loading-container">
-    <div class="spinner"></div>
-    <span>Loading...</span>
-  </div>
+  <app-loading-spinner message="Loading..." />
 } @else {
   <div class="form-card">
     @if (errorMessage()) {

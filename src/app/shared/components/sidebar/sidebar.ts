@@ -1,6 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
+import { ROUTES } from '../../../core/constants/app.constants';
 import { AuthService } from '../../../core/services/auth';
 
 interface NavItem {
@@ -31,20 +32,20 @@ export class SidebarComponent {
       {
         title: 'General',
         items: [
-          { label: 'Dashboard', route: '/dashboard', icon: '📊' },
+          { label: 'Dashboard', route: ROUTES.DASHBOARD, icon: '📊' },
         ],
       },
       {
         title: 'Management',
         items: [
-          { label: 'Third Parties', route: '/third-parties', icon: '🏢' },
+          { label: 'Third Parties', route: ROUTES.THIRD_PARTIES, icon: '🏢' },
         ],
       },
     ];
 
     if (this.authService.isAdmin()) {
       groups[0].items.push(
-        { label: 'Users', route: '/users', icon: '👥' }
+        { label: 'Users', route: ROUTES.USERS, icon: '👥' }
       );
     }
 

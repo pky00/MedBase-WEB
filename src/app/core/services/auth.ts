@@ -3,10 +3,9 @@ import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
+import { API, ROUTES, TOKEN_KEY } from '../constants/app.constants';
 import { CurrentUser, LoginResponse } from '../models/auth.model';
 import { ApiService } from './api';
-
-const TOKEN_KEY = 'medbase_token';
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +26,7 @@ export class AuthService {
       .set('username', username)
       .set('password', password);
 
-    return this.api.postForm<LoginResponse>('auth/login', body).pipe(
+    return this.api.postForm<LoginResponse>(API.AUTH_LOGIN, body).pipe(
       tap((response) => {
         this.setToken(response.access_token);
         this.isLoggedIn.set(true);
@@ -36,14 +35,14 @@ export class AuthService {
   }
 
   logout(): void {
-    this.api.post('auth/logout', {}).subscribe({
+    this.api.post(API.AUTH_LOGOUT, {}).subscribe({
       complete: () => this.clearSession(),
       error: () => this.clearSession(),
     });
   }
 
   loadCurrentUser(): Observable<CurrentUser> {
-    return this.api.get<CurrentUser>('auth/me').pipe(
+    return this.api.get<CurrentUser>(API.AUTH_ME).pipe(
       tap((user) => this.currentUser.set(user))
     );
   }
@@ -64,6 +63,6 @@ export class AuthService {
     localStorage.removeItem(TOKEN_KEY);
     this.currentUser.set(null);
     this.isLoggedIn.set(false);
-    this.router.navigate(['/login']);
+    this.router.navigate([ROUTES.LOGIN]);
   }
 }

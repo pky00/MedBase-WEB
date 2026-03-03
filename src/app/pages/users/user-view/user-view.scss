@@ -3,29 +3,6 @@
   gap: var(--space-sm);
 }
 
-.loading-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-sm);
-  padding: var(--space-2xl);
-  color: var(--text-secondary);
-  font-size: var(--font-sm);
-}
-
-.spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid var(--border-light);
-  border-top-color: var(--primary-500);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
 .detail-card {
   background: var(--bg-white);
   border: 1px solid var(--border-light);

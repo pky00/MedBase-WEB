@@ -1,14 +1,16 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { API, ROUTES } from '../../../core/constants/app.constants';
 import { User } from '../../../core/models/user.model';
 import { ApiService } from '../../../core/services/api';
 import { NotificationService } from '../../../core/services/notification';
 import { ButtonComponent } from '../../../shared/components/button/button';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-user-view',
-  imports: [ButtonComponent],
+  imports: [ButtonComponent, LoadingSpinnerComponent],
   templateUrl: './user-view.html',
   styleUrl: './user-view.scss',
 })
@@ -32,7 +34,7 @@ export class UserViewComponent implements OnInit {
 
   loadUser(id: number): void {
     this.loading.set(true);
-    this.api.get<User>(`users/${id}`).subscribe({
+    this.api.get<User>(`${API.USERS}/${id}`).subscribe({
       next: (user) => {
         this.user.set(user);
         this.loading.set(false);
@@ -40,16 +42,16 @@ export class UserViewComponent implements OnInit {
       error: () => {
         this.loading.set(false);
         this.notification.error('Failed to load user.');
-        this.router.navigate(['/users']);
+        this.router.navigate([ROUTES.USERS]);
       },
     });
   }
 
   editUser(): void {
-    this.router.navigate(['/users', this.user()?.id, 'edit']);
+    this.router.navigate([ROUTES.USERS, this.user()?.id, 'edit']);
   }
 
   goBack(): void {
-    this.router.navigate(['/users']);
+    this.router.navigate([ROUTES.USERS]);
   }
 }
