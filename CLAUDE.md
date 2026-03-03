@@ -129,6 +129,7 @@ Build these once, use everywhere:
 | `docs/plan.md` | Development phases and feature sequence |
 | `docs/pages.md` | Frontend page layouts and functionality specs |
 | `docs/MedBase API.postman_collection.json` | Postman collection with request examples |
+| `docs/openapi.json` | OpenAPI spec from the backend API |
 
 ---
 
@@ -149,8 +150,14 @@ Build these once, use everywhere:
 - `database.dbml` — database schema (Backend)
 - `endpoints.md` — API endpoints list (Backend, copied to Frontend)
 - `MedBase API.postman_collection.json` — Postman collection (originates in API, synced to Planner + Frontend)
+- `openapi.json` — OpenAPI spec (synced from the running dev API)
 - `pages.md` — page layouts and functionality (Frontend)
 - `README.md` — project description, setup instructions, and how to run (in each repo root)
+
+**Syncing from Backend**
+- When BE changes affect endpoints, these files should be updated in `docs/`:
+  1. `MedBase API.postman_collection.json` — copied from `MedBase-API/docs/`
+  2. `openapi.json` — fetched from `https://dev-api.medbaseclinic.com/api/v1/openapi.json`
 
 **PR Workflow**
 - Each phase requires a Pull Request (PR)
@@ -229,3 +236,4 @@ Build these once, use everywhere:
 4. **Mobile first** — Ensure responsive design
 5. **Reuse components** — Don't duplicate code
 6. **Use `ng` CLI** — Auto-generate and configure when possible
+7. **CLAUDE.md changes must be applied across all 3 repos** — When adding or updating any rule, setting, or section in any CLAUDE.md, apply the change to all three: `Planner/CLAUDE.md`, `MedBase-API/CLAUDE.md`, and `MedBase-WEB/CLAUDE.md`
