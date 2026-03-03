@@ -91,8 +91,10 @@ describe('AuthService', () => {
   describe('loadCurrentUser', () => {
     it('should fetch current user and set signal', () => {
       const mockUser = {
-        id: 1, username: 'admin', name: 'Admin', email: 'a@b.com',
-        role: 'admin' as const, is_active: true, third_party_id: 1,
+        id: 1, username: 'admin', email: 'a@b.com',
+        role: 'admin' as const, is_active: true, is_deleted: false, third_party_id: 1,
+        third_party: { id: 1, name: 'Admin', type: 'user', phone: null, email: null, is_active: true, is_deleted: false, created_by: null, created_at: '', updated_by: null, updated_at: '' },
+        created_by: null, created_at: '', updated_by: null, updated_at: '',
       };
 
       service.loadCurrentUser().subscribe((user) => {
@@ -117,16 +119,18 @@ describe('AuthService', () => {
   describe('isAdmin', () => {
     it('should return true when user is admin', () => {
       service.currentUser.set({
-        id: 1, username: 'admin', name: 'Admin', email: 'a@b.com',
-        role: 'admin', is_active: true, third_party_id: 1,
+        id: 1, username: 'admin', email: 'a@b.com',
+        role: 'admin', is_active: true, is_deleted: false, third_party_id: 1,
+        third_party: null, created_by: null, created_at: '', updated_by: null, updated_at: '',
       });
       expect(service.isAdmin()).toBe(true);
     });
 
     it('should return false when user is not admin', () => {
       service.currentUser.set({
-        id: 2, username: 'user', name: 'User', email: 'u@b.com',
-        role: 'user', is_active: true, third_party_id: 2,
+        id: 2, username: 'user', email: 'u@b.com',
+        role: 'user', is_active: true, is_deleted: false, third_party_id: 2,
+        third_party: null, created_by: null, created_at: '', updated_by: null, updated_at: '',
       });
       expect(service.isAdmin()).toBe(false);
     });

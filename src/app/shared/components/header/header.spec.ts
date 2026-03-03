@@ -66,16 +66,20 @@ describe('HeaderComponent', () => {
 
   it('should return initials from user name', () => {
     mockCurrentUser.set({
-      id: 1, username: 'jdoe', name: 'John Doe', email: 'j@d.com',
-      role: 'admin', is_active: true, third_party_id: 1,
+      id: 1, username: 'jdoe', email: 'j@d.com',
+      role: 'admin', is_active: true, is_deleted: false, third_party_id: 1,
+      third_party: { id: 1, name: 'John Doe', type: 'user', phone: null, email: null, is_active: true, is_deleted: false, created_by: null, created_at: '', updated_by: null, updated_at: '' },
+      created_by: null, created_at: '', updated_by: null, updated_at: '',
     });
     expect(component.userInitials).toBe('JD');
   });
 
   it('should use username when name is empty', () => {
     mockCurrentUser.set({
-      id: 1, username: 'admin', name: '', email: 'a@b.com',
-      role: 'admin', is_active: true, third_party_id: 1,
+      id: 1, username: 'admin', email: 'a@b.com',
+      role: 'admin', is_active: true, is_deleted: false, third_party_id: 1,
+      third_party: null,
+      created_by: null, created_at: '', updated_by: null, updated_at: '',
     });
     expect(component.userInitials).toBe('A');
   });

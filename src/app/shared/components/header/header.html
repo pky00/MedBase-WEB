@@ -15,7 +15,7 @@
       @if (menuOpen()) {
         <div class="user-dropdown">
           <div class="user-info">
-            <span class="user-name">{{ currentUser()?.name || currentUser()?.username }}</span>
+            <span class="user-name">{{ currentUser()?.third_party?.name || currentUser()?.username }}</span>
             <span class="user-email">{{ currentUser()?.email }}</span>
             <span class="user-role badge" [class]="'badge-' + currentUser()?.role">
               {{ currentUser()?.role }}

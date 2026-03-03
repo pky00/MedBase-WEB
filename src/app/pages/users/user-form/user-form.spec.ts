@@ -96,8 +96,10 @@ describe('UserFormComponent', () => {
 
   describe('edit mode', () => {
     const mockUser = {
-      id: 5, username: 'jdoe', name: 'John Doe', email: 'j@d.com',
-      role: 'user' as const, is_active: true,
+      id: 5, username: 'jdoe', email: 'j@d.com',
+      role: 'user' as const, is_active: true, is_deleted: false, third_party_id: 5,
+      third_party: { id: 5, name: 'John Doe', type: 'user', phone: null, email: null, is_active: true, is_deleted: false, created_by: null, created_at: '', updated_by: null, updated_at: '' },
+      created_by: null, created_at: '', updated_by: null, updated_at: '',
     };
 
     beforeEach(() => {

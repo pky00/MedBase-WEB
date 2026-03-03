@@ -27,14 +27,16 @@
             [(ngModel)]="username"
             name="username"
           />
-          <app-input
-            label="Name"
-            placeholder="Enter full name"
-            inputId="name"
-            [required]="true"
-            [(ngModel)]="name"
-            name="name"
-          />
+          @if (!isEdit()) {
+            <app-input
+              label="Name"
+              placeholder="Enter full name"
+              inputId="name"
+              [required]="true"
+              [(ngModel)]="name"
+              name="name"
+            />
+          }
           <app-input
             label="Email"
             type="email"

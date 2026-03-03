@@ -22,7 +22,7 @@ export class HeaderComponent {
   get userInitials(): string {
     const user = this.authService.currentUser();
     if (!user) return '?';
-    const name = user.name || user.username;
+    const name = user.third_party?.name || user.username;
     return name
       .split(' ')
       .map((n) => n[0])

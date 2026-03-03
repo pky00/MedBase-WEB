@@ -52,7 +52,7 @@ export class UserFormComponent implements OnInit {
     this.api.get<User>(`${API.USERS}/${this.userId}`).subscribe({
       next: (user) => {
         this.username = user.username;
-        this.name = user.name;
+        this.name = user.third_party?.name || '';
         this.email = user.email;
         this.role = user.role;
         this.isActive = user.is_active;
@@ -67,7 +67,7 @@ export class UserFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.username || !this.name || !this.email) {
+    if (!this.username || !this.email || (!this.isEdit() && !this.name)) {
       this.errorMessage.set('Please fill in all required fields.');
       return;
     }
@@ -83,7 +83,6 @@ export class UserFormComponent implements OnInit {
     if (this.isEdit()) {
       const data: UserUpdate = {
         username: this.username,
-        name: this.name,
         email: this.email,
         role: this.role,
         is_active: this.isActive,
