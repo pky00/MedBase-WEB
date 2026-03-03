@@ -1,0 +1,35 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Medicine Categories</h1>
+    <p class="page-subtitle">Manage medicine categories</p>
+  </div>
+  <app-button variant="primary" (clicked)="createCategory()">+ New Category</app-button>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [data]="categories()"
+  [actions]="actions"
+  [loading]="table.loading()"
+  [totalItems]="table.totalItems()"
+  [currentPage]="table.currentPage()"
+  [pageSize]="table.pageSize"
+  [sortColumn]="table.sortColumn()"
+  [sortOrder]="table.sortOrder()"
+  (sorted)="table.onSort($event); loadCategories()"
+  (pageChanged)="table.onPageChange($event); loadCategories()"
+  (actionClicked)="onAction($event)"
+/>
+
+<app-modal
+  title="Delete Category"
+  [isOpen]="deleteModalOpen()"
+  (closed)="cancelDelete()"
+>
+  <p>Are you sure you want to delete category <strong>{{ categoryToDelete()?.['name'] }}</strong>?</p>
+  <p class="modal-warning">This will fail if medicines are linked to this category.</p>
+  <div class="modal-actions">
+    <app-button variant="secondary" (clicked)="cancelDelete()">Cancel</app-button>
+    <app-button variant="danger" [loading]="deleting()" (clicked)="confirmDelete()">Delete</app-button>
+  </div>
+</app-modal>

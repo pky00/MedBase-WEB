@@ -1,0 +1,52 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Medical Device Details</h1>
+    <p class="page-subtitle">View medical device information</p>
+  </div>
+  <div class="header-actions">
+    <app-button variant="secondary" (clicked)="goBack()">Back</app-button>
+    @if (device()) {
+      <app-button variant="primary" (clicked)="editDevice()">Edit Device</app-button>
+    }
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading-spinner message="Loading..." />
+} @else if (device(); as d) {
+  <div class="detail-card">
+    <div class="detail-section">
+      <h3 class="detail-section-title">Device Information</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">Name</span>
+          <span class="detail-value">{{ d.name }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Category</span>
+          <span class="detail-value">{{ d.category_name }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Description</span>
+          <span class="detail-value">{{ d.description || '—' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Quantity</span>
+          <span class="detail-value">{{ d.quantity }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Status</span>
+          <span class="detail-value">
+            <span class="badge" [class]="d.is_active ? 'badge-active' : 'badge-inactive'">
+              {{ d.is_active ? 'Active' : 'Inactive' }}
+            </span>
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Created</span>
+          <span class="detail-value">{{ d.created_at }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+}
