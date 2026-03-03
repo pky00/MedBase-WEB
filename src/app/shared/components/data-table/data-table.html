@@ -1,0 +1,104 @@
+<div class="table-container">
+  @if (loading()) {
+    <div class="table-loading">
+      <div class="spinner"></div>
+      <span>Loading...</span>
+    </div>
+  }
+
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          @for (col of columns(); track col.key) {
+            <th
+              [class.sortable]="col.sortable"
+              [class.sorted]="sortColumn() === col.key"
+              (click)="onSort(col)"
+            >
+              {{ col.label }}
+              @if (col.sortable) {
+                <span class="sort-icon">
+                  @if (sortColumn() === col.key) {
+                    {{ sortOrder() === 'asc' ? '▲' : '▼' }}
+                  } @else {
+                    ▼
+                  }
+                </span>
+              }
+            </th>
+          }
+          @if (actions().length > 0) {
+            <th class="actions-col">Actions</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @if (!loading() && data().length === 0) {
+          <tr>
+            <td [attr.colspan]="columns().length + (actions().length > 0 ? 1 : 0)" class="empty-cell">
+              <div class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <p>No data found</p>
+              </div>
+            </td>
+          </tr>
+        }
+        @for (item of data(); track $index) {
+          <tr>
+            @for (col of columns(); track col.key) {
+              <td>{{ getCellValue(item, col) }}</td>
+            }
+            @if (actions().length > 0) {
+              <td class="actions-cell">
+                @for (action of actions(); track action.action) {
+                  <button
+                    class="action-btn"
+                    [class.action-danger]="action.variant === 'danger'"
+                    [title]="action.label"
+                    (click)="onAction(action.action, item)"
+                  >
+                    {{ action.label }}
+                  </button>
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (totalItems() > 0) {
+    <div class="pagination">
+      <span class="pagination-info">
+        Showing {{ ((currentPage() - 1) * pageSize()) + 1 }}–{{ currentPage() * pageSize() > totalItems() ? totalItems() : currentPage() * pageSize() }} of {{ totalItems() }}
+      </span>
+      <div class="pagination-controls">
+        <button
+          class="page-btn"
+          [disabled]="currentPage() === 1"
+          (click)="onPageChange(currentPage() - 1)"
+        >
+          ‹ Prev
+        </button>
+        @for (page of pages; track page) {
+          <button
+            class="page-btn"
+            [class.page-active]="page === currentPage()"
+            (click)="onPageChange(page)"
+          >
+            {{ page }}
+          </button>
+        }
+        <button
+          class="page-btn"
+          [disabled]="currentPage() === totalPages"
+          (click)="onPageChange(currentPage() + 1)"
+        >
+          Next ›
+        </button>
+      </div>
+    </div>
+  }
+</div>

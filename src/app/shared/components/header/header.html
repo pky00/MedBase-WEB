@@ -1,0 +1,32 @@
+<header class="header">
+  <div class="header-left">
+    <button class="menu-toggle" (click)="onToggleSidebar()">
+      ☰
+    </button>
+    <h1 class="header-title">MedBase</h1>
+  </div>
+
+  <div class="header-right">
+    <div class="user-menu">
+      <button class="avatar-btn" (click)="toggleMenu()">
+        <span class="avatar">{{ userInitials }}</span>
+      </button>
+
+      @if (menuOpen()) {
+        <div class="user-dropdown">
+          <div class="user-info">
+            <span class="user-name">{{ currentUser()?.third_party?.name || currentUser()?.username }}</span>
+            <span class="user-email">{{ currentUser()?.email }}</span>
+            <span class="user-role badge" [class]="'badge-' + currentUser()?.role">
+              {{ currentUser()?.role }}
+            </span>
+          </div>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" (click)="logout()">
+            Logout
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</header>
