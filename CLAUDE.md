@@ -129,7 +129,6 @@ Build these once, use everywhere:
 | `docs/plan.md` | Development phases and feature sequence |
 | `docs/pages.md` | Frontend page layouts and functionality specs |
 | `docs/MedBase API.postman_collection.json` | Postman collection with request examples |
-| `docs/openapi.json` | OpenAPI spec from the backend API |
 
 ---
 
@@ -150,15 +149,15 @@ Build these once, use everywhere:
 - `database.dbml` — database schema (Backend)
 - `endpoints.md` — API endpoints list (Backend, copied to Frontend)
 - `MedBase API.postman_collection.json` — Postman collection (originates in API, synced to Planner + Frontend)
-- `openapi.json` — OpenAPI spec (synced from the running dev API)
 - `pages.md` — page layouts and functionality (Frontend)
 - `README.md` — project description, setup instructions, and how to run (in each repo root)
 
 **Syncing from Backend**
-- When BE changes affect endpoints, these files should be updated in `docs/`:
+- When BE changes affect endpoints, sync Postman collection in `docs/`:
   1. `MedBase API.postman_collection.json` — copied from `MedBase-API/docs/`
-  2. `openapi.json` — fetched from `https://dev-api.medbaseclinic.com/openapi.json`
-- When the user says "refresh the openapi", fetch the latest `openapi.json` and sync it to all repos. This should also be done automatically whenever syncing docs across repos.
+
+**OpenAPI Spec**
+- The API's OpenAPI spec is available at `https://dev-api.medbaseclinic.com/openapi.json`. Fetch it directly from the live API whenever you need request/response formats — it is not stored as a file in the repos.
 
 **PR Workflow**
 - Each phase requires a Pull Request (PR)
