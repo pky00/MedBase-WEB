@@ -36,8 +36,8 @@ export class DeviceListComponent implements OnInit {
 
   columns: TableColumn[] = [
     { key: 'name', label: 'Name', sortable: true },
-    { key: 'category_name', label: 'Category', sortable: false },
-    { key: 'quantity', label: 'Quantity', sortable: true },
+    { key: 'category.name', label: 'Category', sortable: false },
+    { key: 'inventory_quantity', label: 'Quantity', sortable: false },
     { key: 'is_active', label: 'Status', sortable: true, format: formatActiveStatus },
   ];
 

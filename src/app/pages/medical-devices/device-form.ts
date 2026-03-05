@@ -34,8 +34,6 @@ export class DeviceFormComponent implements OnInit {
   name = '';
   description = '';
   categoryId: number | null = null;
-  manufacturer = '';
-  deviceModel = '';
   serialNumber = '';
   isActive = true;
 
@@ -90,8 +88,6 @@ export class DeviceFormComponent implements OnInit {
         this.name = device.name;
         this.description = device.description || '';
         this.categoryId = device.category_id;
-        this.manufacturer = device.manufacturer || '';
-        this.deviceModel = device.model || '';
         this.serialNumber = device.serial_number || '';
         this.isActive = device.is_active;
         this.loading.set(false);
@@ -118,8 +114,6 @@ export class DeviceFormComponent implements OnInit {
         name: this.name,
         description: this.description || undefined,
         category_id: this.categoryId,
-        manufacturer: this.manufacturer || undefined,
-        model: this.deviceModel || undefined,
         serial_number: this.serialNumber || undefined,
         is_active: this.isActive,
       };
@@ -140,8 +134,6 @@ export class DeviceFormComponent implements OnInit {
         name: this.name,
         description: this.description || undefined,
         category_id: this.categoryId,
-        manufacturer: this.manufacturer || undefined,
-        model: this.deviceModel || undefined,
         serial_number: this.serialNumber || undefined,
         is_active: this.isActive,
       };

@@ -34,9 +34,6 @@ export class EquipmentFormComponent implements OnInit {
   name = '';
   description = '';
   categoryId: number | null = null;
-  equipmentModel = '';
-  serialNumber = '';
-  purchaseDate = '';
   condition: EquipmentCondition = 'new';
   isActive = true;
 
@@ -91,10 +88,7 @@ export class EquipmentFormComponent implements OnInit {
         this.name = equipment.name;
         this.description = equipment.description || '';
         this.categoryId = equipment.category_id;
-        this.equipmentModel = equipment.model || '';
-        this.serialNumber = equipment.serial_number || '';
-        this.purchaseDate = equipment.purchase_date || '';
-        this.condition = equipment.condition;
+        this.condition = equipment.condition || 'new';
         this.isActive = equipment.is_active;
         this.loading.set(false);
       },
@@ -120,9 +114,6 @@ export class EquipmentFormComponent implements OnInit {
         name: this.name,
         description: this.description || undefined,
         category_id: this.categoryId,
-        model: this.equipmentModel || undefined,
-        serial_number: this.serialNumber || undefined,
-        purchase_date: this.purchaseDate || undefined,
         condition: this.condition,
         is_active: this.isActive,
       };
@@ -143,9 +134,6 @@ export class EquipmentFormComponent implements OnInit {
         name: this.name,
         description: this.description || undefined,
         category_id: this.categoryId,
-        model: this.equipmentModel || undefined,
-        serial_number: this.serialNumber || undefined,
-        purchase_date: this.purchaseDate || undefined,
         condition: this.condition,
         is_active: this.isActive,
       };

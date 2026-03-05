@@ -34,10 +34,7 @@ export class MedicineFormComponent implements OnInit {
   name = '';
   description = '';
   categoryId: number | null = null;
-  dosage = '';
   unit = '';
-  manufacturer = '';
-  expiryDate = '';
   isActive = true;
 
   constructor(
@@ -91,10 +88,7 @@ export class MedicineFormComponent implements OnInit {
         this.name = medicine.name;
         this.description = medicine.description || '';
         this.categoryId = medicine.category_id;
-        this.dosage = medicine.dosage || '';
         this.unit = medicine.unit || '';
-        this.manufacturer = medicine.manufacturer || '';
-        this.expiryDate = medicine.expiry_date || '';
         this.isActive = medicine.is_active;
         this.loading.set(false);
       },
@@ -120,10 +114,7 @@ export class MedicineFormComponent implements OnInit {
         name: this.name,
         description: this.description || undefined,
         category_id: this.categoryId,
-        dosage: this.dosage || undefined,
         unit: this.unit || undefined,
-        manufacturer: this.manufacturer || undefined,
-        expiry_date: this.expiryDate || undefined,
         is_active: this.isActive,
       };
 
@@ -143,10 +134,7 @@ export class MedicineFormComponent implements OnInit {
         name: this.name,
         description: this.description || undefined,
         category_id: this.categoryId,
-        dosage: this.dosage || undefined,
         unit: this.unit || undefined,
-        manufacturer: this.manufacturer || undefined,
-        expiry_date: this.expiryDate || undefined,
         is_active: this.isActive,
       };
 
