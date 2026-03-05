@@ -1,0 +1,219 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Patient Details</h1>
+    <p class="page-subtitle">View patient information</p>
+  </div>
+  <div class="header-actions">
+    <app-button variant="secondary" (clicked)="goBack()">Back</app-button>
+    @if (patient()) {
+      <app-button variant="primary" (clicked)="editPatient()">Edit Patient</app-button>
+    }
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading-spinner message="Loading..." />
+} @else if (patient(); as p) {
+  <div class="view-layout">
+    <!-- Left: Patient Details -->
+    <div class="detail-card">
+      <div class="detail-section">
+        <h3 class="detail-section-title">Personal Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">First Name</span>
+            <span class="detail-value">{{ p.first_name }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Last Name</span>
+            <span class="detail-value">{{ p.last_name }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Date of Birth</span>
+            <span class="detail-value">{{ formatDate(p.date_of_birth) }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Gender</span>
+            <span class="detail-value">
+              @if (p.gender) {
+                <span class="badge" [class]="'badge-' + p.gender">
+                  {{ formatGender(p.gender) }}
+                </span>
+              } @else {
+                —
+              }
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3 class="detail-section-title">Contact Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Phone</span>
+            <span class="detail-value">{{ p.phone || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">{{ p.email || '—' }}</span>
+          </div>
+          <div class="detail-item full-width">
+            <span class="detail-label">Address</span>
+            <span class="detail-value">{{ p.address || '—' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3 class="detail-section-title">Emergency Contact</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Contact Name</span>
+            <span class="detail-value">{{ p.emergency_contact || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Contact Phone</span>
+            <span class="detail-value">{{ p.emergency_phone || '—' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3 class="detail-section-title">Status</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Status</span>
+            <span class="detail-value">
+              <span class="badge" [class]="p.is_active ? 'badge-active' : 'badge-inactive'">
+                {{ p.is_active ? 'Active' : 'Inactive' }}
+              </span>
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Created</span>
+            <span class="detail-value">{{ formatDateTime(p.created_at) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Tabs (Documents, Appointments, Records) -->
+    <div class="right-panel">
+      <div class="tabs">
+        <button
+          class="tab"
+          [class.tab-active]="activeTab() === 'documents'"
+          (click)="setTab('documents')"
+        >
+          Documents
+        </button>
+        <button
+          class="tab"
+          [class.tab-active]="activeTab() === 'appointments'"
+          (click)="setTab('appointments')"
+        >
+          Appointments
+        </button>
+        <button
+          class="tab"
+          [class.tab-active]="activeTab() === 'records'"
+          (click)="setTab('records')"
+        >
+          Medical Records
+        </button>
+      </div>
+
+      <div class="tab-content">
+        @if (activeTab() === 'documents') {
+          <!-- Document Upload -->
+          <div class="upload-section">
+            <div class="upload-row">
+              <input
+                type="text"
+                class="doc-type-input"
+                placeholder="Document type (optional)"
+                [(ngModel)]="documentType"
+              />
+              <label class="upload-btn">
+                @if (uploading()) {
+                  <app-loading-spinner size="small" />
+                } @else {
+                  <span>Upload File</span>
+                }
+                <input
+                  type="file"
+                  class="file-input"
+                  (change)="onFileSelected($event)"
+                  [disabled]="uploading()"
+                />
+              </label>
+            </div>
+          </div>
+
+          <!-- Documents List -->
+          @if (documentsLoading()) {
+            <app-loading-spinner message="Loading documents..." />
+          } @else if (documents().length === 0) {
+            <div class="empty-state">
+              <span class="empty-icon">📄</span>
+              <p>No documents uploaded yet.</p>
+            </div>
+          } @else {
+            <div class="documents-list">
+              @for (doc of documents(); track doc.id) {
+                <div class="document-card">
+                  <div class="doc-info">
+                    <span class="doc-name">{{ doc.document_name }}</span>
+                    @if (doc.document_type) {
+                      <span class="doc-type-badge">{{ doc.document_type }}</span>
+                    }
+                    <span class="doc-date">{{ formatDateTime(doc.upload_date) }}</span>
+                  </div>
+                  <div class="doc-actions">
+                    @if (doc.file_url) {
+                      <a [href]="doc.file_url" target="_blank" class="doc-action-btn doc-download">
+                        Download
+                      </a>
+                    }
+                    <button class="doc-action-btn doc-delete" (click)="openDeleteDocModal(doc)">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        }
+
+        @if (activeTab() === 'appointments') {
+          <div class="empty-state">
+            <span class="empty-icon">📅</span>
+            <p>Appointments will be available in a future phase.</p>
+          </div>
+        }
+
+        @if (activeTab() === 'records') {
+          <div class="empty-state">
+            <span class="empty-icon">📋</span>
+            <p>Medical records will be available in a future phase.</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Delete Document Modal -->
+<app-modal
+  title="Delete Document"
+  [isOpen]="deleteDocModalOpen()"
+  (closed)="cancelDeleteDoc()"
+>
+  <p>Are you sure you want to delete <strong>{{ docToDelete()?.document_name }}</strong>?</p>
+  <p class="modal-warning">This action cannot be undone.</p>
+  <div class="modal-actions">
+    <app-button variant="secondary" (clicked)="cancelDeleteDoc()">Cancel</app-button>
+    <app-button variant="danger" [loading]="deletingDoc()" (clicked)="confirmDeleteDoc()">Delete</app-button>
+  </div>
+</app-modal>
