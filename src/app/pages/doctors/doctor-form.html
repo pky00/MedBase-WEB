@@ -1,0 +1,91 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ isEdit() ? 'Edit Doctor' : 'Create Doctor' }}</h1>
+    <p class="page-subtitle">{{ isEdit() ? 'Update doctor information' : 'Add a new doctor' }}</p>
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading-spinner message="Loading..." />
+} @else {
+  <div class="form-card">
+    @if (errorMessage()) {
+      <div class="alert-error">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-section">
+        <h3 class="form-section-title">Doctor Information</h3>
+        <div class="form-grid">
+          <app-input
+            label="Name"
+            placeholder="Enter doctor name"
+            inputId="name"
+            [required]="true"
+            [(ngModel)]="name"
+            name="name"
+          />
+          <app-input
+            label="Specialization"
+            placeholder="Enter specialization"
+            inputId="specialization"
+            [(ngModel)]="specialization"
+            name="specialization"
+          />
+          <div class="form-field">
+            <label class="form-label" for="type">Type <span class="required">*</span></label>
+            <select id="type" class="form-select" [value]="doctorType" (change)="onTypeChange($event)">
+              <option value="internal">Internal</option>
+              <option value="external">External</option>
+              <option value="partner_provided">Partner Provided</option>
+            </select>
+          </div>
+          @if (doctorType === 'partner_provided') {
+            <app-dropdown
+              label="Partner"
+              placeholder="Select partner"
+              [options]="partnerOptions()"
+              [required]="true"
+              [hasMore]="partnerHasMore()"
+              (loadMore)="onPartnerLoadMore()"
+              (searchChanged)="onPartnerSearch($event)"
+              [(ngModel)]="partnerId"
+              name="partnerId"
+            />
+          }
+          <app-input
+            label="Phone"
+            placeholder="Enter phone number"
+            inputId="phone"
+            [(ngModel)]="phone"
+            name="phone"
+          />
+          <app-input
+            label="Email"
+            type="email"
+            placeholder="Enter email address"
+            inputId="email"
+            [(ngModel)]="email"
+            name="email"
+          />
+          <div class="form-field">
+            <label class="form-label" for="is_active">Status</label>
+            <select id="is_active" class="form-select" [value]="isActive" (change)="onActiveChange($event)">
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <app-button variant="secondary" (clicked)="cancel()">Cancel</app-button>
+        <app-button type="submit" variant="primary" [loading]="saving()">
+          {{ isEdit() ? 'Update Doctor' : 'Create Doctor' }}
+        </app-button>
+      </div>
+    </form>
+  </div>
+}

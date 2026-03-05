@@ -44,6 +44,13 @@ export class SidebarComponent {
         ],
       },
       {
+        title: 'People',
+        items: [
+          { label: 'Partners', route: ROUTES.PARTNERS, icon: '🤝' },
+          { label: 'Doctors', route: ROUTES.DOCTORS, icon: '👨‍⚕️' },
+        ],
+      },
+      {
         title: 'Categories',
         items: [
           { label: 'Medicine Cat.', route: ROUTES.MEDICINE_CATEGORIES, icon: '📋' },

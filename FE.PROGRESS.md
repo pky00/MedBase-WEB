@@ -6,7 +6,7 @@ You are the Frontend Agent for MedBase. Your job is to build the Angular fronten
 
 ---
 
-## Current Phase: Phase 2 - Core Entities (Complete)
+## Current Phase: Phase 3 - Partners & Doctors (Complete)
 
 ---
 
@@ -21,6 +21,8 @@ You are the Frontend Agent for MedBase. Your job is to build the Angular fronten
 | 6 | Medicines | 2026-03-03 | Medicine CRUD: list page with category dropdown filter and is_active filter, sortable table, pagination, delete modal. Create/edit form with category dropdown (paginated, searchable). View page with details and inventory quantity |
 | 7 | Equipment | 2026-03-03 | Equipment CRUD: list page with category dropdown filter, condition filter, and is_active filter. Create/edit form with category dropdown and condition select. View page with condition badge styling |
 | 8 | Medical Devices | 2026-03-03 | Medical Device CRUD: list page with category dropdown filter and is_active filter. Create/edit form with category dropdown. View page with details and inventory quantity |
+| 9 | Partners | 2026-03-05 | Partner CRUD: list page with partner_type, organization_type, is_active filters, sortable table, pagination, delete modal. Create/edit form with partner type and organization type selects. View page with partner type badges |
+| 10 | Doctors | 2026-03-05 | Doctor CRUD: list page with type and is_active filters, sortable table, pagination, delete modal. Create/edit form with type select and conditional partner dropdown (paginated, searchable) for partner_provided type. View page with type badges and partner name |
 
 ---
 
@@ -38,4 +40,5 @@ You are the Frontend Agent for MedBase. Your job is to build the Angular fronten
 - Refer to `docs/pages.md` for page layouts
 - Refer to `docs/endpoints.md` for API integration
 - Phase 1 complete — PR merged
-- Phase 2 complete — ready for PR
+- Phase 2 complete — PR merged
+- Phase 3 complete — ready for PR

@@ -13,6 +13,8 @@ export const ROUTES = {
   MEDICINES: '/medicines',
   EQUIPMENT: '/equipment',
   MEDICAL_DEVICES: '/medical-devices',
+  PARTNERS: '/partners',
+  DOCTORS: '/doctors',
 } as const;
 
 // Display formatters
@@ -31,4 +33,6 @@ export const API = {
   MEDICINES: 'medicines',
   EQUIPMENT: 'equipment',
   MEDICAL_DEVICES: 'medical-devices',
+  PARTNERS: 'partners',
+  DOCTORS: 'doctors',
 } as const;

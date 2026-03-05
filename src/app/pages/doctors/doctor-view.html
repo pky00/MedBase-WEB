@@ -1,0 +1,66 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Doctor Details</h1>
+    <p class="page-subtitle">View doctor information</p>
+  </div>
+  <div class="header-actions">
+    <app-button variant="secondary" (clicked)="goBack()">Back</app-button>
+    @if (doctor()) {
+      <app-button variant="primary" (clicked)="editDoctor()">Edit Doctor</app-button>
+    }
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading-spinner message="Loading..." />
+} @else if (doctor(); as d) {
+  <div class="detail-card">
+    <div class="detail-section">
+      <h3 class="detail-section-title">Doctor Information</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">Name</span>
+          <span class="detail-value">{{ d.name }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Specialization</span>
+          <span class="detail-value">{{ d.specialization || '—' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Type</span>
+          <span class="detail-value">
+            <span class="badge" [class]="'badge-' + d.type">
+              {{ formatDoctorType(d.type) }}
+            </span>
+          </span>
+        </div>
+        @if (d.type === 'partner_provided') {
+          <div class="detail-item">
+            <span class="detail-label">Partner</span>
+            <span class="detail-value">{{ d.partner_name || '—' }}</span>
+          </div>
+        }
+        <div class="detail-item">
+          <span class="detail-label">Phone</span>
+          <span class="detail-value">{{ d.phone || '—' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Email</span>
+          <span class="detail-value">{{ d.email || '—' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Status</span>
+          <span class="detail-value">
+            <span class="badge" [class]="d.is_active ? 'badge-active' : 'badge-inactive'">
+              {{ d.is_active ? 'Active' : 'Inactive' }}
+            </span>
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Created</span>
+          <span class="detail-value">{{ d.created_at }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+}

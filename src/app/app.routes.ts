@@ -224,6 +224,72 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'partners',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/partners/partner-list').then(
+                (m) => m.PartnerListComponent
+              ),
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import('./pages/partners/partner-form').then(
+                (m) => m.PartnerFormComponent
+              ),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./pages/partners/partner-view').then(
+                (m) => m.PartnerViewComponent
+              ),
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import('./pages/partners/partner-form').then(
+                (m) => m.PartnerFormComponent
+              ),
+          },
+        ],
+      },
+      {
+        path: 'doctors',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/doctors/doctor-list').then(
+                (m) => m.DoctorListComponent
+              ),
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import('./pages/doctors/doctor-form').then(
+                (m) => m.DoctorFormComponent
+              ),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./pages/doctors/doctor-view').then(
+                (m) => m.DoctorViewComponent
+              ),
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import('./pages/doctors/doctor-form').then(
+                (m) => m.DoctorFormComponent
+              ),
+          },
+        ],
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',
