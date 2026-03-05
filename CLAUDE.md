@@ -47,9 +47,9 @@ Work through features in order as defined in `docs/plan.md`. Do not skip ahead o
 
 ### 3. For Each Feature
 1. **Read the spec** — Check `docs/pages.md` for page layouts
-2. **Check the API** — Review `docs/endpoints.md` for integration
+2. **Check the API** — Review `docs/endpoints.md` and OpenAPI spec for integration
 3. **Build the pages** — Implement following the specs
-4. **Test thoroughly** — Ensure all functionality works
+4. **Add/Update Tests** — Write and run tests to verify it works
 
 ### 4. Update Progress
 Before finishing any feature, update `FE.PROGRESS.md`:
@@ -137,7 +137,8 @@ Build these once, use everywhere:
 **Approach**
 - Features developed independently in sequential order
 - Frontend and Backend developed separately
-- Backend order per feature: Endpoints → Tests → Postman → Dummy Data → Push
+- Backend order per feature: Endpoints → Add/Update Tests → Postman → Dummy Data → Push
+- Frontend order per feature: Read Spec → Check API → Build Pages → Add/Update Tests → Push
 
 **Progress Tracking**
 - `BE.PROGRESS.md` — backend progress
