@@ -36,9 +36,19 @@ export class SidebarComponent {
         ],
       },
       {
-        title: 'Management',
+        title: 'Inventory',
         items: [
-          { label: 'Third Parties', route: ROUTES.THIRD_PARTIES, icon: '🏢' },
+          { label: 'Medicines', route: ROUTES.MEDICINES, icon: '💊' },
+          { label: 'Equipment', route: ROUTES.EQUIPMENT, icon: '🔧' },
+          { label: 'Medical Devices', route: ROUTES.MEDICAL_DEVICES, icon: '🩺' },
+        ],
+      },
+      {
+        title: 'Categories',
+        items: [
+          { label: 'Medicine Cat.', route: ROUTES.MEDICINE_CATEGORIES, icon: '📋' },
+          { label: 'Equipment Cat.', route: ROUTES.EQUIPMENT_CATEGORIES, icon: '📋' },
+          { label: 'Device Cat.', route: ROUTES.MEDICAL_DEVICE_CATEGORIES, icon: '📋' },
         ],
       },
     ];

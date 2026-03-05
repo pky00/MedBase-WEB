@@ -7,7 +7,12 @@ export const ROUTES = {
   DASHBOARD: '/dashboard',
   USERS: '/users',
   USERS_NEW: '/users/new',
-  THIRD_PARTIES: '/third-parties',
+  MEDICINE_CATEGORIES: '/medicine-categories',
+  EQUIPMENT_CATEGORIES: '/equipment-categories',
+  MEDICAL_DEVICE_CATEGORIES: '/medical-device-categories',
+  MEDICINES: '/medicines',
+  EQUIPMENT: '/equipment',
+  MEDICAL_DEVICES: '/medical-devices',
 } as const;
 
 // Display formatters
@@ -20,5 +25,10 @@ export const API = {
   AUTH_LOGOUT: 'auth/logout',
   AUTH_ME: 'auth/me',
   USERS: 'users',
-  THIRD_PARTIES: 'third-parties',
+  MEDICINE_CATEGORIES: 'medicine-categories',
+  EQUIPMENT_CATEGORIES: 'equipment-categories',
+  MEDICAL_DEVICE_CATEGORIES: 'medical-device-categories',
+  MEDICINES: 'medicines',
+  EQUIPMENT: 'equipment',
+  MEDICAL_DEVICES: 'medical-devices',
 } as const;

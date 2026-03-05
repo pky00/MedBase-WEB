@@ -1,0 +1,74 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ isEdit() ? 'Edit Medicine' : 'Create Medicine' }}</h1>
+    <p class="page-subtitle">{{ isEdit() ? 'Update medicine information' : 'Add a new medicine' }}</p>
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading-spinner message="Loading..." />
+} @else {
+  <div class="form-card">
+    @if (errorMessage()) {
+      <div class="alert-error">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-section">
+        <h3 class="form-section-title">Medicine Information</h3>
+        <div class="form-grid">
+          <app-input
+            label="Name"
+            placeholder="Enter medicine name"
+            inputId="name"
+            [required]="true"
+            [(ngModel)]="name"
+            name="name"
+          />
+          <app-dropdown
+            label="Category"
+            placeholder="Select category"
+            [options]="categoryOptions()"
+            [required]="true"
+            [hasMore]="categoryHasMore()"
+            (loadMore)="onCategoryLoadMore()"
+            (searchChanged)="onCategorySearch($event)"
+            [(ngModel)]="categoryId"
+            name="categoryId"
+          />
+          <app-input
+            label="Description"
+            type="textarea"
+            placeholder="Enter description"
+            inputId="description"
+            [(ngModel)]="description"
+            name="description"
+          />
+          <app-input
+            label="Unit"
+            placeholder="Enter unit"
+            inputId="unit"
+            [(ngModel)]="unit"
+            name="unit"
+          />
+          <div class="form-field">
+            <label class="form-label" for="is_active">Status</label>
+            <select id="is_active" class="form-select" [value]="isActive" (change)="onActiveChange($event)">
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <app-button variant="secondary" (clicked)="cancel()">Cancel</app-button>
+        <app-button type="submit" variant="primary" [loading]="saving()">
+          {{ isEdit() ? 'Update Medicine' : 'Create Medicine' }}
+        </app-button>
+      </div>
+    </form>
+  </div>
+}

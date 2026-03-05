@@ -1,0 +1,49 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ isEdit() ? 'Edit Category' : 'Create Category' }}</h1>
+    <p class="page-subtitle">{{ isEdit() ? 'Update medicine category' : 'Add a new medicine category' }}</p>
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading-spinner message="Loading..." />
+} @else {
+  <div class="form-card">
+    @if (errorMessage()) {
+      <div class="alert-error">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-section">
+        <h3 class="form-section-title">Category Information</h3>
+        <div class="form-grid">
+          <app-input
+            label="Name"
+            placeholder="Enter category name"
+            inputId="name"
+            [required]="true"
+            [(ngModel)]="name"
+            name="name"
+          />
+          <app-input
+            label="Description"
+            type="textarea"
+            placeholder="Enter description"
+            inputId="description"
+            [(ngModel)]="description"
+            name="description"
+          />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <app-button variant="secondary" (clicked)="cancel()">Cancel</app-button>
+        <app-button type="submit" variant="primary" [loading]="saving()">
+          {{ isEdit() ? 'Update Category' : 'Create Category' }}
+        </app-button>
+      </div>
+    </form>
+  </div>
+}

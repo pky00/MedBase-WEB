@@ -1,0 +1,52 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Medical Devices</h1>
+    <p class="page-subtitle">Manage medical device inventory items</p>
+  </div>
+  <app-button variant="primary" (clicked)="createDevice()">+ New Device</app-button>
+</div>
+
+<div class="filters-bar">
+  <app-dropdown
+    placeholder="All Categories"
+    [options]="categoryOptions()"
+    [hasMore]="categoryHasMore()"
+    (loadMore)="onCategoryLoadMore()"
+    (searchChanged)="onCategorySearch($event)"
+    (ngModelChange)="onCategoryChange($event)"
+    [ngModel]="filterCategory() || null"
+  />
+  <select class="filter-select" (change)="table.onFilterChange(filterActive, $event); loadDevices()">
+    <option value="">All Status</option>
+    <option value="true">Active</option>
+    <option value="false">Inactive</option>
+  </select>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [data]="devices()"
+  [actions]="actions"
+  [loading]="table.loading()"
+  [totalItems]="table.totalItems()"
+  [currentPage]="table.currentPage()"
+  [pageSize]="table.pageSize"
+  [sortColumn]="table.sortColumn()"
+  [sortOrder]="table.sortOrder()"
+  (sorted)="table.onSort($event); loadDevices()"
+  (pageChanged)="table.onPageChange($event); loadDevices()"
+  (actionClicked)="onAction($event)"
+/>
+
+<app-modal
+  title="Delete Medical Device"
+  [isOpen]="deleteModalOpen()"
+  (closed)="cancelDelete()"
+>
+  <p>Are you sure you want to delete <strong>{{ itemToDelete()?.['name'] }}</strong>?</p>
+  <p class="modal-warning">This will only succeed if inventory quantity is 0.</p>
+  <div class="modal-actions">
+    <app-button variant="secondary" (clicked)="cancelDelete()">Cancel</app-button>
+    <app-button variant="danger" [loading]="deleting()" (clicked)="confirmDelete()">Delete</app-button>
+  </div>
+</app-modal>

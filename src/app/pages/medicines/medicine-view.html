@@ -1,0 +1,56 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Medicine Details</h1>
+    <p class="page-subtitle">View medicine information</p>
+  </div>
+  <div class="header-actions">
+    <app-button variant="secondary" (clicked)="goBack()">Back</app-button>
+    @if (medicine()) {
+      <app-button variant="primary" (clicked)="editMedicine()">Edit Medicine</app-button>
+    }
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading-spinner message="Loading..." />
+} @else if (medicine(); as m) {
+  <div class="detail-card">
+    <div class="detail-section">
+      <h3 class="detail-section-title">Medicine Information</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">Name</span>
+          <span class="detail-value">{{ m.name }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Category</span>
+          <span class="detail-value">{{ m.category?.name || '—' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Description</span>
+          <span class="detail-value">{{ m.description || '—' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Unit</span>
+          <span class="detail-value">{{ m.unit || '—' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Quantity</span>
+          <span class="detail-value">{{ m.inventory_quantity ?? 0 }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Status</span>
+          <span class="detail-value">
+            <span class="badge" [class]="m.is_active ? 'badge-active' : 'badge-inactive'">
+              {{ m.is_active ? 'Active' : 'Inactive' }}
+            </span>
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Created</span>
+          <span class="detail-value">{{ m.created_at }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+}
