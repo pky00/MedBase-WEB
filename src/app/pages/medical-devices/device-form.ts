@@ -67,6 +67,7 @@ export class DeviceFormComponent implements OnInit {
           this.categoryOptions.update((prev) => [...prev, ...options]);
         }
         this.categoryHasMore.set(response.page < response.pages);
+        this.ensureCategoryOption();
       },
     });
   }
@@ -81,6 +82,20 @@ export class DeviceFormComponent implements OnInit {
     this.loadCategories(search);
   }
 
+  private loadedCategoryName: string | null = null;
+
+  private ensureCategoryOption(): void {
+    if (this.categoryId && this.loadedCategoryName) {
+      const exists = this.categoryOptions().some((o) => o.value === this.categoryId);
+      if (!exists) {
+        this.categoryOptions.update((prev) => [
+          { value: this.categoryId!, label: this.loadedCategoryName! },
+          ...prev,
+        ]);
+      }
+    }
+  }
+
   loadDevice(): void {
     this.loading.set(true);
     this.api.get<MedicalDevice>(`${API.MEDICAL_DEVICES}/${this.deviceId}`).subscribe({
@@ -88,8 +103,10 @@ export class DeviceFormComponent implements OnInit {
         this.name = device.name;
         this.description = device.description || '';
         this.categoryId = device.category_id;
+        this.loadedCategoryName = device.category?.name || null;
         this.serialNumber = device.serial_number || '';
         this.isActive = device.is_active;
+        this.ensureCategoryOption();
         this.loading.set(false);
       },
       error: () => {

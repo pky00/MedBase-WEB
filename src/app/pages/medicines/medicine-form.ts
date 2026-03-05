@@ -67,6 +67,7 @@ export class MedicineFormComponent implements OnInit {
           this.categoryOptions.update((prev) => [...prev, ...options]);
         }
         this.categoryHasMore.set(response.page < response.pages);
+        this.ensureCategoryOption();
       },
     });
   }
@@ -81,6 +82,20 @@ export class MedicineFormComponent implements OnInit {
     this.loadCategories(search);
   }
 
+  private loadedCategoryName: string | null = null;
+
+  private ensureCategoryOption(): void {
+    if (this.categoryId && this.loadedCategoryName) {
+      const exists = this.categoryOptions().some((o) => o.value === this.categoryId);
+      if (!exists) {
+        this.categoryOptions.update((prev) => [
+          { value: this.categoryId!, label: this.loadedCategoryName! },
+          ...prev,
+        ]);
+      }
+    }
+  }
+
   loadMedicine(): void {
     this.loading.set(true);
     this.api.get<Medicine>(`${API.MEDICINES}/${this.medicineId}`).subscribe({
@@ -88,8 +103,10 @@ export class MedicineFormComponent implements OnInit {
         this.name = medicine.name;
         this.description = medicine.description || '';
         this.categoryId = medicine.category_id;
+        this.loadedCategoryName = medicine.category?.name || null;
         this.unit = medicine.unit || '';
         this.isActive = medicine.is_active;
+        this.ensureCategoryOption();
         this.loading.set(false);
       },
       error: () => {

@@ -67,6 +67,7 @@ export class EquipmentFormComponent implements OnInit {
           this.categoryOptions.update((prev) => [...prev, ...options]);
         }
         this.categoryHasMore.set(response.page < response.pages);
+        this.ensureCategoryOption();
       },
     });
   }
@@ -81,6 +82,20 @@ export class EquipmentFormComponent implements OnInit {
     this.loadCategories(search);
   }
 
+  private loadedCategoryName: string | null = null;
+
+  private ensureCategoryOption(): void {
+    if (this.categoryId && this.loadedCategoryName) {
+      const exists = this.categoryOptions().some((o) => o.value === this.categoryId);
+      if (!exists) {
+        this.categoryOptions.update((prev) => [
+          { value: this.categoryId!, label: this.loadedCategoryName! },
+          ...prev,
+        ]);
+      }
+    }
+  }
+
   loadEquipment(): void {
     this.loading.set(true);
     this.api.get<Equipment>(`${API.EQUIPMENT}/${this.equipmentId}`).subscribe({
@@ -88,8 +103,10 @@ export class EquipmentFormComponent implements OnInit {
         this.name = equipment.name;
         this.description = equipment.description || '';
         this.categoryId = equipment.category_id;
+        this.loadedCategoryName = equipment.category?.name || null;
         this.condition = equipment.condition || 'new';
         this.isActive = equipment.is_active;
+        this.ensureCategoryOption();
         this.loading.set(false);
       },
       error: () => {
