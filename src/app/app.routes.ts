@@ -47,13 +47,6 @@ export const routes: Routes = [
         ],
       },
       {
-        path: 'third-parties',
-        loadComponent: () =>
-          import('./pages/third-parties/third-party-list/third-party-list').then(
-            (m) => m.ThirdPartyListComponent
-          ),
-      },
-      {
         path: 'medicine-categories',
         children: [
           {

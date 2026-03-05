@@ -45,13 +45,13 @@ describe('SidebarComponent', () => {
     expect(labels).not.toContain('Users');
   });
 
-  it('should always include Dashboard and Third Parties', () => {
+  it('should always include Dashboard and Medicines', () => {
     authService.isAdmin.mockReturnValue(false);
     const labels = component.navGroups
       .flatMap((g) => g.items)
       .map((i) => i.label);
     expect(labels).toContain('Dashboard');
-    expect(labels).toContain('Third Parties');
+    expect(labels).toContain('Medicines');
   });
 
   it('should emit closeSidebar on nav click', () => {

@@ -51,12 +51,6 @@ export class SidebarComponent {
           { label: 'Device Cat.', route: ROUTES.MEDICAL_DEVICE_CATEGORIES, icon: '📋' },
         ],
       },
-      {
-        title: 'Management',
-        items: [
-          { label: 'Third Parties', route: ROUTES.THIRD_PARTIES, icon: '🏢' },
-        ],
-      },
     ];
 
     if (this.authService.isAdmin()) {
