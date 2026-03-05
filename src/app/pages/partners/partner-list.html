@@ -1,0 +1,57 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Partners</h1>
+    <p class="page-subtitle">Manage partner organizations and individuals</p>
+  </div>
+  <app-button variant="primary" (clicked)="createPartner()">+ New Partner</app-button>
+</div>
+
+<div class="filters-bar">
+  <select class="filter-select" (change)="table.onFilterChange(filterPartnerType, $event); loadPartners()">
+    <option value="">All Partner Types</option>
+    <option value="donor">Donor</option>
+    <option value="referral">Referral</option>
+    <option value="both">Both</option>
+  </select>
+  <select class="filter-select" (change)="table.onFilterChange(filterOrgType, $event); loadPartners()">
+    <option value="">All Organization Types</option>
+    <option value="NGO">NGO</option>
+    <option value="organization">Organization</option>
+    <option value="individual">Individual</option>
+    <option value="hospital">Hospital</option>
+    <option value="medical_center">Medical Center</option>
+  </select>
+  <select class="filter-select" (change)="table.onFilterChange(filterActive, $event); loadPartners()">
+    <option value="">All Status</option>
+    <option value="true">Active</option>
+    <option value="false">Inactive</option>
+  </select>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [data]="partners()"
+  [actions]="actions"
+  [loading]="table.loading()"
+  [totalItems]="table.totalItems()"
+  [currentPage]="table.currentPage()"
+  [pageSize]="table.pageSize"
+  [sortColumn]="table.sortColumn()"
+  [sortOrder]="table.sortOrder()"
+  (sorted)="table.onSort($event); loadPartners()"
+  (pageChanged)="table.onPageChange($event); loadPartners()"
+  (actionClicked)="onAction($event)"
+/>
+
+<app-modal
+  title="Delete Partner"
+  [isOpen]="deleteModalOpen()"
+  (closed)="cancelDelete()"
+>
+  <p>Are you sure you want to delete <strong>{{ itemToDelete()?.['name'] }}</strong>?</p>
+  <p class="modal-warning">This action cannot be undone.</p>
+  <div class="modal-actions">
+    <app-button variant="secondary" (clicked)="cancelDelete()">Cancel</app-button>
+    <app-button variant="danger" [loading]="deleting()" (clicked)="confirmDelete()">Delete</app-button>
+  </div>
+</app-modal>

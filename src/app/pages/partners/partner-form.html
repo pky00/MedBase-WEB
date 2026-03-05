@@ -1,0 +1,97 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ isEdit() ? 'Edit Partner' : 'Create Partner' }}</h1>
+    <p class="page-subtitle">{{ isEdit() ? 'Update partner information' : 'Add a new partner' }}</p>
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading-spinner message="Loading..." />
+} @else {
+  <div class="form-card">
+    @if (errorMessage()) {
+      <div class="alert-error">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-section">
+        <h3 class="form-section-title">Partner Information</h3>
+        <div class="form-grid">
+          <app-input
+            label="Name"
+            placeholder="Enter partner name"
+            inputId="name"
+            [required]="true"
+            [(ngModel)]="name"
+            name="name"
+          />
+          <div class="form-field">
+            <label class="form-label" for="partner_type">Partner Type <span class="required">*</span></label>
+            <select id="partner_type" class="form-select" [value]="partnerType" (change)="onPartnerTypeChange($event)">
+              <option value="donor">Donor</option>
+              <option value="referral">Referral</option>
+              <option value="both">Both</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="organization_type">Organization Type</label>
+            <select id="organization_type" class="form-select" [value]="organizationType || ''" (change)="onOrgTypeChange($event)">
+              <option value="">— Select —</option>
+              <option value="NGO">NGO</option>
+              <option value="organization">Organization</option>
+              <option value="individual">Individual</option>
+              <option value="hospital">Hospital</option>
+              <option value="medical_center">Medical Center</option>
+            </select>
+          </div>
+          <app-input
+            label="Contact Person"
+            placeholder="Enter contact person"
+            inputId="contact_person"
+            [(ngModel)]="contactPerson"
+            name="contactPerson"
+          />
+          <app-input
+            label="Phone"
+            placeholder="Enter phone number"
+            inputId="phone"
+            [(ngModel)]="phone"
+            name="phone"
+          />
+          <app-input
+            label="Email"
+            type="email"
+            placeholder="Enter email address"
+            inputId="email"
+            [(ngModel)]="email"
+            name="email"
+          />
+          <app-input
+            label="Address"
+            type="textarea"
+            placeholder="Enter address"
+            inputId="address"
+            [(ngModel)]="address"
+            name="address"
+          />
+          <div class="form-field">
+            <label class="form-label" for="is_active">Status</label>
+            <select id="is_active" class="form-select" [value]="isActive" (change)="onActiveChange($event)">
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <app-button variant="secondary" (clicked)="cancel()">Cancel</app-button>
+        <app-button type="submit" variant="primary" [loading]="saving()">
+          {{ isEdit() ? 'Update Partner' : 'Create Partner' }}
+        </app-button>
+      </div>
+    </form>
+  </div>
+}

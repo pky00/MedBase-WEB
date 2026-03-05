@@ -1,0 +1,68 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Partner Details</h1>
+    <p class="page-subtitle">View partner information</p>
+  </div>
+  <div class="header-actions">
+    <app-button variant="secondary" (clicked)="goBack()">Back</app-button>
+    @if (partner()) {
+      <app-button variant="primary" (clicked)="editPartner()">Edit Partner</app-button>
+    }
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading-spinner message="Loading..." />
+} @else if (partner(); as p) {
+  <div class="detail-card">
+    <div class="detail-section">
+      <h3 class="detail-section-title">Partner Information</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">Name</span>
+          <span class="detail-value">{{ p.name }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Partner Type</span>
+          <span class="detail-value">
+            <span class="badge" [class]="'badge-' + p.partner_type">
+              {{ formatPartnerType(p.partner_type) }}
+            </span>
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Organization Type</span>
+          <span class="detail-value">{{ formatOrgType(p.organization_type) }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Contact Person</span>
+          <span class="detail-value">{{ p.contact_person || '—' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Phone</span>
+          <span class="detail-value">{{ p.phone || '—' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Email</span>
+          <span class="detail-value">{{ p.email || '—' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Address</span>
+          <span class="detail-value">{{ p.address || '—' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Status</span>
+          <span class="detail-value">
+            <span class="badge" [class]="p.is_active ? 'badge-active' : 'badge-inactive'">
+              {{ p.is_active ? 'Active' : 'Inactive' }}
+            </span>
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Created</span>
+          <span class="detail-value">{{ p.created_at }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+}

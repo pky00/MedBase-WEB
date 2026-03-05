@@ -1,0 +1,49 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Doctors</h1>
+    <p class="page-subtitle">Manage clinic and external doctors</p>
+  </div>
+  <app-button variant="primary" (clicked)="createDoctor()">+ New Doctor</app-button>
+</div>
+
+<div class="filters-bar">
+  <select class="filter-select" (change)="table.onFilterChange(filterType, $event); loadDoctors()">
+    <option value="">All Types</option>
+    <option value="internal">Internal</option>
+    <option value="external">External</option>
+    <option value="partner_provided">Partner Provided</option>
+  </select>
+  <select class="filter-select" (change)="table.onFilterChange(filterActive, $event); loadDoctors()">
+    <option value="">All Status</option>
+    <option value="true">Active</option>
+    <option value="false">Inactive</option>
+  </select>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [data]="doctors()"
+  [actions]="actions"
+  [loading]="table.loading()"
+  [totalItems]="table.totalItems()"
+  [currentPage]="table.currentPage()"
+  [pageSize]="table.pageSize"
+  [sortColumn]="table.sortColumn()"
+  [sortOrder]="table.sortOrder()"
+  (sorted)="table.onSort($event); loadDoctors()"
+  (pageChanged)="table.onPageChange($event); loadDoctors()"
+  (actionClicked)="onAction($event)"
+/>
+
+<app-modal
+  title="Delete Doctor"
+  [isOpen]="deleteModalOpen()"
+  (closed)="cancelDelete()"
+>
+  <p>Are you sure you want to delete <strong>{{ itemToDelete()?.['name'] }}</strong>?</p>
+  <p class="modal-warning">This action cannot be undone.</p>
+  <div class="modal-actions">
+    <app-button variant="secondary" (clicked)="cancelDelete()">Cancel</app-button>
+    <app-button variant="danger" [loading]="deleting()" (clicked)="confirmDelete()">Delete</app-button>
+  </div>
+</app-modal>
