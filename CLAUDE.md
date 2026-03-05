@@ -157,7 +157,17 @@ Build these once, use everywhere:
   1. `MedBase API.postman_collection.json` — copied from `MedBase-API/docs/`
 
 **OpenAPI Spec**
-- The API's OpenAPI spec is available at `https://dev-api.medbaseclinic.com/openapi.json`. Fetch it directly from the live API whenever you need request/response formats — it is not stored as a file in the repos.
+- The API's OpenAPI spec is available at `https://dev-api.medbaseclinic.com/openapi.json`. Fetch it directly from the live API whenever you need request/response formats — it is not stored as a file in the repos. To extract specific schemas:
+```bash
+curl -s https://dev-api.medbaseclinic.com/openapi.json | python -c "
+import json, sys
+data = json.load(sys.stdin)
+schemas = data['components']['schemas']
+for name in ['MedicineDetailResponse', 'MedicineCreate']:  # replace with needed schemas
+    print(f'--- {name} ---')
+    print(json.dumps(schemas[name], indent=2))
+"
+```
 
 **PR Workflow**
 - Each phase requires a Pull Request (PR)
