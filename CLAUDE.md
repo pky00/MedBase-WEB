@@ -248,3 +248,4 @@ for name in ['MedicineDetailResponse', 'MedicineCreate']:  # replace with needed
 5. **Reuse components** — Don't duplicate code
 6. **Use `ng` CLI** — Auto-generate and configure when possible
 7. **CLAUDE.md changes must be applied across all 3 repos** — When adding or updating any rule, setting, or section in any CLAUDE.md, apply the change to all three: `Planner/CLAUDE.md`, `MedBase-API/CLAUDE.md`, and `MedBase-WEB/CLAUDE.md`
+8. **Any code change must include updated tests** — When any code is changed, update/add relevant tests. All tests must be run and pass before pushing.
