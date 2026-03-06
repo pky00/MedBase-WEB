@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { API, ROUTES } from '../../core/constants/app.constants';
 import { PaginatedResponse, QueryParams } from '../../core/models/api.model';
-import { PatientDetail, PatientDocument } from '../../core/models/patient.model';
+import { PatientDetail, PatientDocument, PatientDocumentType } from '../../core/models/patient.model';
 import { ApiService } from '../../core/services/api';
 import { NotificationService } from '../../core/services/notification';
 import { ButtonComponent } from '../../shared/components/button/button';
@@ -26,6 +26,9 @@ export class PatientViewComponent implements OnInit {
   documents = signal<PatientDocument[]>([]);
   documentsLoading = signal(false);
   uploading = signal(false);
+
+  // Document types
+  documentTypes = signal<PatientDocumentType[]>([]);
 
   // Upload document modal
   uploadModalOpen = signal(false);
@@ -53,6 +56,7 @@ export class PatientViewComponent implements OnInit {
       this.patientId = Number(id);
       this.loadPatient();
       this.loadDocuments();
+      this.loadDocumentTypes();
     }
   }
 
@@ -84,6 +88,13 @@ export class PatientViewComponent implements OnInit {
         this.documentsLoading.set(false);
         this.notification.error('Failed to load documents.');
       },
+    });
+  }
+
+  loadDocumentTypes(): void {
+    this.api.get<PatientDocumentType[]>(API.PATIENT_DOCUMENT_TYPES).subscribe({
+      next: (types) => this.documentTypes.set(types),
+      error: () => {},
     });
   }
 

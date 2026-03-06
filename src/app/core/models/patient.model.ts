@@ -50,6 +50,11 @@ export interface PatientUpdate {
   is_active?: boolean | null;
 }
 
+export interface PatientDocumentType {
+  value: string;
+  label: string;
+}
+
 export interface PatientDocument {
   id: number;
   patient_id: number;

@@ -24,6 +24,7 @@
 .form-label { font-size: var(--font-sm); font-weight: 500; color: var(--text-primary); }
 .form-label .required { color: var(--error); }
 .form-input { padding: var(--space-sm) var(--space-md); font-size: var(--font-sm); color: var(--text-primary); border: 1px solid var(--border-default); border-radius: var(--radius-md); &::placeholder { color: var(--text-hint); } &:focus { outline: none; border-color: var(--primary-500); } }
+.form-select { padding: var(--space-sm) var(--space-md); font-size: var(--font-sm); color: var(--text-primary); border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--bg-white); &:focus { outline: none; border-color: var(--primary-500); } }
 .file-select-btn { display: inline-flex; align-items: center; padding: var(--space-sm) var(--space-md); font-size: var(--font-sm); color: var(--text-secondary); background: var(--bg-light); border: 1px dashed var(--border-default); border-radius: var(--radius-md); cursor: pointer; &:hover { border-color: var(--primary-500); color: var(--text-primary); } }
 .file-select-btn.file-selected { border-style: solid; border-color: var(--primary-500); color: var(--text-primary); }
 .documents-list { display: flex; flex-direction: column; gap: var(--space-sm); }

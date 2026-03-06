@@ -38,4 +38,5 @@ export const API = {
   DOCTORS: 'doctors',
   PATIENTS: 'patients',
   PATIENT_DOCUMENTS: 'patient-documents',
+  PATIENT_DOCUMENT_TYPES: 'patient-document-types',
 } as const;

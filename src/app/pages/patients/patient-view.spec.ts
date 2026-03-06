@@ -25,7 +25,7 @@ describe('PatientViewComponent', () => {
 
   const mockDocResponse = {
     items: [
-      { id: 1, patient_id: 1, document_name: 'test.pdf', document_type: 'lab', file_path: '/test.pdf', file_url: 'https://example.com/test.pdf', upload_date: '2024-01-01T00:00:00', is_deleted: false, created_at: '2024-01-01', updated_at: '2024-01-01', created_by: null, updated_by: null },
+      { id: 1, patient_id: 1, document_name: 'test.pdf', document_type: 'lab_report', file_path: '/test.pdf', file_url: 'https://example.com/test.pdf', upload_date: '2024-01-01T00:00:00', is_deleted: false, created_at: '2024-01-01', updated_at: '2024-01-01', created_by: null, updated_by: null },
     ],
     total: 1,
     page: 1,
@@ -33,9 +33,18 @@ describe('PatientViewComponent', () => {
     pages: 1,
   };
 
+  const mockDocumentTypes = [
+    { value: 'lab_report', label: 'Lab Report' },
+    { value: 'insurance', label: 'Insurance' },
+    { value: 'referral', label: 'Referral' },
+  ];
+
   beforeEach(async () => {
     api = {
-      get: vi.fn().mockReturnValue(of(mockPatient)),
+      get: vi.fn().mockImplementation((url: string) => {
+        if (url === 'patient-document-types') return of(mockDocumentTypes);
+        return of(mockPatient);
+      }),
       getList: vi.fn().mockReturnValue(of(mockDocResponse)),
       delete: vi.fn().mockReturnValue(of({})),
       postFormData: vi.fn().mockReturnValue(of({})),
@@ -69,6 +78,20 @@ describe('PatientViewComponent', () => {
     expect(api.get).toHaveBeenCalledWith('patients/1');
     expect(component.patient()).toEqual(mockPatient);
     expect(component.loading()).toBe(false);
+  });
+
+  it('should load document types on init', () => {
+    expect(api.get).toHaveBeenCalledWith('patient-document-types');
+    expect(component.documentTypes()).toEqual(mockDocumentTypes);
+  });
+
+  it('should handle load document types error gracefully', () => {
+    api.get.mockImplementation((url: string) => {
+      if (url === 'patient-document-types') return throwError(() => new Error('fail'));
+      return of(mockPatient);
+    });
+    component.loadDocumentTypes();
+    expect(component.documentTypes()).toEqual(mockDocumentTypes); // retains previous value
   });
 
   it('should load documents on init', () => {

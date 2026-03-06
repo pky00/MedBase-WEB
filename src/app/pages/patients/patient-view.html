@@ -203,13 +203,16 @@
     </div>
     <div class="form-field">
       <label class="form-label" for="docType">Document Type</label>
-      <input
+      <select
         id="docType"
-        type="text"
-        class="form-input"
-        placeholder="e.g. lab_report, insurance, referral (optional)"
+        class="form-select"
         [(ngModel)]="documentType"
-      />
+      >
+        <option value="">Select type (optional)</option>
+        @for (type of documentTypes(); track type.value) {
+          <option [value]="type.value">{{ type.label }}</option>
+        }
+      </select>
     </div>
     <div class="form-field">
       <label class="form-label">File <span class="required">*</span></label>
