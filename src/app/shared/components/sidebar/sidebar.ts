@@ -44,6 +44,13 @@ export class SidebarComponent {
         ],
       },
       {
+        title: 'Clinic',
+        items: [
+          { label: 'Appointments', route: ROUTES.APPOINTMENTS, icon: '📅' },
+          { label: 'Medical Records', route: ROUTES.MEDICAL_RECORDS, icon: '📝' },
+        ],
+      },
+      {
         title: 'People',
         items: [
           { label: 'Patients', route: ROUTES.PATIENTS, icon: '🧑' },

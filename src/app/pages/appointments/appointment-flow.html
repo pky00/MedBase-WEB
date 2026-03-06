@@ -1,0 +1,312 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Appointment Flow</h1>
+    <p class="page-subtitle">Process appointment step by step</p>
+  </div>
+  <div class="header-actions">
+    <app-button variant="secondary" (clicked)="goBack()">Back to Details</app-button>
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading-spinner message="Loading..." />
+} @else if (appointment(); as a) {
+  <!-- Appointment summary bar -->
+  <div class="summary-bar">
+    <div class="summary-item">
+      <span class="summary-label">Patient</span>
+      <span class="summary-value">{{ a.patient_name || '—' }}</span>
+    </div>
+    <div class="summary-item">
+      <span class="summary-label">Doctor</span>
+      <span class="summary-value">{{ a.doctor_name || '—' }}</span>
+    </div>
+    <div class="summary-item">
+      <span class="summary-label">Date</span>
+      <span class="summary-value">{{ formatDateTime(a.appointment_date) }}</span>
+    </div>
+    <div class="summary-item">
+      <span class="summary-label">Status</span>
+      <span class="badge" [class]="'badge-' + a.status">{{ formatStatus(a.status) }}</span>
+    </div>
+  </div>
+
+  <!-- Step indicators -->
+  <div class="steps">
+    <button
+      class="step"
+      [class.step-active]="currentStep() === 'overview'"
+      [class.step-done]="a.status !== 'scheduled'"
+      (click)="setStep('overview')"
+    >
+      <span class="step-number">1</span>
+      <span class="step-label">Begin</span>
+    </button>
+    <div class="step-line" [class.step-line-done]="a.vital_signs"></div>
+    <button
+      class="step"
+      [class.step-active]="currentStep() === 'vitals'"
+      [class.step-done]="a.vital_signs !== null"
+      (click)="setStep('vitals')"
+    >
+      <span class="step-number">2</span>
+      <span class="step-label">Vitals</span>
+    </button>
+    <div class="step-line" [class.step-line-done]="a.medical_record"></div>
+    <button
+      class="step"
+      [class.step-active]="currentStep() === 'record'"
+      [class.step-done]="a.medical_record !== null"
+      (click)="setStep('record')"
+    >
+      <span class="step-number">3</span>
+      <span class="step-label">Record</span>
+    </button>
+    <div class="step-line" [class.step-line-done]="a.status === 'completed'"></div>
+    <button
+      class="step"
+      [class.step-active]="currentStep() === 'complete'"
+      [class.step-done]="a.status === 'completed'"
+      (click)="setStep('complete')"
+    >
+      <span class="step-number">4</span>
+      <span class="step-label">Complete</span>
+    </button>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="alert-error">{{ errorMessage() }}</div>
+  }
+
+  <!-- Step content -->
+  <div class="step-content">
+    @if (currentStep() === 'overview') {
+      <div class="step-card">
+        <h3 class="step-title">Begin Appointment</h3>
+        @if (a.status === 'scheduled') {
+          <p class="step-description">Start processing this appointment by changing the status to "In Progress".</p>
+          <div class="step-actions">
+            <app-button variant="primary" [loading]="saving()" (clicked)="beginAppointment()">
+              Begin Appointment
+            </app-button>
+          </div>
+        } @else if (a.status === 'in_progress') {
+          <p class="step-description">Appointment is in progress. Continue to the next step.</p>
+          <div class="step-actions">
+            <app-button variant="primary" (clicked)="setStep('vitals')">Next: Vital Signs</app-button>
+          </div>
+        } @else if (a.status === 'completed') {
+          <p class="step-description">This appointment has been completed.</p>
+          <div class="step-actions">
+            <app-button variant="secondary" (clicked)="goToAppointments()">Back to Appointments</app-button>
+          </div>
+        } @else if (a.status === 'cancelled') {
+          <p class="step-description">This appointment has been cancelled.</p>
+          <div class="step-actions">
+            <app-button variant="secondary" (clicked)="goToAppointments()">Back to Appointments</app-button>
+          </div>
+        }
+      </div>
+    }
+
+    @if (currentStep() === 'vitals') {
+      <div class="step-card">
+        <h3 class="step-title">Vital Signs</h3>
+        <p class="step-description">Record the patient's vital signs. All fields are optional.</p>
+
+        <form (ngSubmit)="saveVitals()">
+          <div class="form-grid">
+            <app-input
+              label="Systolic BP (mmHg)"
+              type="number"
+              placeholder="e.g. 120"
+              inputId="bpSystolic"
+              [(ngModel)]="bpSystolic"
+              name="bpSystolic"
+              [disabled]="isReadOnly"
+            />
+            <app-input
+              label="Diastolic BP (mmHg)"
+              type="number"
+              placeholder="e.g. 80"
+              inputId="bpDiastolic"
+              [(ngModel)]="bpDiastolic"
+              name="bpDiastolic"
+              [disabled]="isReadOnly"
+            />
+            <app-input
+              label="Heart Rate (bpm)"
+              type="number"
+              placeholder="e.g. 72"
+              inputId="heartRate"
+              [(ngModel)]="heartRate"
+              name="heartRate"
+              [disabled]="isReadOnly"
+            />
+            <app-input
+              label="Temperature (°C)"
+              placeholder="e.g. 36.5"
+              inputId="temperature"
+              [(ngModel)]="temperature"
+              name="temperature"
+              [disabled]="isReadOnly"
+            />
+            <app-input
+              label="Respiratory Rate (/min)"
+              type="number"
+              placeholder="e.g. 16"
+              inputId="respiratoryRate"
+              [(ngModel)]="respiratoryRate"
+              name="respiratoryRate"
+              [disabled]="isReadOnly"
+            />
+            <app-input
+              label="Weight (kg)"
+              placeholder="e.g. 70"
+              inputId="weight"
+              [(ngModel)]="weight"
+              name="weight"
+              [disabled]="isReadOnly"
+            />
+            <app-input
+              label="Height (cm)"
+              placeholder="e.g. 175"
+              inputId="height"
+              [(ngModel)]="height"
+              name="height"
+              [disabled]="isReadOnly"
+            />
+            <app-input
+              label="Notes"
+              type="textarea"
+              placeholder="Additional notes"
+              inputId="vitalNotes"
+              [(ngModel)]="vitalNotes"
+              name="vitalNotes"
+              [disabled]="isReadOnly"
+            />
+          </div>
+
+          @if (!isReadOnly) {
+            <div class="step-actions">
+              <app-button variant="secondary" (clicked)="setStep('record')">Skip to Record</app-button>
+              <app-button type="submit" variant="primary" [loading]="saving()">
+                {{ appointment()?.vital_signs ? 'Update Vitals' : 'Save Vitals' }} & Next
+              </app-button>
+            </div>
+          } @else {
+            <div class="step-actions">
+              <app-button variant="secondary" (clicked)="setStep('record')">Next: Record</app-button>
+            </div>
+          }
+        </form>
+      </div>
+    }
+
+    @if (currentStep() === 'record') {
+      <div class="step-card">
+        <h3 class="step-title">Medical Record</h3>
+        <p class="step-description">Enter the medical record for this appointment. All fields are optional.</p>
+
+        <form (ngSubmit)="saveMedicalRecord()">
+          <div class="form-grid">
+            <app-input
+              label="Chief Complaint"
+              type="textarea"
+              placeholder="Patient's primary complaint"
+              inputId="chiefComplaint"
+              [(ngModel)]="chiefComplaint"
+              name="chiefComplaint"
+              [disabled]="isReadOnly"
+            />
+            <app-input
+              label="Diagnosis"
+              type="textarea"
+              placeholder="Diagnosis"
+              inputId="diagnosis"
+              [(ngModel)]="diagnosis"
+              name="diagnosis"
+              [disabled]="isReadOnly"
+            />
+            <app-input
+              label="Treatment Notes"
+              type="textarea"
+              placeholder="Treatment plan and notes"
+              inputId="treatmentNotes"
+              [(ngModel)]="treatmentNotes"
+              name="treatmentNotes"
+              [disabled]="isReadOnly"
+            />
+            <app-input
+              label="Follow-up Date"
+              type="date"
+              inputId="followUpDate"
+              [(ngModel)]="followUpDate"
+              name="followUpDate"
+              [disabled]="isReadOnly"
+            />
+          </div>
+
+          @if (!isReadOnly) {
+            <div class="step-actions">
+              <app-button variant="secondary" (clicked)="setStep('complete')">Skip to Complete</app-button>
+              <app-button type="submit" variant="primary" [loading]="saving()">
+                {{ appointment()?.medical_record ? 'Update Record' : 'Save Record' }} & Next
+              </app-button>
+            </div>
+          } @else {
+            <div class="step-actions">
+              <app-button variant="secondary" (clicked)="setStep('complete')">Next: Complete</app-button>
+            </div>
+          }
+        </form>
+      </div>
+    }
+
+    @if (currentStep() === 'complete') {
+      <div class="step-card">
+        <h3 class="step-title">Complete Appointment</h3>
+        @if (a.status === 'completed') {
+          <p class="step-description">This appointment is already completed.</p>
+          <div class="step-actions">
+            <app-button variant="secondary" (clicked)="goToAppointments()">Back to Appointments</app-button>
+            <app-button variant="primary" (clicked)="goBack()">View Details</app-button>
+          </div>
+        } @else if (a.status === 'cancelled') {
+          <p class="step-description">This appointment has been cancelled.</p>
+          <div class="step-actions">
+            <app-button variant="secondary" (clicked)="goToAppointments()">Back to Appointments</app-button>
+          </div>
+        } @else {
+          <p class="step-description">Review the appointment and mark it as completed.</p>
+
+          <div class="completion-summary">
+            <div class="completion-item">
+              <span class="completion-label">Vital Signs</span>
+              @if (a.vital_signs) {
+                <span class="completion-status completion-done">Recorded</span>
+              } @else {
+                <span class="completion-status completion-pending">Not recorded</span>
+              }
+            </div>
+            <div class="completion-item">
+              <span class="completion-label">Medical Record</span>
+              @if (a.medical_record) {
+                <span class="completion-status completion-done">Recorded</span>
+              } @else {
+                <span class="completion-status completion-pending">Not recorded</span>
+              }
+            </div>
+          </div>
+
+          <div class="step-actions">
+            <app-button variant="secondary" (clicked)="setStep('vitals')">Back to Vitals</app-button>
+            <app-button variant="primary" [loading]="saving()" (clicked)="completeAppointment()">
+              Complete Appointment
+            </app-button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+}

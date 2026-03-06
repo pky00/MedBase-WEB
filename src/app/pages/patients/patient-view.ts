@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { API, ROUTES } from '../../core/constants/app.constants';
 import { PaginatedResponse, QueryParams } from '../../core/models/api.model';
+import { Appointment, MedicalRecord } from '../../core/models/appointment.model';
 import { PatientDetail, PatientDocument, PatientDocumentType } from '../../core/models/patient.model';
 import { ApiService } from '../../core/services/api';
 import { NotificationService } from '../../core/services/notification';
@@ -41,6 +42,14 @@ export class PatientViewComponent implements OnInit {
   docToDelete = signal<PatientDocument | null>(null);
   deletingDoc = signal(false);
 
+  // Appointments
+  appointments = signal<Appointment[]>([]);
+  appointmentsLoading = signal(false);
+
+  // Medical Records
+  medicalRecords = signal<MedicalRecord[]>([]);
+  recordsLoading = signal(false);
+
   private patientId: number | null = null;
 
   constructor(
@@ -57,6 +66,8 @@ export class PatientViewComponent implements OnInit {
       this.loadPatient();
       this.loadDocuments();
       this.loadDocumentTypes();
+      this.loadAppointments();
+      this.loadMedicalRecords();
     }
   }
 
@@ -179,6 +190,50 @@ export class PatientViewComponent implements OnInit {
   cancelDeleteDoc(): void {
     this.deleteDocModalOpen.set(false);
     this.docToDelete.set(null);
+  }
+
+  loadAppointments(): void {
+    if (!this.patientId) return;
+    this.appointmentsLoading.set(true);
+    const params: QueryParams = { page: 1, size: 100, patient_id: this.patientId, sort: 'appointment_date', order: 'desc' };
+    this.api.getList<Appointment>(API.APPOINTMENTS, params).subscribe({
+      next: (response: PaginatedResponse<Appointment>) => {
+        this.appointments.set(response.items);
+        this.appointmentsLoading.set(false);
+      },
+      error: () => {
+        this.appointmentsLoading.set(false);
+      },
+    });
+  }
+
+  loadMedicalRecords(): void {
+    if (!this.patientId) return;
+    this.recordsLoading.set(true);
+    const params: QueryParams = { page: 1, size: 100, patient_id: this.patientId };
+    this.api.getList<MedicalRecord>(API.MEDICAL_RECORDS, params).subscribe({
+      next: (response: PaginatedResponse<MedicalRecord>) => {
+        this.medicalRecords.set(response.items);
+        this.recordsLoading.set(false);
+      },
+      error: () => {
+        this.recordsLoading.set(false);
+      },
+    });
+  }
+
+  viewAppointment(id: number): void {
+    this.router.navigate([ROUTES.APPOINTMENTS, id]);
+  }
+
+  formatStatus(status: string): string {
+    const map: Record<string, string> = {
+      scheduled: 'Scheduled',
+      in_progress: 'In Progress',
+      completed: 'Completed',
+      cancelled: 'Cancelled',
+    };
+    return map[status] || status;
   }
 
   setTab(tab: 'documents' | 'appointments' | 'records'): void {

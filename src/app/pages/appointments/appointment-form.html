@@ -1,0 +1,102 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ isEdit() ? 'Edit Appointment' : 'Create Appointment' }}</h1>
+    <p class="page-subtitle">{{ isEdit() ? 'Update appointment information' : 'Schedule a new appointment' }}</p>
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading-spinner message="Loading..." />
+} @else {
+  <div class="form-card">
+    @if (errorMessage()) {
+      <div class="alert-error">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-section">
+        <h3 class="form-section-title">Appointment Details</h3>
+        <div class="form-grid">
+          <app-dropdown
+            label="Patient"
+            placeholder="Select patient"
+            [options]="patientOptions()"
+            [required]="true"
+            [hasMore]="patientHasMore()"
+            (loadMore)="onPatientLoadMore()"
+            (searchChanged)="onPatientSearch($event)"
+            [(ngModel)]="patientId"
+            name="patientId"
+          />
+          <app-dropdown
+            label="Doctor"
+            placeholder="Select doctor"
+            [options]="doctorOptions()"
+            [hasMore]="doctorHasMore()"
+            (loadMore)="onDoctorLoadMore()"
+            (searchChanged)="onDoctorSearch($event)"
+            [(ngModel)]="doctorId"
+            name="doctorId"
+          />
+          <app-input
+            label="Appointment Date"
+            type="datetime-local"
+            inputId="appointmentDate"
+            [required]="true"
+            [(ngModel)]="appointmentDate"
+            name="appointmentDate"
+          />
+          <div class="form-field">
+            <label class="form-label" for="type">Type <span class="required">*</span></label>
+            <select id="type" class="form-select" [value]="appointmentType" (change)="onTypeChange($event)">
+              <option value="scheduled">Scheduled</option>
+              <option value="walk_in">Walk-in</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="location">Location</label>
+            <select id="location" class="form-select" [value]="location" (change)="onLocationChange($event)">
+              <option value="internal">Internal (at clinic)</option>
+              <option value="external">External (with partner)</option>
+            </select>
+          </div>
+          @if (location === 'external') {
+            <app-dropdown
+              label="Partner"
+              placeholder="Select partner"
+              [options]="partnerOptions()"
+              [hasMore]="partnerHasMore()"
+              (loadMore)="onPartnerLoadMore()"
+              (searchChanged)="onPartnerSearch($event)"
+              [(ngModel)]="partnerId"
+              name="partnerId"
+            />
+          }
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="form-section-title">Notes</h3>
+        <div class="form-grid">
+          <app-input
+            label="Notes"
+            type="textarea"
+            placeholder="Enter appointment notes"
+            inputId="notes"
+            [(ngModel)]="notes"
+            name="notes"
+          />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <app-button variant="secondary" (clicked)="cancel()">Cancel</app-button>
+        <app-button type="submit" variant="primary" [loading]="saving()">
+          {{ isEdit() ? 'Update Appointment' : 'Create Appointment' }}
+        </app-button>
+      </div>
+    </form>
+  </div>
+}

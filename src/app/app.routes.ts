@@ -323,6 +323,58 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'appointments',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/appointments/appointment-list').then(
+                (m) => m.AppointmentListComponent
+              ),
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import('./pages/appointments/appointment-form').then(
+                (m) => m.AppointmentFormComponent
+              ),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./pages/appointments/appointment-view').then(
+                (m) => m.AppointmentViewComponent
+              ),
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import('./pages/appointments/appointment-form').then(
+                (m) => m.AppointmentFormComponent
+              ),
+          },
+          {
+            path: ':id/flow',
+            loadComponent: () =>
+              import('./pages/appointments/appointment-flow').then(
+                (m) => m.AppointmentFlowComponent
+              ),
+          },
+        ],
+      },
+      {
+        path: 'medical-records',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/medical-records/record-list').then(
+                (m) => m.RecordListComponent
+              ),
+          },
+        ],
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

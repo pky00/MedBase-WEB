@@ -16,6 +16,8 @@ export const ROUTES = {
   PARTNERS: '/partners',
   DOCTORS: '/doctors',
   PATIENTS: '/patients',
+  APPOINTMENTS: '/appointments',
+  MEDICAL_RECORDS: '/medical-records',
 } as const;
 
 // Display formatters
@@ -39,4 +41,7 @@ export const API = {
   PATIENTS: 'patients',
   PATIENT_DOCUMENTS: 'patient-documents',
   PATIENT_DOCUMENT_TYPES: 'patient-document-types',
+  APPOINTMENTS: 'appointments',
+  VITAL_SIGNS: 'vital-signs',
+  MEDICAL_RECORDS: 'medical-records',
 } as const;
