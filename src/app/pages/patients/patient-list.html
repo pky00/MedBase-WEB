@@ -1,0 +1,58 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Patients</h1>
+    <p class="page-subtitle">Manage patient records</p>
+  </div>
+  <app-button variant="primary" (clicked)="createPatient()">+ New Patient</app-button>
+</div>
+
+<div class="filters-bar">
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Search by name, phone, or email..."
+      [(ngModel)]="searchQuery"
+      (keyup.enter)="onSearch()"
+    />
+  </div>
+  <select class="filter-select" (change)="table.onFilterChange(filterGender, $event); loadPatients()">
+    <option value="">All Genders</option>
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+  </select>
+  <select class="filter-select" (change)="table.onFilterChange(filterActive, $event); loadPatients()">
+    <option value="">All Status</option>
+    <option value="true">Active</option>
+    <option value="false">Inactive</option>
+  </select>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [data]="patients()"
+  [actions]="actions"
+  [loading]="table.loading()"
+  [totalItems]="table.totalItems()"
+  [currentPage]="table.currentPage()"
+  [pageSize]="table.pageSize"
+  [sortColumn]="table.sortColumn()"
+  [sortOrder]="table.sortOrder()"
+  (sorted)="table.onSort($event); loadPatients()"
+  (pageChanged)="table.onPageChange($event); loadPatients()"
+  (actionClicked)="onAction($event)"
+/>
+
+<app-modal
+  title="Delete Patient"
+  [isOpen]="deleteModalOpen()"
+  (closed)="cancelDelete()"
+>
+  <p>Are you sure you want to delete <strong>{{ itemToDelete()?.['first_name'] }} {{ itemToDelete()?.['last_name'] }}</strong>?</p>
+  <p class="modal-warning">This action cannot be undone.</p>
+  <div class="modal-actions">
+    <app-button variant="secondary" (clicked)="cancelDelete()">Cancel</app-button>
+    <app-button variant="danger" [loading]="deleting()" (clicked)="confirmDelete()">Delete</app-button>
+  </div>
+</app-modal>

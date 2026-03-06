@@ -1,0 +1,120 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ isEdit() ? 'Edit Patient' : 'Create Patient' }}</h1>
+    <p class="page-subtitle">{{ isEdit() ? 'Update patient information' : 'Add a new patient' }}</p>
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading-spinner message="Loading..." />
+} @else {
+  <div class="form-card">
+    @if (errorMessage()) {
+      <div class="alert-error">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-section">
+        <h3 class="form-section-title">Personal Information</h3>
+        <div class="form-grid">
+          <app-input
+            label="First Name"
+            placeholder="Enter first name"
+            inputId="firstName"
+            [required]="true"
+            [(ngModel)]="firstName"
+            name="firstName"
+          />
+          <app-input
+            label="Last Name"
+            placeholder="Enter last name"
+            inputId="lastName"
+            [required]="true"
+            [(ngModel)]="lastName"
+            name="lastName"
+          />
+          <app-input
+            label="Date of Birth"
+            type="date"
+            inputId="dateOfBirth"
+            [(ngModel)]="dateOfBirth"
+            name="dateOfBirth"
+          />
+          <div class="form-field">
+            <label class="form-label" for="gender">Gender</label>
+            <select id="gender" class="form-select" [value]="gender" (change)="onGenderChange($event)">
+              <option value="">Select gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="form-section-title">Contact Information</h3>
+        <div class="form-grid">
+          <app-input
+            label="Phone"
+            placeholder="Enter phone number"
+            inputId="phone"
+            [(ngModel)]="phone"
+            name="phone"
+          />
+          <app-input
+            label="Email"
+            type="email"
+            placeholder="Enter email address"
+            inputId="email"
+            [(ngModel)]="email"
+            name="email"
+          />
+          <app-input
+            label="Address"
+            type="textarea"
+            placeholder="Enter address"
+            inputId="address"
+            [(ngModel)]="address"
+            name="address"
+          />
+          <div class="form-field">
+            <label class="form-label" for="is_active">Status</label>
+            <select id="is_active" class="form-select" [value]="isActive" (change)="onActiveChange($event)">
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="form-section-title">Emergency Contact</h3>
+        <div class="form-grid">
+          <app-input
+            label="Emergency Contact Name"
+            placeholder="Enter emergency contact name"
+            inputId="emergencyContact"
+            [(ngModel)]="emergencyContact"
+            name="emergencyContact"
+          />
+          <app-input
+            label="Emergency Phone"
+            placeholder="Enter emergency phone number"
+            inputId="emergencyPhone"
+            [(ngModel)]="emergencyPhone"
+            name="emergencyPhone"
+          />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <app-button variant="secondary" (clicked)="cancel()">Cancel</app-button>
+        <app-button type="submit" variant="primary" [loading]="saving()">
+          {{ isEdit() ? 'Update Patient' : 'Create Patient' }}
+        </app-button>
+      </div>
+    </form>
+  </div>
+}

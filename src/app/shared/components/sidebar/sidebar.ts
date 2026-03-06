@@ -46,6 +46,7 @@ export class SidebarComponent {
       {
         title: 'People',
         items: [
+          { label: 'Patients', route: ROUTES.PATIENTS, icon: '🧑' },
           { label: 'Partners', route: ROUTES.PARTNERS, icon: '🤝' },
           { label: 'Doctors', route: ROUTES.DOCTORS, icon: '👨‍⚕️' },
         ],

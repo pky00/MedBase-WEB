@@ -257,6 +257,39 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'patients',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/patients/patient-list').then(
+                (m) => m.PatientListComponent
+              ),
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import('./pages/patients/patient-form').then(
+                (m) => m.PatientFormComponent
+              ),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./pages/patients/patient-view').then(
+                (m) => m.PatientViewComponent
+              ),
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import('./pages/patients/patient-form').then(
+                (m) => m.PatientFormComponent
+              ),
+          },
+        ],
+      },
+      {
         path: 'doctors',
         children: [
           {
