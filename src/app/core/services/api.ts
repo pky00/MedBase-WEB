@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, retry } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { PaginatedResponse, QueryParams } from '../models/api.model';
@@ -28,11 +28,11 @@ export class ApiService {
   getList<T>(endpoint: string, params?: QueryParams): Observable<PaginatedResponse<T>> {
     return this.http.get<PaginatedResponse<T>>(`${this.baseUrl}/${endpoint}`, {
       params: this.buildParams(params),
-    });
+    }).pipe(retry({ count: 1, delay: 1000 }));
   }
 
   get<T>(endpoint: string): Observable<T> {
-    return this.http.get<T>(`${this.baseUrl}/${endpoint}`);
+    return this.http.get<T>(`${this.baseUrl}/${endpoint}`).pipe(retry({ count: 1, delay: 1000 }));
   }
 
   post<T>(endpoint: string, body: unknown): Observable<T> {
