@@ -126,29 +126,9 @@
 
       <div class="tab-content">
         @if (activeTab() === 'documents') {
-          <!-- Document Upload -->
+          <!-- Document Upload Button -->
           <div class="upload-section">
-            <div class="upload-row">
-              <input
-                type="text"
-                class="doc-type-input"
-                placeholder="Document type (optional)"
-                [(ngModel)]="documentType"
-              />
-              <label class="upload-btn">
-                @if (uploading()) {
-                  <app-loading-spinner size="small" />
-                } @else {
-                  <span>Upload File</span>
-                }
-                <input
-                  type="file"
-                  class="file-input"
-                  (change)="onFileSelected($event)"
-                  [disabled]="uploading()"
-                />
-              </label>
-            </div>
+            <app-button variant="primary" (clicked)="openUploadModal()">Upload Document</app-button>
           </div>
 
           <!-- Documents List -->
@@ -203,6 +183,51 @@
     </div>
   </div>
 }
+
+<!-- Upload Document Modal -->
+<app-modal
+  title="Upload Document"
+  [isOpen]="uploadModalOpen()"
+  (closed)="closeUploadModal()"
+>
+  <div class="upload-form">
+    <div class="form-field">
+      <label class="form-label" for="docName">Document Name</label>
+      <input
+        id="docName"
+        type="text"
+        class="form-input"
+        placeholder="Enter document name (optional)"
+        [(ngModel)]="documentName"
+      />
+    </div>
+    <div class="form-field">
+      <label class="form-label" for="docType">Document Type</label>
+      <input
+        id="docType"
+        type="text"
+        class="form-input"
+        placeholder="e.g. lab_report, insurance, referral (optional)"
+        [(ngModel)]="documentType"
+      />
+    </div>
+    <div class="form-field">
+      <label class="form-label">File <span class="required">*</span></label>
+      <label class="file-select-btn" [class.file-selected]="selectedFile">
+        <span>{{ selectedFile ? selectedFile.name : 'Choose File' }}</span>
+        <input
+          type="file"
+          class="file-input"
+          (change)="onFileSelected($event)"
+        />
+      </label>
+    </div>
+  </div>
+  <div class="modal-actions">
+    <app-button variant="secondary" (clicked)="closeUploadModal()">Cancel</app-button>
+    <app-button variant="primary" [loading]="uploading()" [disabled]="!selectedFile" (clicked)="uploadDocument()">Upload</app-button>
+  </div>
+</app-modal>
 
 <!-- Delete Document Modal -->
 <app-modal

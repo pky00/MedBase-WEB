@@ -26,7 +26,12 @@ export class PatientViewComponent implements OnInit {
   documents = signal<PatientDocument[]>([]);
   documentsLoading = signal(false);
   uploading = signal(false);
+
+  // Upload document modal
+  uploadModalOpen = signal(false);
+  documentName = '';
   documentType = '';
+  selectedFile: File | null = null;
 
   // Delete document modal
   deleteDocModalOpen = signal(false);
@@ -82,15 +87,35 @@ export class PatientViewComponent implements OnInit {
     });
   }
 
+  openUploadModal(): void {
+    this.documentName = '';
+    this.documentType = '';
+    this.selectedFile = null;
+    this.uploadModalOpen.set(true);
+  }
+
+  closeUploadModal(): void {
+    this.uploadModalOpen.set(false);
+    this.selectedFile = null;
+  }
+
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (!input.files?.length || !this.patientId) return;
+    if (input.files?.length) {
+      this.selectedFile = input.files[0];
+    }
+  }
 
-    const file = input.files[0];
+  uploadDocument(): void {
+    if (!this.selectedFile || !this.patientId) return;
+
     this.uploading.set(true);
 
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', this.selectedFile);
+    if (this.documentName.trim()) {
+      formData.append('document_name', this.documentName.trim());
+    }
     if (this.documentType.trim()) {
       formData.append('document_type', this.documentType.trim());
     }
@@ -101,15 +126,16 @@ export class PatientViewComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.uploading.set(false);
+        this.uploadModalOpen.set(false);
+        this.selectedFile = null;
+        this.documentName = '';
         this.documentType = '';
         this.notification.success('Document uploaded successfully.');
         this.loadDocuments();
-        input.value = '';
       },
       error: () => {
         this.uploading.set(false);
         this.notification.error('Failed to upload document.');
-        input.value = '';
       },
     });
   }

@@ -140,6 +140,85 @@ describe('PatientViewComponent', () => {
     expect(navigateSpy).toHaveBeenCalledWith(['/patients']);
   });
 
+  // Upload modal tests
+  it('should open upload modal with empty fields', () => {
+    component.openUploadModal();
+    expect(component.uploadModalOpen()).toBe(true);
+    expect(component.documentName).toBe('');
+    expect(component.documentType).toBe('');
+    expect(component.selectedFile).toBeNull();
+  });
+
+  it('should close upload modal and reset state', () => {
+    component.uploadModalOpen.set(true);
+    component.selectedFile = new File(['test'], 'test.pdf');
+    component.closeUploadModal();
+    expect(component.uploadModalOpen()).toBe(false);
+    expect(component.selectedFile).toBeNull();
+  });
+
+  it('should set selectedFile on file selection', () => {
+    const file = new File(['test'], 'test.pdf');
+    const event = { target: { files: [file] } } as unknown as Event;
+    component.onFileSelected(event);
+    expect(component.selectedFile).toBe(file);
+  });
+
+  it('should not set selectedFile when no files selected', () => {
+    const event = { target: { files: [] } } as unknown as Event;
+    component.onFileSelected(event);
+    expect(component.selectedFile).toBeNull();
+  });
+
+  it('should upload document with name and type', () => {
+    component.selectedFile = new File(['test'], 'test.pdf');
+    component.documentName = 'My Document';
+    component.documentType = 'lab_report';
+    component.uploadModalOpen.set(true);
+
+    component.uploadDocument();
+
+    expect(api.postFormData).toHaveBeenCalledWith(
+      'patients/1/documents',
+      expect.any(FormData)
+    );
+    expect(notification.success).toHaveBeenCalledWith('Document uploaded successfully.');
+    expect(component.uploadModalOpen()).toBe(false);
+    expect(component.selectedFile).toBeNull();
+    expect(component.documentName).toBe('');
+    expect(component.documentType).toBe('');
+  });
+
+  it('should upload document without optional fields', () => {
+    component.selectedFile = new File(['test'], 'test.pdf');
+    component.documentName = '';
+    component.documentType = '';
+
+    component.uploadDocument();
+
+    expect(api.postFormData).toHaveBeenCalledWith(
+      'patients/1/documents',
+      expect.any(FormData)
+    );
+    expect(notification.success).toHaveBeenCalledWith('Document uploaded successfully.');
+  });
+
+  it('should not upload when no file selected', () => {
+    component.selectedFile = null;
+    component.uploadDocument();
+    expect(api.postFormData).not.toHaveBeenCalled();
+  });
+
+  it('should handle upload error', () => {
+    api.postFormData.mockReturnValue(throwError(() => new Error('fail')));
+    component.selectedFile = new File(['test'], 'test.pdf');
+
+    component.uploadDocument();
+
+    expect(notification.error).toHaveBeenCalledWith('Failed to upload document.');
+    expect(component.uploading()).toBe(false);
+  });
+
   it('should format gender', () => {
     expect(component.formatGender('male')).toBe('Male');
     expect(component.formatGender('female')).toBe('Female');
