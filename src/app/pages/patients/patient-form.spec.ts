@@ -57,8 +57,8 @@ describe('PatientFormComponent', () => {
       expect(component.isEdit()).toBe(false);
     });
 
-    it('should load third parties on init in create mode', () => {
-      expect(api.getList).toHaveBeenCalledWith('third-parties', expect.objectContaining({ page: 1, size: 50 }));
+    it('should load third parties on init in create mode with exclude_patients flag', () => {
+      expect(api.getList).toHaveBeenCalledWith('third-parties', expect.objectContaining({ page: 1, size: 50, exclude_patients: true }));
       expect(component.thirdPartyOptions().length).toBe(1);
     });
 

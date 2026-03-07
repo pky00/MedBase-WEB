@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -50,7 +50,8 @@ export class DoctorFormComponent implements OnInit {
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private notification: NotificationService
+    private notification: NotificationService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -67,7 +68,7 @@ export class DoctorFormComponent implements OnInit {
 
   // Third party dropdown methods
   loadThirdParties(search?: string): void {
-    const params: QueryParams = { page: this.thirdPartyPage, size: 50 };
+    const params: QueryParams = { page: this.thirdPartyPage, size: 50, exclude_doctors: true };
     if (search) params['search'] = search;
 
     this.api.getList<ThirdParty>(API.THIRD_PARTIES, params).subscribe({
@@ -101,6 +102,7 @@ export class DoctorFormComponent implements OnInit {
           this.name = tp.name || this.name;
           this.phone = tp.phone || this.phone;
           this.email = tp.email || this.email;
+          this.cdr.markForCheck();
         },
       });
     }

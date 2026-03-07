@@ -71,8 +71,8 @@ describe('DoctorFormComponent', () => {
       expect(component.partnerOptions().length).toBe(1);
     });
 
-    it('should load third parties on init in create mode', () => {
-      expect(api.getList).toHaveBeenCalledWith('third-parties', expect.objectContaining({ page: 1, size: 50 }));
+    it('should load third parties on init in create mode with exclude_doctors flag', () => {
+      expect(api.getList).toHaveBeenCalledWith('third-parties', expect.objectContaining({ page: 1, size: 50, exclude_doctors: true }));
       expect(component.thirdPartyOptions().length).toBe(1);
     });
 
