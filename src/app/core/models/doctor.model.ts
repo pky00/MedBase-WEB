@@ -29,6 +29,7 @@ export interface DoctorCreate {
   email?: string | null;
   partner_id?: number | null;
   is_active?: boolean;
+  third_party_id?: number | null;
 }
 
 export interface DoctorUpdate {

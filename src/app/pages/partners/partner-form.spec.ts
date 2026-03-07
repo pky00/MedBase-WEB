@@ -10,13 +10,19 @@ import { PartnerFormComponent } from './partner-form';
 describe('PartnerFormComponent', () => {
   let component: PartnerFormComponent;
   let fixture: ComponentFixture<PartnerFormComponent>;
-  let api: { get: ReturnType<typeof vi.fn>; post: ReturnType<typeof vi.fn>; put: ReturnType<typeof vi.fn> };
+  let api: { get: ReturnType<typeof vi.fn>; getList: ReturnType<typeof vi.fn>; post: ReturnType<typeof vi.fn>; put: ReturnType<typeof vi.fn> };
   let notification: { success: ReturnType<typeof vi.fn>; error: ReturnType<typeof vi.fn> };
   let router: Router;
+
+  const mockThirdPartyResponse = {
+    items: [{ id: 1, name: 'TP A', type: 'partner' }],
+    total: 1, page: 1, size: 50, pages: 1,
+  };
 
   function setup(paramId: string | null = null) {
     api = {
       get: vi.fn(),
+      getList: vi.fn().mockReturnValue(of(mockThirdPartyResponse)),
       post: vi.fn(),
       put: vi.fn(),
     };
@@ -51,6 +57,11 @@ describe('PartnerFormComponent', () => {
       expect(component.isEdit()).toBe(false);
     });
 
+    it('should load third parties on init in create mode', () => {
+      expect(api.getList).toHaveBeenCalledWith('third-parties', expect.objectContaining({ page: 1, size: 50 }));
+      expect(component.thirdPartyOptions().length).toBe(1);
+    });
+
     it('should require name and partner type', () => {
       component.name = '';
       component.onSubmit();
@@ -74,6 +85,20 @@ describe('PartnerFormComponent', () => {
       expect(navigateSpy).toHaveBeenCalledWith(['/partners', 1]);
     });
 
+    it('should include third_party_id when selected', () => {
+      const mockPartner = { id: 1, name: 'Partner A' };
+      api.post.mockReturnValue(of(mockPartner));
+
+      component.name = 'Partner A';
+      component.partnerType = 'donor';
+      component.thirdPartyId = 5;
+      component.onSubmit();
+
+      expect(api.post).toHaveBeenCalledWith('partners', expect.objectContaining({
+        third_party_id: 5,
+      }));
+    });
+
     it('should show error on create failure', () => {
       const error = new HttpErrorResponse({ error: { detail: 'Name already exists' }, status: 400 });
       api.post.mockReturnValue(throwError(() => error));
@@ -84,6 +109,34 @@ describe('PartnerFormComponent', () => {
 
       expect(component.errorMessage()).toBe('Name already exists');
       expect(component.saving()).toBe(false);
+    });
+
+    it('should auto-fill on third party selection', () => {
+      const mockTp = { id: 5, name: 'TP Name', phone: '123', email: 'tp@test.com', type: 'partner' };
+      api.get.mockReturnValue(of(mockTp));
+
+      component.onThirdPartySelected(5);
+
+      expect(api.get).toHaveBeenCalledWith('third-parties/5');
+      expect(component.name).toBe('TP Name');
+      expect(component.phone).toBe('123');
+      expect(component.email).toBe('tp@test.com');
+    });
+
+    it('should search third parties', () => {
+      api.getList.mockClear();
+      api.getList.mockReturnValue(of(mockThirdPartyResponse));
+      component.onThirdPartySearch('test');
+      expect(component.thirdPartyPage).toBe(1);
+      expect(api.getList).toHaveBeenCalledWith('third-parties', expect.objectContaining({ search: 'test' }));
+    });
+
+    it('should load more third parties', () => {
+      api.getList.mockClear();
+      api.getList.mockReturnValue(of(mockThirdPartyResponse));
+      component.onThirdPartyLoadMore();
+      expect(component.thirdPartyPage).toBe(2);
+      expect(api.getList).toHaveBeenCalledWith('third-parties', expect.objectContaining({ page: 2 }));
     });
   });
 
@@ -110,6 +163,10 @@ describe('PartnerFormComponent', () => {
       expect(component.name).toBe('Partner B');
       expect(component.partnerType).toBe('referral');
       expect(component.organizationType).toBe('hospital');
+    });
+
+    it('should not load third parties in edit mode', () => {
+      expect(api.getList).not.toHaveBeenCalledWith('third-parties', expect.anything());
     });
 
     it('should update partner successfully', () => {

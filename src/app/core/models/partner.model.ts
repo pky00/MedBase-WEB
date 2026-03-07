@@ -28,6 +28,7 @@ export interface PartnerCreate {
   email?: string | null;
   address?: string | null;
   is_active?: boolean;
+  third_party_id?: number | null;
 }
 
 export interface PartnerUpdate {

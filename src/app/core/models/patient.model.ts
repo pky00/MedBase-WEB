@@ -35,6 +35,7 @@ export interface PatientCreate {
   emergency_contact?: string | null;
   emergency_phone?: string | null;
   is_active?: boolean;
+  third_party_id?: number | null;
 }
 
 export interface PatientUpdate {

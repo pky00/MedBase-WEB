@@ -16,16 +16,22 @@ describe('DoctorFormComponent', () => {
 
   const mockPartnerResponse = {
     items: [{ id: 1, name: 'Partner A' }],
-    total: 1,
-    page: 1,
-    size: 50,
-    pages: 1,
+    total: 1, page: 1, size: 50, pages: 1,
+  };
+
+  const mockThirdPartyResponse = {
+    items: [{ id: 1, name: 'TP A', type: 'doctor' }],
+    total: 1, page: 1, size: 50, pages: 1,
   };
 
   function setup(paramId: string | null = null) {
     api = {
       get: vi.fn(),
-      getList: vi.fn().mockReturnValue(of(mockPartnerResponse)),
+      getList: vi.fn().mockImplementation((endpoint: string) => {
+        if (endpoint === 'partners') return of(mockPartnerResponse);
+        if (endpoint === 'third-parties') return of(mockThirdPartyResponse);
+        return of(mockPartnerResponse);
+      }),
       post: vi.fn(),
       put: vi.fn(),
     };
@@ -65,6 +71,11 @@ describe('DoctorFormComponent', () => {
       expect(component.partnerOptions().length).toBe(1);
     });
 
+    it('should load third parties on init in create mode', () => {
+      expect(api.getList).toHaveBeenCalledWith('third-parties', expect.objectContaining({ page: 1, size: 50 }));
+      expect(component.thirdPartyOptions().length).toBe(1);
+    });
+
     it('should require name and type', () => {
       component.name = '';
       component.onSubmit();
@@ -94,6 +105,32 @@ describe('DoctorFormComponent', () => {
       }));
       expect(notification.success).toHaveBeenCalledWith('Doctor created successfully.');
       expect(navigateSpy).toHaveBeenCalledWith(['/doctors', 1]);
+    });
+
+    it('should include third_party_id when selected', () => {
+      const mockDoctor = { id: 1, name: 'Dr. Test' };
+      api.post.mockReturnValue(of(mockDoctor));
+
+      component.name = 'Dr. Test';
+      component.doctorType = 'internal';
+      component.thirdPartyId = 5;
+      component.onSubmit();
+
+      expect(api.post).toHaveBeenCalledWith('doctors', expect.objectContaining({
+        third_party_id: 5,
+      }));
+    });
+
+    it('should auto-fill on third party selection', () => {
+      const mockTp = { id: 5, name: 'TP Name', phone: '123', email: 'tp@test.com', type: 'doctor' };
+      api.get.mockReturnValue(of(mockTp));
+
+      component.onThirdPartySelected(5);
+
+      expect(api.get).toHaveBeenCalledWith('third-parties/5');
+      expect(component.name).toBe('TP Name');
+      expect(component.phone).toBe('123');
+      expect(component.email).toBe('tp@test.com');
     });
 
     it('should show error on create failure', () => {
@@ -132,6 +169,10 @@ describe('DoctorFormComponent', () => {
       expect(component.name).toBe('Dr. Smith');
       expect(component.doctorType).toBe('external');
       expect(component.specialization).toBe('General');
+    });
+
+    it('should not load third parties in edit mode', () => {
+      expect(api.getList).not.toHaveBeenCalledWith('third-parties', expect.anything());
     });
 
     it('should update doctor successfully', () => {
@@ -204,5 +245,25 @@ describe('DoctorFormComponent', () => {
     component.onPartnerSearch('test');
     expect(component.partnerPage).toBe(1);
     expect(api.getList).toHaveBeenCalledWith('partners', expect.objectContaining({ search: 'test' }));
+  });
+
+  it('should search third parties', () => {
+    setup('new');
+    fixture.detectChanges();
+    api.getList.mockClear();
+    api.getList.mockReturnValue(of(mockThirdPartyResponse));
+    component.onThirdPartySearch('test');
+    expect(component.thirdPartyPage).toBe(1);
+    expect(api.getList).toHaveBeenCalledWith('third-parties', expect.objectContaining({ search: 'test' }));
+  });
+
+  it('should load more third parties', () => {
+    setup('new');
+    fixture.detectChanges();
+    api.getList.mockClear();
+    api.getList.mockReturnValue(of(mockThirdPartyResponse));
+    component.onThirdPartyLoadMore();
+    expect(component.thirdPartyPage).toBe(2);
+    expect(api.getList).toHaveBeenCalledWith('third-parties', expect.objectContaining({ page: 2 }));
   });
 });

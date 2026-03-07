@@ -44,4 +44,7 @@ export const API = {
   APPOINTMENTS: 'appointments',
   VITAL_SIGNS: 'vital-signs',
   MEDICAL_RECORDS: 'medical-records',
+  THIRD_PARTIES: 'third-parties',
+  INVENTORY_TRANSACTIONS: 'inventory-transactions',
+  TREATMENTS: 'treatments',
 } as const;
