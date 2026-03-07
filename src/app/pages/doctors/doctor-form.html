@@ -16,6 +16,26 @@
     }
 
     <form (ngSubmit)="onSubmit()">
+      @if (!isEdit()) {
+        <div class="form-section">
+          <h3 class="form-section-title">Link to Existing Third Party</h3>
+          <p class="form-hint">Optionally select an existing third party to auto-fill details.</p>
+          <div class="form-grid">
+            <app-dropdown
+              label="Third Party"
+              placeholder="Search and select a third party"
+              [options]="thirdPartyOptions()"
+              [hasMore]="thirdPartyHasMore()"
+              (loadMore)="onThirdPartyLoadMore()"
+              (searchChanged)="onThirdPartySearch($event)"
+              [(ngModel)]="thirdPartyId"
+              name="thirdPartyId"
+              (ngModelChange)="onThirdPartySelected($event)"
+            />
+          </div>
+        </div>
+      }
+
       <div class="form-section">
         <h3 class="form-section-title">Doctor Information</h3>
         <div class="form-grid">

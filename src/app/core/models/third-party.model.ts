@@ -1,7 +1,6 @@
 export interface ThirdParty {
   id: number;
   name: string;
-  type: string;
   phone: string | null;
   email: string | null;
   is_active: boolean;

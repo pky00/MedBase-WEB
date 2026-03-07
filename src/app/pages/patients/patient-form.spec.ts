@@ -10,13 +10,19 @@ import { PatientFormComponent } from './patient-form';
 describe('PatientFormComponent', () => {
   let component: PatientFormComponent;
   let fixture: ComponentFixture<PatientFormComponent>;
-  let api: { get: ReturnType<typeof vi.fn>; post: ReturnType<typeof vi.fn>; put: ReturnType<typeof vi.fn> };
+  let api: { get: ReturnType<typeof vi.fn>; getList: ReturnType<typeof vi.fn>; post: ReturnType<typeof vi.fn>; put: ReturnType<typeof vi.fn> };
   let notification: { success: ReturnType<typeof vi.fn>; error: ReturnType<typeof vi.fn> };
   let router: Router;
+
+  const mockThirdPartyResponse = {
+    items: [{ id: 1, name: 'TP A' }],
+    total: 1, page: 1, size: 50, pages: 1,
+  };
 
   function setup(paramId: string | null = null) {
     api = {
       get: vi.fn(),
+      getList: vi.fn().mockReturnValue(of(mockThirdPartyResponse)),
       post: vi.fn(),
       put: vi.fn(),
     };
@@ -51,6 +57,11 @@ describe('PatientFormComponent', () => {
       expect(component.isEdit()).toBe(false);
     });
 
+    it('should load third parties on init in create mode with exclude_patients flag', () => {
+      expect(api.getList).toHaveBeenCalledWith('third-parties', expect.objectContaining({ page: 1, size: 50, exclude_patients: true }));
+      expect(component.thirdPartyOptions().length).toBe(1);
+    });
+
     it('should require first name and last name', () => {
       component.firstName = '';
       component.lastName = '';
@@ -77,6 +88,33 @@ describe('PatientFormComponent', () => {
       expect(navigateSpy).toHaveBeenCalledWith(['/patients', 1]);
     });
 
+    it('should include third_party_id when selected', () => {
+      const mockPatient = { id: 1, first_name: 'John', last_name: 'Doe' };
+      api.post.mockReturnValue(of(mockPatient));
+
+      component.firstName = 'John';
+      component.lastName = 'Doe';
+      component.thirdPartyId = 5;
+      component.onSubmit();
+
+      expect(api.post).toHaveBeenCalledWith('patients', expect.objectContaining({
+        third_party_id: 5,
+      }));
+    });
+
+    it('should auto-fill on third party selection', () => {
+      const mockTp = { id: 5, name: 'John Smith', phone: '123', email: 'tp@test.com' };
+      api.get.mockReturnValue(of(mockTp));
+
+      component.onThirdPartySelected(5);
+
+      expect(api.get).toHaveBeenCalledWith('third-parties/5');
+      expect(component.firstName).toBe('John');
+      expect(component.lastName).toBe('Smith');
+      expect(component.phone).toBe('123');
+      expect(component.email).toBe('tp@test.com');
+    });
+
     it('should show error on create failure', () => {
       const error = new HttpErrorResponse({ error: { detail: 'Validation error' }, status: 400 });
       api.post.mockReturnValue(throwError(() => error));
@@ -87,6 +125,22 @@ describe('PatientFormComponent', () => {
 
       expect(component.errorMessage()).toBe('Validation error');
       expect(component.saving()).toBe(false);
+    });
+
+    it('should search third parties', () => {
+      api.getList.mockClear();
+      api.getList.mockReturnValue(of(mockThirdPartyResponse));
+      component.onThirdPartySearch('test');
+      expect(component.thirdPartyPage).toBe(1);
+      expect(api.getList).toHaveBeenCalledWith('third-parties', expect.objectContaining({ search: 'test' }));
+    });
+
+    it('should load more third parties', () => {
+      api.getList.mockClear();
+      api.getList.mockReturnValue(of(mockThirdPartyResponse));
+      component.onThirdPartyLoadMore();
+      expect(component.thirdPartyPage).toBe(2);
+      expect(api.getList).toHaveBeenCalledWith('third-parties', expect.objectContaining({ page: 2 }));
     });
   });
 
@@ -117,6 +171,10 @@ describe('PatientFormComponent', () => {
       expect(component.lastName).toBe('Smith');
       expect(component.gender).toBe('female');
       expect(component.dateOfBirth).toBe('1990-01-15');
+    });
+
+    it('should not load third parties in edit mode', () => {
+      expect(api.getList).not.toHaveBeenCalledWith('third-parties', expect.anything());
     });
 
     it('should update patient successfully', () => {
