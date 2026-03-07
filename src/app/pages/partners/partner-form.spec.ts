@@ -15,7 +15,7 @@ describe('PartnerFormComponent', () => {
   let router: Router;
 
   const mockThirdPartyResponse = {
-    items: [{ id: 1, name: 'TP A', type: 'partner' }],
+    items: [{ id: 1, name: 'TP A' }],
     total: 1, page: 1, size: 50, pages: 1,
   };
 
@@ -112,7 +112,7 @@ describe('PartnerFormComponent', () => {
     });
 
     it('should auto-fill on third party selection', () => {
-      const mockTp = { id: 5, name: 'TP Name', phone: '123', email: 'tp@test.com', type: 'partner' };
+      const mockTp = { id: 5, name: 'TP Name', phone: '123', email: 'tp@test.com' };
       api.get.mockReturnValue(of(mockTp));
 
       component.onThirdPartySelected(5);

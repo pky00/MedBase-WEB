@@ -69,7 +69,7 @@ export class PatientFormComponent implements OnInit {
 
     this.api.getList<ThirdParty>(API.THIRD_PARTIES, params).subscribe({
       next: (response) => {
-        const options = response.items.map((tp) => ({ value: tp.id, label: `${tp.name} (${tp.type})` }));
+        const options = response.items.map((tp) => ({ value: tp.id, label: tp.name }));
         if (this.thirdPartyPage === 1) {
           this.thirdPartyOptions.set(options);
         } else {
