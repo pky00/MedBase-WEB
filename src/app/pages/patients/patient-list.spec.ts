@@ -14,7 +14,7 @@ describe('PatientListComponent', () => {
   let router: Router;
 
   const mockPatientResponse = {
-    items: [{ id: 1, first_name: 'John', last_name: 'Doe', gender: 'male', phone: '123', email: 'j@d.com', is_active: true }],
+    items: [{ id: 1, first_name: 'John', last_name: 'Doe', gender: 'male', third_party: { phone: '123', email: 'j@d.com' }, is_active: true }],
     total: 1,
     page: 1,
     size: 10,

@@ -105,7 +105,7 @@ export class AppointmentFormComponent implements OnInit {
 
     this.api.getList<Doctor>(API.DOCTORS, params).subscribe({
       next: (response) => {
-        const options = response.items.map((d) => ({ value: d.id, label: d.name }));
+        const options = response.items.map((d) => ({ value: d.id, label: d.third_party?.name || `Doctor #${d.id}` }));
         if (this.doctorPage === 1) {
           this.doctorOptions.set(options);
         } else {
@@ -123,7 +123,7 @@ export class AppointmentFormComponent implements OnInit {
 
     this.api.getList<Partner>(API.PARTNERS, params).subscribe({
       next: (response) => {
-        const options = response.items.map((p) => ({ value: p.id, label: p.name }));
+        const options = response.items.map((p) => ({ value: p.id, label: p.third_party?.name || `Partner #${p.id}` }));
         if (this.partnerPage === 1) {
           this.partnerOptions.set(options);
         } else {

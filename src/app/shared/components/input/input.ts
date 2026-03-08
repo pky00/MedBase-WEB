@@ -1,4 +1,4 @@
-import { Component, forwardRef, input, signal } from '@angular/core';
+import { Component, effect, forwardRef, input, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
@@ -21,9 +21,18 @@ export class InputComponent implements ControlValueAccessor {
   required = input(false);
   errorMessage = input('');
   inputId = input('');
+  disabled = input(false);
 
   value = signal('');
   isDisabled = signal(false);
+
+  constructor() {
+    effect(() => {
+      if (this.disabled()) {
+        this.isDisabled.set(true);
+      }
+    });
+  }
 
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};

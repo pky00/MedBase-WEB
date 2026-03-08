@@ -117,8 +117,8 @@ export class PatientFormComponent implements OnInit {
         this.lastName = patient.last_name;
         this.dateOfBirth = patient.date_of_birth || '';
         this.gender = patient.gender || '';
-        this.phone = patient.phone || '';
-        this.email = patient.email || '';
+        this.phone = patient.third_party?.phone || '';
+        this.email = patient.third_party?.email || '';
         this.address = patient.address || '';
         this.emergencyContact = patient.emergency_contact || '';
         this.emergencyPhone = patient.emergency_phone || '';
@@ -148,8 +148,6 @@ export class PatientFormComponent implements OnInit {
         last_name: this.lastName,
         date_of_birth: this.dateOfBirth || null,
         gender: (this.gender as Gender) || null,
-        phone: this.phone || null,
-        email: this.email || null,
         address: this.address || null,
         emergency_contact: this.emergencyContact || null,
         emergency_phone: this.emergencyPhone || null,

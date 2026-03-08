@@ -114,7 +114,7 @@ export class DoctorFormComponent implements OnInit {
 
     this.api.getList<Partner>(API.PARTNERS, params).subscribe({
       next: (response) => {
-        const options = response.items.map((p) => ({ value: p.id, label: p.name }));
+        const options = response.items.map((p) => ({ value: p.id, label: p.third_party?.name || `Partner #${p.id}` }));
         if (this.partnerPage === 1) {
           this.partnerOptions.set(options);
         } else {
@@ -154,10 +154,10 @@ export class DoctorFormComponent implements OnInit {
     this.loading.set(true);
     this.api.get<DoctorDetail>(`${API.DOCTORS}/${this.doctorId}`).subscribe({
       next: (doctor) => {
-        this.name = doctor.name;
+        this.name = doctor.third_party?.name || '';
         this.specialization = doctor.specialization || '';
-        this.phone = doctor.phone || '';
-        this.email = doctor.email || '';
+        this.phone = doctor.third_party?.phone || '';
+        this.email = doctor.third_party?.email || '';
         this.doctorType = doctor.type;
         this.partnerId = doctor.partner_id;
         this.loadedPartnerName = doctor.partner_name || null;
@@ -174,8 +174,13 @@ export class DoctorFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.name || !this.doctorType) {
+    if (!this.isEdit() && !this.name) {
       this.errorMessage.set('Name and type are required.');
+      return;
+    }
+
+    if (!this.doctorType) {
+      this.errorMessage.set('Type is required.');
       return;
     }
 
@@ -189,11 +194,8 @@ export class DoctorFormComponent implements OnInit {
 
     if (this.isEdit()) {
       const data: DoctorUpdate = {
-        name: this.name,
         type: this.doctorType,
         specialization: this.specialization || undefined,
-        phone: this.phone || undefined,
-        email: this.email || undefined,
         partner_id: this.doctorType === 'partner_provided' ? this.partnerId : null,
         is_active: this.isActive,
       };

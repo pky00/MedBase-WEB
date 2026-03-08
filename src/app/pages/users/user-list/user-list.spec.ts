@@ -14,7 +14,7 @@ describe('UserListComponent', () => {
   let router: Router;
 
   const mockResponse = {
-    items: [{ id: 1, username: 'admin', name: 'Admin', email: 'a@b.com', role: 'admin', is_active: true }],
+    items: [{ id: 1, username: 'admin', third_party: { name: 'Admin', email: 'a@b.com' }, role: 'admin', is_active: true }],
     total: 1,
     page: 1,
     size: 10,

@@ -14,8 +14,8 @@ describe('DoctorViewComponent', () => {
   let router: Router;
 
   const mockDoctor = {
-    id: 1, name: 'Dr. Smith', specialization: 'General',
-    phone: '123', email: 'dr@test.com', type: 'internal' as const,
+    id: 1, third_party_id: 10, third_party: { id: 10, name: 'Dr. Smith', phone: '123', email: 'dr@test.com' },
+    specialization: 'General', type: 'internal' as const,
     partner_id: null, partner_name: null,
     is_active: true, is_deleted: false, created_at: '2024-01-01', updated_at: '2024-01-01',
   };

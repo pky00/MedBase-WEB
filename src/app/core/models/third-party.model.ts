@@ -10,3 +10,10 @@ export interface ThirdParty {
   updated_by: string | null;
   updated_at: string;
 }
+
+export interface ThirdPartyUpdate {
+  name?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  is_active?: boolean | null;
+}

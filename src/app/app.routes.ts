@@ -363,6 +363,32 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'third-parties',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/third-parties/third-party-list').then(
+                (m) => m.ThirdPartyListComponent
+              ),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./pages/third-parties/third-party-view').then(
+                (m) => m.ThirdPartyViewComponent
+              ),
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import('./pages/third-parties/third-party-form').then(
+                (m) => m.ThirdPartyFormComponent
+              ),
+          },
+        ],
+      },
+      {
         path: 'medical-records',
         children: [
           {

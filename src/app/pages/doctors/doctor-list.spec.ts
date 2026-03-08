@@ -14,7 +14,7 @@ describe('DoctorListComponent', () => {
   let router: Router;
 
   const mockDoctorResponse = {
-    items: [{ id: 1, name: 'Dr. Smith', specialization: 'General', type: 'internal', is_active: true }],
+    items: [{ id: 1, third_party: { name: 'Dr. Smith' }, specialization: 'General', type: 'internal', is_active: true }],
     total: 1,
     page: 1,
     size: 10,

@@ -156,7 +156,7 @@ export class AppointmentListComponent implements OnInit {
 
     this.api.getList<Doctor>(API.DOCTORS, params).subscribe({
       next: (response) => {
-        const options = response.items.map((d) => ({ value: d.id, label: d.name }));
+        const options = response.items.map((d) => ({ value: d.id, label: d.third_party?.name || `Doctor #${d.id}` }));
         if (this.doctorPage === 1) {
           this.doctorOptions.set(options);
         } else {

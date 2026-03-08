@@ -22,7 +22,7 @@
         <div class="detail-grid">
           <div class="detail-item">
             <span class="detail-label">Name</span>
-            <span class="detail-value">{{ p.name }}</span>
+            <span class="detail-value">{{ p.third_party?.name || '—' }}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Partner Type</span>
@@ -42,11 +42,11 @@
           </div>
           <div class="detail-item">
             <span class="detail-label">Phone</span>
-            <span class="detail-value">{{ p.phone || '—' }}</span>
+            <span class="detail-value">{{ p.third_party?.phone || '—' }}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Email</span>
-            <span class="detail-value">{{ p.email || '—' }}</span>
+            <span class="detail-value">{{ p.third_party?.email || '—' }}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Address</span>

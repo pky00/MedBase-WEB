@@ -142,9 +142,10 @@ describe('PartnerFormComponent', () => {
 
   describe('edit mode', () => {
     const mockPartner = {
-      id: 5, name: 'Partner B', partner_type: 'referral' as const,
+      id: 5, third_party_id: 10, third_party: { id: 10, name: 'Partner B', phone: '123', email: 'a@b.com' },
+      partner_type: 'referral' as const,
       organization_type: 'hospital' as const, contact_person: 'John',
-      phone: '123', email: 'a@b.com', address: '123 St',
+      address: '123 St',
       is_active: true, is_deleted: false, created_at: '', updated_at: '',
     };
 
@@ -175,7 +176,7 @@ describe('PartnerFormComponent', () => {
 
       component.onSubmit();
 
-      expect(api.put).toHaveBeenCalledWith('partners/5', expect.objectContaining({ name: 'Partner B' }));
+      expect(api.put).toHaveBeenCalledWith('partners/5', expect.objectContaining({ partner_type: 'referral' }));
       expect(notification.success).toHaveBeenCalledWith('Partner updated successfully.');
       expect(navigateSpy).toHaveBeenCalledWith(['/partners', 5]);
     });

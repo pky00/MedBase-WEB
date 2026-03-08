@@ -43,7 +43,8 @@
             label="Name"
             placeholder="Enter partner name"
             inputId="name"
-            [required]="true"
+            [required]="!isEdit()"
+            [disabled]="isEdit()"
             [(ngModel)]="name"
             name="name"
           />
@@ -77,6 +78,7 @@
             label="Phone"
             placeholder="Enter phone number"
             inputId="phone"
+            [disabled]="isEdit()"
             [(ngModel)]="phone"
             name="phone"
           />
@@ -85,6 +87,7 @@
             type="email"
             placeholder="Enter email address"
             inputId="email"
+            [disabled]="isEdit()"
             [(ngModel)]="email"
             name="email"
           />

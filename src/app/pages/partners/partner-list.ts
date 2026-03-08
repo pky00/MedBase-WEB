@@ -30,7 +30,7 @@ export class PartnerListComponent implements OnInit {
   deleting = signal(false);
 
   columns: TableColumn[] = [
-    { key: 'name', label: 'Name', sortable: true },
+    { key: 'third_party.name', label: 'Name', sortable: false },
     { key: 'partner_type', label: 'Partner Type', sortable: true, format: this.formatPartnerType },
     { key: 'organization_type', label: 'Organization Type', sortable: true, format: this.formatOrgType },
     { key: 'is_active', label: 'Status', sortable: true, format: formatActiveStatus },

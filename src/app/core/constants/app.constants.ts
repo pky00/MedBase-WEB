@@ -18,6 +18,7 @@ export const ROUTES = {
   PATIENTS: '/patients',
   APPOINTMENTS: '/appointments',
   MEDICAL_RECORDS: '/medical-records',
+  THIRD_PARTIES: '/third-parties',
 } as const;
 
 // Display formatters

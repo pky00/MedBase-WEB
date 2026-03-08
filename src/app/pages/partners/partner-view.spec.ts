@@ -14,10 +14,11 @@ describe('PartnerViewComponent', () => {
   let router: Router;
 
   const mockPartner = {
-    id: 1, name: 'Partner A', partner_type: 'both' as const,
+    id: 1, third_party_id: 10, third_party: { id: 10, name: 'Partner A', phone: '123', email: 'a@b.com' },
+    partner_type: 'both' as const,
     organization_type: 'NGO' as const, contact_person: 'John',
-    phone: '123', email: 'a@b.com', address: '123 St',
-    is_active: true, is_deleted: false, third_party_id: 10,
+    address: '123 St',
+    is_active: true, is_deleted: false,
     created_at: '2024-01-01', updated_at: '2024-01-01',
   };
 

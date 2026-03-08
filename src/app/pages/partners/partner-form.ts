@@ -107,12 +107,12 @@ export class PartnerFormComponent implements OnInit {
     this.loading.set(true);
     this.api.get<Partner>(`${API.PARTNERS}/${this.partnerId}`).subscribe({
       next: (partner) => {
-        this.name = partner.name;
+        this.name = partner.third_party?.name || '';
         this.partnerType = partner.partner_type;
         this.organizationType = partner.organization_type;
         this.contactPerson = partner.contact_person || '';
-        this.phone = partner.phone || '';
-        this.email = partner.email || '';
+        this.phone = partner.third_party?.phone || '';
+        this.email = partner.third_party?.email || '';
         this.address = partner.address || '';
         this.isActive = partner.is_active;
         this.loading.set(false);
@@ -126,8 +126,13 @@ export class PartnerFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.name || !this.partnerType) {
+    if (!this.isEdit() && !this.name) {
       this.errorMessage.set('Name and partner type are required.');
+      return;
+    }
+
+    if (!this.partnerType) {
+      this.errorMessage.set('Partner type is required.');
       return;
     }
 
@@ -136,12 +141,9 @@ export class PartnerFormComponent implements OnInit {
 
     if (this.isEdit()) {
       const data: PartnerUpdate = {
-        name: this.name,
         partner_type: this.partnerType,
         organization_type: this.organizationType || undefined,
         contact_person: this.contactPerson || undefined,
-        phone: this.phone || undefined,
-        email: this.email || undefined,
         address: this.address || undefined,
         is_active: this.isActive,
       };

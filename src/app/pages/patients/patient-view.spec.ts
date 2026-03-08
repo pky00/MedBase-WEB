@@ -16,10 +16,11 @@ describe('PatientViewComponent', () => {
   const mockPatient = {
     id: 1, first_name: 'John', last_name: 'Doe',
     date_of_birth: '1990-05-15', gender: 'male' as const,
-    phone: '123', email: 'j@d.com', address: '123 St',
+    address: '123 St',
     emergency_contact: 'Jane', emergency_phone: '456',
     is_active: true, is_deleted: false, documents: null,
-    third_party_id: 10, created_at: '2024-01-01T00:00:00', updated_at: '2024-01-01T00:00:00',
+    third_party_id: 10, third_party: { id: 10, name: 'John Doe', phone: '123', email: 'j@d.com' },
+    created_at: '2024-01-01T00:00:00', updated_at: '2024-01-01T00:00:00',
     created_by: null, updated_by: null,
   };
 

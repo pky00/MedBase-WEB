@@ -148,8 +148,8 @@ describe('DoctorFormComponent', () => {
 
   describe('edit mode', () => {
     const mockDoctor = {
-      id: 5, name: 'Dr. Smith', specialization: 'General',
-      phone: '123', email: 'dr@test.com', type: 'external' as const,
+      id: 5, third_party_id: 10, third_party: { id: 10, name: 'Dr. Smith', phone: '123', email: 'dr@test.com' },
+      specialization: 'General', type: 'external' as const,
       partner_id: null, partner_name: null,
       is_active: true, is_deleted: false, created_at: '', updated_at: '',
     };
@@ -181,7 +181,7 @@ describe('DoctorFormComponent', () => {
 
       component.onSubmit();
 
-      expect(api.put).toHaveBeenCalledWith('doctors/5', expect.objectContaining({ name: 'Dr. Smith' }));
+      expect(api.put).toHaveBeenCalledWith('doctors/5', expect.objectContaining({ type: 'external' }));
       expect(notification.success).toHaveBeenCalledWith('Doctor updated successfully.');
       expect(navigateSpy).toHaveBeenCalledWith(['/doctors', 5]);
     });

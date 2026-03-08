@@ -33,8 +33,8 @@ export class PatientListComponent implements OnInit {
     { key: 'first_name', label: 'First Name', sortable: true },
     { key: 'last_name', label: 'Last Name', sortable: true },
     { key: 'gender', label: 'Gender', sortable: true, format: this.formatGender },
-    { key: 'phone', label: 'Phone', sortable: true },
-    { key: 'email', label: 'Email', sortable: true },
+    { key: 'third_party.phone', label: 'Phone', sortable: false },
+    { key: 'third_party.email', label: 'Email', sortable: false },
     { key: 'is_active', label: 'Status', sortable: true, format: formatActiveStatus },
   ];
 

@@ -14,7 +14,7 @@ describe('PartnerListComponent', () => {
   let router: Router;
 
   const mockPartnerResponse = {
-    items: [{ id: 1, name: 'Partner A', partner_type: 'donor', organization_type: 'NGO', is_active: true }],
+    items: [{ id: 1, third_party: { name: 'Partner A' }, partner_type: 'donor', organization_type: 'NGO', is_active: true }],
     total: 1,
     page: 1,
     size: 10,

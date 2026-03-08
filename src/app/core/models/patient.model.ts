@@ -1,18 +1,19 @@
+import { ThirdParty } from './third-party.model';
+
 export type Gender = 'male' | 'female';
 
 export interface Patient {
   id: number;
+  third_party_id: number;
+  third_party: ThirdParty | null;
   first_name: string;
   last_name: string;
   date_of_birth: string | null;
   gender: Gender | null;
-  phone: string | null;
-  email: string | null;
   address: string | null;
   emergency_contact: string | null;
   emergency_phone: string | null;
   is_active: boolean;
-  third_party_id: number;
   is_deleted: boolean;
   created_by: string | null;
   created_at: string;
@@ -25,17 +26,17 @@ export interface PatientDetail extends Patient {
 }
 
 export interface PatientCreate {
+  third_party_id?: number | null;
   first_name: string;
   last_name: string;
-  date_of_birth?: string | null;
-  gender?: Gender | null;
   phone?: string | null;
   email?: string | null;
+  date_of_birth?: string | null;
+  gender?: Gender | null;
   address?: string | null;
   emergency_contact?: string | null;
   emergency_phone?: string | null;
   is_active?: boolean;
-  third_party_id?: number | null;
 }
 
 export interface PatientUpdate {
@@ -43,8 +44,6 @@ export interface PatientUpdate {
   last_name?: string | null;
   date_of_birth?: string | null;
   gender?: Gender | null;
-  phone?: string | null;
-  email?: string | null;
   address?: string | null;
   emergency_contact?: string | null;
   emergency_phone?: string | null;

@@ -3,7 +3,6 @@ import { ThirdParty } from './third-party.model';
 export interface User {
   id: number;
   username: string;
-  email: string;
   role: 'admin' | 'user';
   is_active: boolean;
   is_deleted: boolean;
@@ -16,9 +15,10 @@ export interface User {
 }
 
 export interface UserCreate {
+  third_party_id?: number | null;
   username: string;
-  name: string;
-  email: string;
+  name?: string | null;
+  email?: string | null;
   password: string;
   role: 'admin' | 'user';
   is_active: boolean;
@@ -26,7 +26,6 @@ export interface UserCreate {
 
 export interface UserUpdate {
   username?: string;
-  email?: string;
   password?: string;
   role?: 'admin' | 'user';
   is_active?: boolean;

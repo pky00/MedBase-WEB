@@ -148,10 +148,11 @@ describe('PatientFormComponent', () => {
     const mockPatient = {
       id: 5, first_name: 'Jane', last_name: 'Smith',
       date_of_birth: '1990-01-15', gender: 'female' as const,
-      phone: '555-1234', email: 'jane@test.com', address: '123 Main St',
+      address: '123 Main St',
       emergency_contact: 'Bob', emergency_phone: '555-9999',
       is_active: true, is_deleted: false, documents: null,
-      third_party_id: 10, created_at: '', updated_at: '',
+      third_party_id: 10, third_party: { id: 10, name: 'Jane Smith', phone: '555-1234', email: 'jane@test.com' },
+      created_at: '', updated_at: '',
       created_by: null, updated_by: null,
     };
 
