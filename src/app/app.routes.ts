@@ -401,6 +401,65 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'inventory-transactions',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/inventory-transactions/transaction-list').then(
+                (m) => m.TransactionListComponent
+              ),
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import('./pages/inventory-transactions/transaction-form').then(
+                (m) => m.TransactionFormComponent
+              ),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./pages/inventory-transactions/transaction-view').then(
+                (m) => m.TransactionViewComponent
+              ),
+          },
+        ],
+      },
+      {
+        path: 'treatments',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/treatments/treatment-list').then(
+                (m) => m.TreatmentListComponent
+              ),
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import('./pages/treatments/treatment-form').then(
+                (m) => m.TreatmentFormComponent
+              ),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./pages/treatments/treatment-view').then(
+                (m) => m.TreatmentViewComponent
+              ),
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import('./pages/treatments/treatment-form').then(
+                (m) => m.TreatmentFormComponent
+              ),
+          },
+        ],
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

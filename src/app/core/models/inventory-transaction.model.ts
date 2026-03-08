@@ -1,4 +1,5 @@
 export type TransactionType = 'purchase' | 'donation' | 'prescription' | 'loss' | 'breakage' | 'expiration' | 'destruction';
+export type ItemType = 'medicine' | 'equipment' | 'medical_device';
 
 export interface TransactionItem {
   id: number;
@@ -27,4 +28,23 @@ export interface InventoryTransaction {
   updated_at: string;
   third_party_name: string | null;
   items: TransactionItem[] | null;
+}
+
+export interface TransactionItemCreate {
+  item_type: ItemType;
+  item_id: number;
+  quantity: number;
+}
+
+export interface InventoryTransactionCreate {
+  transaction_type: TransactionType;
+  third_party_id?: number | null;
+  transaction_date: string;
+  notes?: string | null;
+  items?: TransactionItemCreate[] | null;
+}
+
+export interface InventoryTransactionUpdate {
+  transaction_date?: string | null;
+  notes?: string | null;
 }

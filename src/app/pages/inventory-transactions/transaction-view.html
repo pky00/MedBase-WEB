@@ -1,0 +1,91 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Transaction Details</h1>
+    <p class="page-subtitle">View inventory transaction information</p>
+  </div>
+  <div class="header-actions">
+    <app-button variant="secondary" (clicked)="goBack()">Back</app-button>
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading-spinner message="Loading..." />
+} @else if (transaction(); as t) {
+  <div class="view-layout">
+    <!-- Left: Transaction Details -->
+    <div class="detail-card">
+      <div class="detail-section">
+        <h3 class="detail-section-title">Transaction Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Type</span>
+            <span class="detail-value">
+              <span class="badge" [class]="'badge-' + t.transaction_type">
+                {{ formatTransactionType(t.transaction_type) }}
+              </span>
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Date</span>
+            <span class="detail-value">{{ formatDate(t.transaction_date) }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Third Party</span>
+            <span class="detail-value">{{ t.third_party_name || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Notes</span>
+            <span class="detail-value">{{ t.notes || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Created</span>
+            <span class="detail-value">{{ formatDateTime(t.created_at) }}</span>
+          </div>
+          @if (t.created_by) {
+            <div class="detail-item">
+              <span class="detail-label">Created By</span>
+              <span class="detail-value">{{ t.created_by }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Items -->
+    <div class="right-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Items ({{ t.items?.length || 0 }})</h3>
+      </div>
+      <div class="panel-content">
+        @if (!t.items || t.items.length === 0) {
+          <div class="empty-state">
+            <p>No items in this transaction.</p>
+          </div>
+        } @else {
+          <div class="items-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Item</th>
+                  <th>Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of t.items; track item.id) {
+                  <tr>
+                    <td>
+                      <span class="badge badge-item-type">{{ formatItemType(item.item_type) }}</span>
+                    </td>
+                    <td>{{ item.item_name || 'Unknown' }}</td>
+                    <td>{{ item.quantity }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

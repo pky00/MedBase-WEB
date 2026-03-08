@@ -1,0 +1,120 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ isEdit() ? 'Edit Treatment' : 'Create Treatment' }}</h1>
+    <p class="page-subtitle">{{ isEdit() ? 'Update treatment information' : 'Record a new external treatment' }}</p>
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading-spinner message="Loading..." />
+} @else {
+  <div class="form-card">
+    @if (errorMessage()) {
+      <div class="alert-error">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-section">
+        <h3 class="form-section-title">Treatment Information</h3>
+        <div class="form-grid">
+          <app-dropdown
+            label="Patient"
+            placeholder="Search and select patient"
+            [options]="patientOptions()"
+            [hasMore]="patientHasMore()"
+            [required]="true"
+            (loadMore)="onPatientLoadMore()"
+            (searchChanged)="onPatientSearch($event)"
+            [(ngModel)]="patientId"
+            name="patientId"
+          />
+
+          <app-dropdown
+            label="Partner (Referral)"
+            placeholder="Search and select partner"
+            [options]="partnerOptions()"
+            [hasMore]="partnerHasMore()"
+            [required]="true"
+            (loadMore)="onPartnerLoadMore()"
+            (searchChanged)="onPartnerSearch($event)"
+            [(ngModel)]="partnerId"
+            name="partnerId"
+          />
+
+          <app-dropdown
+            label="Appointment (Optional)"
+            placeholder="Search and select appointment"
+            [options]="appointmentOptions()"
+            [hasMore]="appointmentHasMore()"
+            (loadMore)="onAppointmentLoadMore()"
+            (searchChanged)="onAppointmentSearch($event)"
+            [(ngModel)]="appointmentId"
+            name="appointmentId"
+          />
+
+          <app-input
+            label="Treatment Type"
+            placeholder="Enter treatment type"
+            inputId="treatment_type"
+            [required]="true"
+            [(ngModel)]="treatmentType"
+            name="treatmentType"
+          />
+
+          <app-input
+            label="Treatment Date"
+            type="date"
+            placeholder="Select date"
+            inputId="treatment_date"
+            [(ngModel)]="treatmentDate"
+            name="treatmentDate"
+          />
+
+          <div class="form-field">
+            <label class="form-label" for="status">Status</label>
+            <select id="status" class="form-select" [value]="status" (change)="onStatusChange($event)">
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+
+          <app-input
+            label="Cost"
+            type="number"
+            placeholder="Enter cost (optional)"
+            inputId="cost"
+            [(ngModel)]="cost"
+            name="cost"
+          />
+
+          <app-input
+            label="Description"
+            type="textarea"
+            placeholder="Enter description (optional)"
+            inputId="description"
+            [(ngModel)]="description"
+            name="description"
+          />
+
+          <app-input
+            label="Notes"
+            type="textarea"
+            placeholder="Enter notes (optional)"
+            inputId="notes"
+            [(ngModel)]="notes"
+            name="notes"
+          />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <app-button variant="secondary" (clicked)="cancel()">Cancel</app-button>
+        <app-button type="submit" variant="primary" [loading]="saving()">
+          {{ isEdit() ? 'Update Treatment' : 'Create Treatment' }}
+        </app-button>
+      </div>
+    </form>
+  </div>
+}

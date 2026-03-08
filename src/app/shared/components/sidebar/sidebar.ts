@@ -41,6 +41,7 @@ export class SidebarComponent {
           { label: 'Medicines', route: ROUTES.MEDICINES, icon: '💊' },
           { label: 'Equipment', route: ROUTES.EQUIPMENT, icon: '🔧' },
           { label: 'Medical Devices', route: ROUTES.MEDICAL_DEVICES, icon: '🩺' },
+          { label: 'Transactions', route: ROUTES.INVENTORY_TRANSACTIONS, icon: '📦' },
         ],
       },
       {
@@ -48,6 +49,7 @@ export class SidebarComponent {
         items: [
           { label: 'Appointments', route: ROUTES.APPOINTMENTS, icon: '📅' },
           { label: 'Medical Records', route: ROUTES.MEDICAL_RECORDS, icon: '📝' },
+          { label: 'Treatments', route: ROUTES.TREATMENTS, icon: '🏥' },
         ],
       },
       {

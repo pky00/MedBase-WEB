@@ -6,7 +6,7 @@ You are the Frontend Agent for MedBase. Your job is to build the Angular fronten
 
 ---
 
-## Current Phase: Phase 5 - Appointments & Records (Complete)
+## Current Phase: Phase 6 - Inventory Transactions & Treatments (Complete)
 
 ---
 
@@ -29,6 +29,8 @@ You are the Frontend Agent for MedBase. Your job is to build the Angular fronten
 | 14 | Vital Signs | 2026-03-06 | Vital signs create/update integrated into appointment flow page. Form fields: blood_pressure (systolic/diastolic), heart_rate, temperature, respiratory_rate, weight, height, notes. All fields optional. Read-only when appointment is completed. Display in appointment view page |
 | 15 | Medical Records | 2026-03-06 | Medical record CRUD: list page with patient dropdown filter, sortable table, pagination. Records link to appointments for viewing. Create/update integrated into appointment flow page. Fields: chief_complaint, diagnosis, treatment_notes, follow_up_date. Read-only when appointment is completed |
 | 16 | Appointment Flow | 2026-03-06 | Step-by-step appointment processing page with 4 steps: Begin (status to in_progress), Vitals (optional), Medical Record (optional), Complete (status to completed). Summary bar with patient/doctor/date/status. Visual step indicator with done/active states. Skip buttons for optional steps. Completion summary showing what was recorded. Read-only mode for completed/cancelled appointments |
+| 17 | Inventory Transactions | 2026-03-08 | Transaction list page with transaction_type filter, sortable table, pagination, delete modal. Create page with transaction type select, conditional third-party dropdown (donor for donations, doctor for prescriptions), date, notes, and dynamic items table (item_type/item/quantity with add/remove). View page with two-column layout: transaction details on left, items table on right. Transaction type badges with color coding. All 567 tests passing |
+| 18 | Treatments | 2026-03-08 | Treatment CRUD: list page with patient/partner dropdown filters, status filter, sortable table, pagination, delete modal. Create/edit form with patient dropdown (paginated, searchable), partner dropdown (referral/both only), optional appointment dropdown, treatment type, date, status, cost, description, notes. View page with treatment details and status badges. Status values: pending, completed |
 
 ---
 
@@ -50,3 +52,4 @@ You are the Frontend Agent for MedBase. Your job is to build the Angular fronten
 - Phase 3 complete — ready for PR
 - Phase 4 complete — ready for PR
 - Phase 5 complete — ready for PR
+- Phase 6 complete — ready for PR

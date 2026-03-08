@@ -19,3 +19,30 @@ export interface Treatment {
   patient_name: string | null;
   partner_name: string | null;
 }
+
+export interface TreatmentCreate {
+  patient_id: number;
+  partner_id: number;
+  appointment_id?: number | null;
+  treatment_type: string;
+  description?: string | null;
+  treatment_date?: string | null;
+  cost?: number | string | null;
+  notes?: string | null;
+  status?: TreatmentStatus;
+}
+
+export interface TreatmentUpdate {
+  patient_id?: number | null;
+  partner_id?: number | null;
+  appointment_id?: number | null;
+  treatment_type?: string | null;
+  description?: string | null;
+  treatment_date?: string | null;
+  cost?: number | string | null;
+  notes?: string | null;
+}
+
+export interface TreatmentStatusUpdate {
+  status: TreatmentStatus;
+}
