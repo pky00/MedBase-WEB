@@ -6,8 +6,6 @@ export interface Patient {
   id: number;
   third_party_id: number;
   third_party: ThirdParty | null;
-  first_name: string;
-  last_name: string;
   date_of_birth: string | null;
   gender: Gender | null;
   address: string | null;
@@ -27,8 +25,7 @@ export interface PatientDetail extends Patient {
 
 export interface PatientCreate {
   third_party_id?: number | null;
-  first_name: string;
-  last_name: string;
+  name?: string | null;
   phone?: string | null;
   email?: string | null;
   date_of_birth?: string | null;
@@ -40,8 +37,6 @@ export interface PatientCreate {
 }
 
 export interface PatientUpdate {
-  first_name?: string | null;
-  last_name?: string | null;
   date_of_birth?: string | null;
   gender?: Gender | null;
   address?: string | null;

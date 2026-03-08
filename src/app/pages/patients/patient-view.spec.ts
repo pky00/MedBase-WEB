@@ -14,7 +14,7 @@ describe('PatientViewComponent', () => {
   let router: Router;
 
   const mockPatient = {
-    id: 1, first_name: 'John', last_name: 'Doe',
+    id: 1,
     date_of_birth: '1990-05-15', gender: 'male' as const,
     address: '123 St',
     emergency_contact: 'Jane', emergency_phone: '456',

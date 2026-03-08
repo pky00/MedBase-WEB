@@ -86,7 +86,7 @@ export class AppointmentFormComponent implements OnInit {
       next: (response) => {
         const options = response.items.map((p) => ({
           value: p.id,
-          label: `${p.first_name} ${p.last_name}`,
+          label: p.third_party?.name || `Patient #${p.id}`,
         }));
         if (this.patientPage === 1) {
           this.patientOptions.set(options);

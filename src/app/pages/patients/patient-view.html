@@ -21,12 +21,8 @@
         <h3 class="detail-section-title">Personal Information</h3>
         <div class="detail-grid">
           <div class="detail-item">
-            <span class="detail-label">First Name</span>
-            <span class="detail-value">{{ p.first_name }}</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Last Name</span>
-            <span class="detail-value">{{ p.last_name }}</span>
+            <span class="detail-label">Name</span>
+            <span class="detail-value">{{ p.third_party?.name || '—' }}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Date of Birth</span>

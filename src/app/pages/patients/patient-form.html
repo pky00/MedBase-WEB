@@ -40,20 +40,13 @@
         <h3 class="form-section-title">Personal Information</h3>
         <div class="form-grid">
           <app-input
-            label="First Name"
-            placeholder="Enter first name"
-            inputId="firstName"
-            [required]="true"
-            [(ngModel)]="firstName"
-            name="firstName"
-          />
-          <app-input
-            label="Last Name"
-            placeholder="Enter last name"
-            inputId="lastName"
-            [required]="true"
-            [(ngModel)]="lastName"
-            name="lastName"
+            label="Name"
+            placeholder="Enter patient name"
+            inputId="name"
+            [required]="!isEdit()"
+            [disabled]="isEdit()"
+            [(ngModel)]="name"
+            name="name"
           />
           <app-input
             label="Date of Birth"

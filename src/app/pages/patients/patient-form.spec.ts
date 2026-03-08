@@ -62,26 +62,23 @@ describe('PatientFormComponent', () => {
       expect(component.thirdPartyOptions().length).toBe(1);
     });
 
-    it('should require first name and last name', () => {
-      component.firstName = '';
-      component.lastName = '';
+    it('should require name', () => {
+      component.name = '';
       component.onSubmit();
-      expect(component.errorMessage()).toBe('First name and last name are required.');
+      expect(component.errorMessage()).toBe('Name is required.');
     });
 
     it('should create patient successfully', () => {
-      const mockPatient = { id: 1, first_name: 'John', last_name: 'Doe' };
+      const mockPatient = { id: 1 };
       api.post.mockReturnValue(of(mockPatient));
       const navigateSpy = vi.spyOn(router, 'navigate');
 
-      component.firstName = 'John';
-      component.lastName = 'Doe';
+      component.name = 'John Doe';
       component.gender = 'male';
       component.onSubmit();
 
       expect(api.post).toHaveBeenCalledWith('patients', expect.objectContaining({
-        first_name: 'John',
-        last_name: 'Doe',
+        name: 'John Doe',
         gender: 'male',
       }));
       expect(notification.success).toHaveBeenCalledWith('Patient created successfully.');
@@ -89,11 +86,10 @@ describe('PatientFormComponent', () => {
     });
 
     it('should include third_party_id when selected', () => {
-      const mockPatient = { id: 1, first_name: 'John', last_name: 'Doe' };
+      const mockPatient = { id: 1 };
       api.post.mockReturnValue(of(mockPatient));
 
-      component.firstName = 'John';
-      component.lastName = 'Doe';
+      component.name = 'John Doe';
       component.thirdPartyId = 5;
       component.onSubmit();
 
@@ -109,8 +105,7 @@ describe('PatientFormComponent', () => {
       component.onThirdPartySelected(5);
 
       expect(api.get).toHaveBeenCalledWith('third-parties/5');
-      expect(component.firstName).toBe('John');
-      expect(component.lastName).toBe('Smith');
+      expect(component.name).toBe('John Smith');
       expect(component.phone).toBe('123');
       expect(component.email).toBe('tp@test.com');
     });
@@ -119,8 +114,7 @@ describe('PatientFormComponent', () => {
       const error = new HttpErrorResponse({ error: { detail: 'Validation error' }, status: 400 });
       api.post.mockReturnValue(throwError(() => error));
 
-      component.firstName = 'John';
-      component.lastName = 'Doe';
+      component.name = 'John Doe';
       component.onSubmit();
 
       expect(component.errorMessage()).toBe('Validation error');
@@ -146,7 +140,7 @@ describe('PatientFormComponent', () => {
 
   describe('edit mode', () => {
     const mockPatient = {
-      id: 5, first_name: 'Jane', last_name: 'Smith',
+      id: 5,
       date_of_birth: '1990-01-15', gender: 'female' as const,
       address: '123 Main St',
       emergency_contact: 'Bob', emergency_phone: '555-9999',
@@ -168,8 +162,7 @@ describe('PatientFormComponent', () => {
     });
 
     it('should load patient data', () => {
-      expect(component.firstName).toBe('Jane');
-      expect(component.lastName).toBe('Smith');
+      expect(component.name).toBe('Jane Smith');
       expect(component.gender).toBe('female');
       expect(component.dateOfBirth).toBe('1990-01-15');
     });
@@ -184,7 +177,7 @@ describe('PatientFormComponent', () => {
 
       component.onSubmit();
 
-      expect(api.put).toHaveBeenCalledWith('patients/5', expect.objectContaining({ first_name: 'Jane' }));
+      expect(api.put).toHaveBeenCalledWith('patients/5', expect.objectContaining({ gender: 'female' }));
       expect(notification.success).toHaveBeenCalledWith('Patient updated successfully.');
       expect(navigateSpy).toHaveBeenCalledWith(['/patients', 5]);
     });

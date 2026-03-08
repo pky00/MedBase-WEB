@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { API, ROUTES } from '../../core/constants/app.constants';
 import { QueryParams } from '../../core/models/api.model';
-import { Gender, PatientCreate, PatientDetail, PatientUpdate } from '../../core/models/patient.model';
+import { Gender, Patient, PatientCreate, PatientUpdate } from '../../core/models/patient.model';
 import { ThirdParty } from '../../core/models/third-party.model';
 import { ApiService } from '../../core/services/api';
 import { NotificationService } from '../../core/services/notification';
@@ -33,12 +33,11 @@ export class PatientFormComponent implements OnInit {
   thirdPartyId: number | null = null;
 
   patientId: number | null = null;
-  firstName = '';
-  lastName = '';
-  dateOfBirth = '';
-  gender: Gender | '' = '';
+  name = '';
   phone = '';
   email = '';
+  dateOfBirth = '';
+  gender: Gender | '' = '';
   address = '';
   emergencyContact = '';
   emergencyPhone = '';
@@ -96,11 +95,7 @@ export class PatientFormComponent implements OnInit {
     if (value) {
       this.api.get<ThirdParty>(`${API.THIRD_PARTIES}/${value}`).subscribe({
         next: (tp) => {
-          if (tp.name) {
-            const parts = tp.name.split(' ');
-            this.firstName = parts[0] || this.firstName;
-            this.lastName = parts.slice(1).join(' ') || this.lastName;
-          }
+          this.name = tp.name || this.name;
           this.phone = tp.phone || this.phone;
           this.email = tp.email || this.email;
           this.cdr.markForCheck();
@@ -111,14 +106,13 @@ export class PatientFormComponent implements OnInit {
 
   loadPatient(): void {
     this.loading.set(true);
-    this.api.get<PatientDetail>(`${API.PATIENTS}/${this.patientId}`).subscribe({
+    this.api.get<Patient>(`${API.PATIENTS}/${this.patientId}`).subscribe({
       next: (patient) => {
-        this.firstName = patient.first_name;
-        this.lastName = patient.last_name;
-        this.dateOfBirth = patient.date_of_birth || '';
-        this.gender = patient.gender || '';
+        this.name = patient.third_party?.name || '';
         this.phone = patient.third_party?.phone || '';
         this.email = patient.third_party?.email || '';
+        this.dateOfBirth = patient.date_of_birth || '';
+        this.gender = patient.gender || '';
         this.address = patient.address || '';
         this.emergencyContact = patient.emergency_contact || '';
         this.emergencyPhone = patient.emergency_phone || '';
@@ -134,8 +128,8 @@ export class PatientFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.firstName || !this.lastName) {
-      this.errorMessage.set('First name and last name are required.');
+    if (!this.isEdit() && !this.name) {
+      this.errorMessage.set('Name is required.');
       return;
     }
 
@@ -144,8 +138,6 @@ export class PatientFormComponent implements OnInit {
 
     if (this.isEdit()) {
       const data: PatientUpdate = {
-        first_name: this.firstName,
-        last_name: this.lastName,
         date_of_birth: this.dateOfBirth || null,
         gender: (this.gender as Gender) || null,
         address: this.address || null,
@@ -154,7 +146,7 @@ export class PatientFormComponent implements OnInit {
         is_active: this.isActive,
       };
 
-      this.api.put<PatientDetail>(`${API.PATIENTS}/${this.patientId}`, data).subscribe({
+      this.api.put<Patient>(`${API.PATIENTS}/${this.patientId}`, data).subscribe({
         next: () => {
           this.saving.set(false);
           this.notification.success('Patient updated successfully.');
@@ -167,8 +159,7 @@ export class PatientFormComponent implements OnInit {
       });
     } else {
       const data: PatientCreate = {
-        first_name: this.firstName,
-        last_name: this.lastName,
+        name: this.name,
         date_of_birth: this.dateOfBirth || undefined,
         gender: (this.gender as Gender) || undefined,
         phone: this.phone || undefined,
@@ -180,7 +171,7 @@ export class PatientFormComponent implements OnInit {
         third_party_id: this.thirdPartyId || undefined,
       };
 
-      this.api.post<PatientDetail>(API.PATIENTS, data).subscribe({
+      this.api.post<Patient>(API.PATIENTS, data).subscribe({
         next: (patient) => {
           this.saving.set(false);
           this.notification.success('Patient created successfully.');
