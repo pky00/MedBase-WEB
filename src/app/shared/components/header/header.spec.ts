@@ -68,7 +68,7 @@ describe('HeaderComponent', () => {
     mockCurrentUser.set({
       id: 1, username: 'jdoe', email: 'j@d.com',
       role: 'admin', is_active: true, is_deleted: false, third_party_id: 1,
-      third_party: { id: 1, name: 'John Doe', type: 'user', phone: null, email: null, is_active: true, is_deleted: false, created_by: null, created_at: '', updated_by: null, updated_at: '' },
+      third_party: { id: 1, name: 'John Doe', phone: null, email: null, is_active: true, is_deleted: false, created_by: null, created_at: '', updated_by: null, updated_at: '' },
       created_by: null, created_at: '', updated_by: null, updated_at: '',
     });
     expect(component.userInitials).toBe('JD');

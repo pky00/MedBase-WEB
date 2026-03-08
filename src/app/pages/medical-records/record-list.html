@@ -1,0 +1,34 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Medical Records</h1>
+    <p class="page-subtitle">View all medical records</p>
+  </div>
+</div>
+
+<div class="filters-bar">
+  <app-dropdown
+    placeholder="Filter by patient"
+    [options]="patientOptions()"
+    [hasMore]="patientHasMore()"
+    (loadMore)="onPatientLoadMore()"
+    (searchChanged)="onPatientSearch($event)"
+    [ngModel]="filterPatientId()"
+    (ngModelChange)="onPatientFilterChange($event)"
+    name="filterPatient"
+  />
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [data]="records()"
+  [actions]="actions"
+  [loading]="table.loading()"
+  [totalItems]="table.totalItems()"
+  [currentPage]="table.currentPage()"
+  [pageSize]="table.pageSize"
+  [sortColumn]="table.sortColumn()"
+  [sortOrder]="table.sortOrder()"
+  (sorted)="table.onSort($event); loadRecords()"
+  (pageChanged)="table.onPageChange($event); loadRecords()"
+  (actionClicked)="onAction($event)"
+/>

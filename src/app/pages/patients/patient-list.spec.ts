@@ -14,7 +14,7 @@ describe('PatientListComponent', () => {
   let router: Router;
 
   const mockPatientResponse = {
-    items: [{ id: 1, first_name: 'John', last_name: 'Doe', gender: 'male', phone: '123', email: 'j@d.com', is_active: true }],
+    items: [{ id: 1, gender: 'male', third_party: { name: 'John Doe', phone: '123', email: 'j@d.com' }, is_active: true }],
     total: 1,
     page: 1,
     size: 10,
@@ -92,9 +92,9 @@ describe('PatientListComponent', () => {
     });
 
     it('should open delete modal on delete action', () => {
-      component.onAction({ action: 'delete', item: { id: 1, first_name: 'John', last_name: 'Doe' } });
+      component.onAction({ action: 'delete', item: { id: 1, third_party: { name: 'John Doe' } } });
       expect(component.deleteModalOpen()).toBe(true);
-      expect(component.itemToDelete()).toEqual({ id: 1, first_name: 'John', last_name: 'Doe' });
+      expect(component.itemToDelete()).toEqual({ id: 1, third_party: { name: 'John Doe' } });
     });
   });
 
@@ -106,7 +106,7 @@ describe('PatientListComponent', () => {
 
   describe('delete', () => {
     it('should delete patient and reload', () => {
-      component.itemToDelete.set({ id: 1, first_name: 'John', last_name: 'Doe' });
+      component.itemToDelete.set({ id: 1, third_party: { name: 'John Doe' } });
       component.confirmDelete();
 
       expect(api.delete).toHaveBeenCalledWith('patients/1');
@@ -116,7 +116,7 @@ describe('PatientListComponent', () => {
 
     it('should show error on delete failure', () => {
       api.delete.mockReturnValue(throwError(() => new Error('fail')));
-      component.itemToDelete.set({ id: 1, first_name: 'John' });
+      component.itemToDelete.set({ id: 1 });
       component.confirmDelete();
 
       expect(notification.error).toHaveBeenCalledWith('Failed to delete patient.');

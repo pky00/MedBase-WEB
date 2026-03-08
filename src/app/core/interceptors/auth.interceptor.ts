@@ -1,7 +1,7 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
+import { catchError, EMPTY, throwError } from 'rxjs';
 
 import { ROUTES, TOKEN_KEY } from '../constants/app.constants';
 import { AuthService } from '../services/auth';
@@ -26,6 +26,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         authService.isLoggedIn.set(false);
         authService.currentUser.set(null);
         router.navigate([ROUTES.LOGIN]);
+        return EMPTY;
       }
       return throwError(() => error);
     })

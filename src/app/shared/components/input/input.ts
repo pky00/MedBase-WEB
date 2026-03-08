@@ -1,4 +1,4 @@
-import { Component, forwardRef, input, signal } from '@angular/core';
+import { Component, effect, forwardRef, input, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
@@ -16,14 +16,23 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 })
 export class InputComponent implements ControlValueAccessor {
   label = input('');
-  type = input<'text' | 'number' | 'email' | 'password' | 'date' | 'textarea'>('text');
+  type = input<'text' | 'number' | 'email' | 'password' | 'date' | 'datetime-local' | 'textarea'>('text');
   placeholder = input('');
   required = input(false);
   errorMessage = input('');
   inputId = input('');
+  disabled = input(false);
 
   value = signal('');
   isDisabled = signal(false);
+
+  constructor() {
+    effect(() => {
+      if (this.disabled()) {
+        this.isDisabled.set(true);
+      }
+    });
+  }
 
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};

@@ -1,0 +1,39 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Third Parties</h1>
+    <p class="page-subtitle">Manage third party records</p>
+  </div>
+</div>
+
+<div class="filters-bar">
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Search by name, phone, or email..."
+      [(ngModel)]="searchQuery"
+      (keyup.enter)="onSearch()"
+    />
+  </div>
+  <select class="filter-select" (change)="table.onFilterChange(filterActive, $event); loadThirdParties()">
+    <option value="">All Status</option>
+    <option value="true">Active</option>
+    <option value="false">Inactive</option>
+  </select>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [data]="thirdParties()"
+  [actions]="actions"
+  [loading]="table.loading()"
+  [totalItems]="table.totalItems()"
+  [currentPage]="table.currentPage()"
+  [pageSize]="table.pageSize"
+  [sortColumn]="table.sortColumn()"
+  [sortOrder]="table.sortOrder()"
+  (sorted)="table.onSort($event); loadThirdParties()"
+  (pageChanged)="table.onPageChange($event); loadThirdParties()"
+  (actionClicked)="onAction($event)"
+/>

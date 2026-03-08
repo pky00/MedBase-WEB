@@ -44,11 +44,19 @@ export class SidebarComponent {
         ],
       },
       {
+        title: 'Clinic',
+        items: [
+          { label: 'Appointments', route: ROUTES.APPOINTMENTS, icon: '📅' },
+          { label: 'Medical Records', route: ROUTES.MEDICAL_RECORDS, icon: '📝' },
+        ],
+      },
+      {
         title: 'People',
         items: [
           { label: 'Patients', route: ROUTES.PATIENTS, icon: '🧑' },
           { label: 'Partners', route: ROUTES.PARTNERS, icon: '🤝' },
           { label: 'Doctors', route: ROUTES.DOCTORS, icon: '👨‍⚕️' },
+          { label: 'Third Parties', route: ROUTES.THIRD_PARTIES, icon: '👤' },
         ],
       },
       {

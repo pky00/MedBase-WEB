@@ -1,0 +1,75 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Appointments</h1>
+    <p class="page-subtitle">Manage patient appointments</p>
+  </div>
+  <app-button variant="primary" (clicked)="createAppointment()">+ New Appointment</app-button>
+</div>
+
+<div class="filters-bar">
+  <app-dropdown
+    placeholder="Filter by patient"
+    [options]="patientOptions()"
+    [hasMore]="patientHasMore()"
+    (loadMore)="onPatientLoadMore()"
+    (searchChanged)="onPatientSearch($event)"
+    [ngModel]="filterPatientId()"
+    (ngModelChange)="onPatientFilterChange($event)"
+    name="filterPatient"
+  />
+  <app-dropdown
+    placeholder="Filter by doctor"
+    [options]="doctorOptions()"
+    [hasMore]="doctorHasMore()"
+    (loadMore)="onDoctorLoadMore()"
+    (searchChanged)="onDoctorSearch($event)"
+    [ngModel]="filterDoctorId()"
+    (ngModelChange)="onDoctorFilterChange($event)"
+    name="filterDoctor"
+  />
+  <select class="filter-select" (change)="table.onFilterChange(filterStatus, $event); loadAppointments()">
+    <option value="">All Status</option>
+    <option value="scheduled">Scheduled</option>
+    <option value="in_progress">In Progress</option>
+    <option value="completed">Completed</option>
+    <option value="cancelled">Cancelled</option>
+  </select>
+  <select class="filter-select" (change)="table.onFilterChange(filterType, $event); loadAppointments()">
+    <option value="">All Types</option>
+    <option value="scheduled">Scheduled</option>
+    <option value="walk_in">Walk-in</option>
+  </select>
+  <select class="filter-select" (change)="table.onFilterChange(filterLocation, $event); loadAppointments()">
+    <option value="">All Locations</option>
+    <option value="internal">Internal</option>
+    <option value="external">External</option>
+  </select>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [data]="appointments()"
+  [actions]="actions"
+  [loading]="table.loading()"
+  [totalItems]="table.totalItems()"
+  [currentPage]="table.currentPage()"
+  [pageSize]="table.pageSize"
+  [sortColumn]="table.sortColumn()"
+  [sortOrder]="table.sortOrder()"
+  (sorted)="table.onSort($event); loadAppointments()"
+  (pageChanged)="table.onPageChange($event); loadAppointments()"
+  (actionClicked)="onAction($event)"
+/>
+
+<app-modal
+  title="Delete Appointment"
+  [isOpen]="deleteModalOpen()"
+  (closed)="cancelDelete()"
+>
+  <p>Are you sure you want to delete this appointment for <strong>{{ itemToDelete()?.['patient_name'] }}</strong>?</p>
+  <p class="modal-warning">This action cannot be undone.</p>
+  <div class="modal-actions">
+    <app-button variant="secondary" (clicked)="cancelDelete()">Cancel</app-button>
+    <app-button variant="danger" [loading]="deleting()" (clicked)="confirmDelete()">Delete</app-button>
+  </div>
+</app-modal>

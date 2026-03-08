@@ -10,13 +10,19 @@ import { PatientFormComponent } from './patient-form';
 describe('PatientFormComponent', () => {
   let component: PatientFormComponent;
   let fixture: ComponentFixture<PatientFormComponent>;
-  let api: { get: ReturnType<typeof vi.fn>; post: ReturnType<typeof vi.fn>; put: ReturnType<typeof vi.fn> };
+  let api: { get: ReturnType<typeof vi.fn>; getList: ReturnType<typeof vi.fn>; post: ReturnType<typeof vi.fn>; put: ReturnType<typeof vi.fn> };
   let notification: { success: ReturnType<typeof vi.fn>; error: ReturnType<typeof vi.fn> };
   let router: Router;
+
+  const mockThirdPartyResponse = {
+    items: [{ id: 1, name: 'TP A' }],
+    total: 1, page: 1, size: 50, pages: 1,
+  };
 
   function setup(paramId: string | null = null) {
     api = {
       get: vi.fn(),
+      getList: vi.fn().mockReturnValue(of(mockThirdPartyResponse)),
       post: vi.fn(),
       put: vi.fn(),
     };
@@ -51,53 +57,96 @@ describe('PatientFormComponent', () => {
       expect(component.isEdit()).toBe(false);
     });
 
-    it('should require first name and last name', () => {
-      component.firstName = '';
-      component.lastName = '';
+    it('should load third parties on init in create mode with exclude_patients flag', () => {
+      expect(api.getList).toHaveBeenCalledWith('third-parties', expect.objectContaining({ page: 1, size: 50, exclude_patients: true }));
+      expect(component.thirdPartyOptions().length).toBe(1);
+    });
+
+    it('should require name', () => {
+      component.name = '';
       component.onSubmit();
-      expect(component.errorMessage()).toBe('First name and last name are required.');
+      expect(component.errorMessage()).toBe('Name is required.');
     });
 
     it('should create patient successfully', () => {
-      const mockPatient = { id: 1, first_name: 'John', last_name: 'Doe' };
+      const mockPatient = { id: 1 };
       api.post.mockReturnValue(of(mockPatient));
       const navigateSpy = vi.spyOn(router, 'navigate');
 
-      component.firstName = 'John';
-      component.lastName = 'Doe';
+      component.name = 'John Doe';
       component.gender = 'male';
       component.onSubmit();
 
       expect(api.post).toHaveBeenCalledWith('patients', expect.objectContaining({
-        first_name: 'John',
-        last_name: 'Doe',
+        name: 'John Doe',
         gender: 'male',
       }));
       expect(notification.success).toHaveBeenCalledWith('Patient created successfully.');
       expect(navigateSpy).toHaveBeenCalledWith(['/patients', 1]);
     });
 
+    it('should include third_party_id when selected', () => {
+      const mockPatient = { id: 1 };
+      api.post.mockReturnValue(of(mockPatient));
+
+      component.name = 'John Doe';
+      component.thirdPartyId = 5;
+      component.onSubmit();
+
+      expect(api.post).toHaveBeenCalledWith('patients', expect.objectContaining({
+        third_party_id: 5,
+      }));
+    });
+
+    it('should auto-fill on third party selection', () => {
+      const mockTp = { id: 5, name: 'John Smith', phone: '123', email: 'tp@test.com' };
+      api.get.mockReturnValue(of(mockTp));
+
+      component.onThirdPartySelected(5);
+
+      expect(api.get).toHaveBeenCalledWith('third-parties/5');
+      expect(component.name).toBe('John Smith');
+      expect(component.phone).toBe('123');
+      expect(component.email).toBe('tp@test.com');
+    });
+
     it('should show error on create failure', () => {
       const error = new HttpErrorResponse({ error: { detail: 'Validation error' }, status: 400 });
       api.post.mockReturnValue(throwError(() => error));
 
-      component.firstName = 'John';
-      component.lastName = 'Doe';
+      component.name = 'John Doe';
       component.onSubmit();
 
       expect(component.errorMessage()).toBe('Validation error');
       expect(component.saving()).toBe(false);
     });
+
+    it('should search third parties', () => {
+      api.getList.mockClear();
+      api.getList.mockReturnValue(of(mockThirdPartyResponse));
+      component.onThirdPartySearch('test');
+      expect(component.thirdPartyPage).toBe(1);
+      expect(api.getList).toHaveBeenCalledWith('third-parties', expect.objectContaining({ search: 'test' }));
+    });
+
+    it('should load more third parties', () => {
+      api.getList.mockClear();
+      api.getList.mockReturnValue(of(mockThirdPartyResponse));
+      component.onThirdPartyLoadMore();
+      expect(component.thirdPartyPage).toBe(2);
+      expect(api.getList).toHaveBeenCalledWith('third-parties', expect.objectContaining({ page: 2 }));
+    });
   });
 
   describe('edit mode', () => {
     const mockPatient = {
-      id: 5, first_name: 'Jane', last_name: 'Smith',
+      id: 5,
       date_of_birth: '1990-01-15', gender: 'female' as const,
-      phone: '555-1234', email: 'jane@test.com', address: '123 Main St',
+      address: '123 Main St',
       emergency_contact: 'Bob', emergency_phone: '555-9999',
       is_active: true, is_deleted: false, documents: null,
-      third_party_id: 10, created_at: '', updated_at: '',
+      third_party_id: 10, third_party: { id: 10, name: 'Jane Smith', phone: '555-1234', email: 'jane@test.com' },
+      created_at: '', updated_at: '',
       created_by: null, updated_by: null,
     };
 
@@ -113,10 +162,13 @@ describe('PatientFormComponent', () => {
     });
 
     it('should load patient data', () => {
-      expect(component.firstName).toBe('Jane');
-      expect(component.lastName).toBe('Smith');
+      expect(component.name).toBe('Jane Smith');
       expect(component.gender).toBe('female');
       expect(component.dateOfBirth).toBe('1990-01-15');
+    });
+
+    it('should not load third parties in edit mode', () => {
+      expect(api.getList).not.toHaveBeenCalledWith('third-parties', expect.anything());
     });
 
     it('should update patient successfully', () => {
@@ -125,7 +177,7 @@ describe('PatientFormComponent', () => {
 
       component.onSubmit();
 
-      expect(api.put).toHaveBeenCalledWith('patients/5', expect.objectContaining({ first_name: 'Jane' }));
+      expect(api.put).toHaveBeenCalledWith('patients/5', expect.objectContaining({ gender: 'female' }));
       expect(notification.success).toHaveBeenCalledWith('Patient updated successfully.');
       expect(navigateSpy).toHaveBeenCalledWith(['/patients', 5]);
     });

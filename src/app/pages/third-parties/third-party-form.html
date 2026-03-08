@@ -1,0 +1,63 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Edit Third Party</h1>
+    <p class="page-subtitle">Update third party information</p>
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading-spinner message="Loading..." />
+} @else {
+  <div class="form-card">
+    @if (errorMessage()) {
+      <div class="alert-error">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-section">
+        <h3 class="form-section-title">Third Party Information</h3>
+        <div class="form-grid">
+          <app-input
+            label="Name"
+            placeholder="Enter name"
+            inputId="name"
+            [required]="true"
+            [(ngModel)]="name"
+            name="name"
+          />
+          <app-input
+            label="Phone"
+            placeholder="Enter phone number"
+            inputId="phone"
+            [(ngModel)]="phone"
+            name="phone"
+          />
+          <app-input
+            label="Email"
+            type="email"
+            placeholder="Enter email address"
+            inputId="email"
+            [(ngModel)]="email"
+            name="email"
+          />
+          <div class="form-field">
+            <label class="form-label" for="is_active">Status</label>
+            <select id="is_active" class="form-select" [value]="isActive" (change)="onActiveChange($event)">
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <app-button variant="secondary" (clicked)="cancel()">Cancel</app-button>
+        <app-button type="submit" variant="primary" [loading]="saving()">
+          Update Third Party
+        </app-button>
+      </div>
+    </form>
+  </div>
+}

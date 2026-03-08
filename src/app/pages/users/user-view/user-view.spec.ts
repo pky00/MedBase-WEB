@@ -14,8 +14,9 @@ describe('UserViewComponent', () => {
   let router: Router;
 
   const mockUser = {
-    id: 1, username: 'admin', name: 'Admin', email: 'a@b.com',
-    role: 'admin', is_active: true, third_party_id: 1,
+    id: 1, username: 'admin', third_party_id: 1,
+    third_party: { id: 1, name: 'Admin', phone: null, email: 'a@b.com' },
+    role: 'admin', is_active: true,
     created_at: '2024-01-01', updated_at: '2024-01-01',
   };
 

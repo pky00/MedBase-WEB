@@ -21,12 +21,8 @@
         <h3 class="detail-section-title">Personal Information</h3>
         <div class="detail-grid">
           <div class="detail-item">
-            <span class="detail-label">First Name</span>
-            <span class="detail-value">{{ p.first_name }}</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Last Name</span>
-            <span class="detail-value">{{ p.last_name }}</span>
+            <span class="detail-label">Name</span>
+            <span class="detail-value">{{ p.third_party?.name || '—' }}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Date of Birth</span>
@@ -52,11 +48,11 @@
         <div class="detail-grid">
           <div class="detail-item">
             <span class="detail-label">Phone</span>
-            <span class="detail-value">{{ p.phone || '—' }}</span>
+            <span class="detail-value">{{ p.third_party?.phone || '—' }}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Email</span>
-            <span class="detail-value">{{ p.email || '—' }}</span>
+            <span class="detail-value">{{ p.third_party?.email || '—' }}</span>
           </div>
           <div class="detail-item full-width">
             <span class="detail-label">Address</span>
@@ -167,17 +163,60 @@
         }
 
         @if (activeTab() === 'appointments') {
-          <div class="empty-state">
-            <span class="empty-icon">📅</span>
-            <p>Appointments will be available in a future phase.</p>
-          </div>
+          @if (appointmentsLoading()) {
+            <app-loading-spinner message="Loading appointments..." />
+          } @else if (appointments().length === 0) {
+            <div class="empty-state">
+              <span class="empty-icon">📅</span>
+              <p>No appointments found.</p>
+            </div>
+          } @else {
+            <div class="appointments-list">
+              @for (apt of appointments(); track apt.id) {
+                <div class="appointment-card" (click)="viewAppointment(apt.id)">
+                  <div class="apt-info">
+                    <span class="apt-date">{{ formatDateTime(apt.appointment_date) }}</span>
+                    <span class="apt-doctor">{{ apt.doctor_name || 'No doctor assigned' }}</span>
+                  </div>
+                  <div class="apt-meta">
+                    <span class="badge" [class]="'badge-' + apt.status">{{ formatStatus(apt.status) }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
         }
 
         @if (activeTab() === 'records') {
-          <div class="empty-state">
-            <span class="empty-icon">📋</span>
-            <p>Medical records will be available in a future phase.</p>
-          </div>
+          @if (recordsLoading()) {
+            <app-loading-spinner message="Loading medical records..." />
+          } @else if (medicalRecords().length === 0) {
+            <div class="empty-state">
+              <span class="empty-icon">📋</span>
+              <p>No medical records found.</p>
+            </div>
+          } @else {
+            <div class="records-list">
+              @for (rec of medicalRecords(); track rec.id) {
+                <div class="record-card" (click)="viewAppointment(rec.appointment_id)">
+                  <div class="rec-info">
+                    <span class="rec-date">{{ formatDateTime(rec.created_at) }}</span>
+                    @if (rec.diagnosis) {
+                      <span class="rec-diagnosis">{{ rec.diagnosis }}</span>
+                    }
+                    @if (rec.chief_complaint) {
+                      <span class="rec-complaint">{{ rec.chief_complaint }}</span>
+                    }
+                  </div>
+                  @if (rec.follow_up_date) {
+                    <div class="rec-followup">
+                      Follow-up: {{ formatDate(rec.follow_up_date) }}
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
         }
       </div>
     </div>

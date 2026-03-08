@@ -197,6 +197,12 @@ a {
   margin-bottom: var(--space-md);
 }
 
+.form-hint {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;

@@ -14,52 +14,85 @@
 @if (loading()) {
   <app-loading-spinner message="Loading..." />
 } @else if (doctor(); as d) {
-  <div class="detail-card">
-    <div class="detail-section">
-      <h3 class="detail-section-title">Doctor Information</h3>
-      <div class="detail-grid">
-        <div class="detail-item">
-          <span class="detail-label">Name</span>
-          <span class="detail-value">{{ d.name }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Specialization</span>
-          <span class="detail-value">{{ d.specialization || '—' }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Type</span>
-          <span class="detail-value">
-            <span class="badge" [class]="'badge-' + d.type">
-              {{ formatDoctorType(d.type) }}
-            </span>
-          </span>
-        </div>
-        @if (d.type === 'partner_provided') {
+  <div class="view-layout">
+    <!-- Left: Doctor Details -->
+    <div class="detail-card">
+      <div class="detail-section">
+        <h3 class="detail-section-title">Doctor Information</h3>
+        <div class="detail-grid">
           <div class="detail-item">
-            <span class="detail-label">Partner</span>
-            <span class="detail-value">{{ d.partner_name || '—' }}</span>
+            <span class="detail-label">Name</span>
+            <span class="detail-value">{{ d.third_party?.name || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Specialization</span>
+            <span class="detail-value">{{ d.specialization || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Type</span>
+            <span class="detail-value">
+              <span class="badge" [class]="'badge-' + d.type">
+                {{ formatDoctorType(d.type) }}
+              </span>
+            </span>
+          </div>
+          @if (d.type === 'partner_provided') {
+            <div class="detail-item">
+              <span class="detail-label">Partner</span>
+              <span class="detail-value">{{ d.partner_name || '—' }}</span>
+            </div>
+          }
+          <div class="detail-item">
+            <span class="detail-label">Phone</span>
+            <span class="detail-value">{{ d.third_party?.phone || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">{{ d.third_party?.email || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Status</span>
+            <span class="detail-value">
+              <span class="badge" [class]="d.is_active ? 'badge-active' : 'badge-inactive'">
+                {{ d.is_active ? 'Active' : 'Inactive' }}
+              </span>
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Created</span>
+            <span class="detail-value">{{ formatDateTime(d.created_at) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Appointments -->
+    <div class="right-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Appointments</h3>
+      </div>
+      <div class="panel-content">
+        @if (appointmentsLoading()) {
+          <app-loading-spinner message="Loading appointments..." />
+        } @else if (appointments().length === 0) {
+          <div class="empty-state">
+            <p>No appointments found.</p>
+          </div>
+        } @else {
+          <div class="items-list">
+            @for (apt of appointments(); track apt.id) {
+              <div class="item-card clickable" (click)="viewAppointment(apt.id)">
+                <div class="item-info">
+                  <span class="item-title">{{ formatDateTime(apt.appointment_date) }}</span>
+                  <span class="item-subtitle">{{ apt.patient_name || 'Unknown patient' }}</span>
+                </div>
+                <div class="item-badges">
+                  <span class="badge" [class]="'badge-' + apt.status">{{ formatStatus(apt.status) }}</span>
+                </div>
+              </div>
+            }
           </div>
         }
-        <div class="detail-item">
-          <span class="detail-label">Phone</span>
-          <span class="detail-value">{{ d.phone || '—' }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Email</span>
-          <span class="detail-value">{{ d.email || '—' }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Status</span>
-          <span class="detail-value">
-            <span class="badge" [class]="d.is_active ? 'badge-active' : 'badge-inactive'">
-              {{ d.is_active ? 'Active' : 'Inactive' }}
-            </span>
-          </span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Created</span>
-          <span class="detail-value">{{ d.created_at }}</span>
-        </div>
       </div>
     </div>
   </div>

@@ -323,6 +323,84 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'appointments',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/appointments/appointment-list').then(
+                (m) => m.AppointmentListComponent
+              ),
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import('./pages/appointments/appointment-form').then(
+                (m) => m.AppointmentFormComponent
+              ),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./pages/appointments/appointment-view').then(
+                (m) => m.AppointmentViewComponent
+              ),
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import('./pages/appointments/appointment-form').then(
+                (m) => m.AppointmentFormComponent
+              ),
+          },
+          {
+            path: ':id/flow',
+            loadComponent: () =>
+              import('./pages/appointments/appointment-flow').then(
+                (m) => m.AppointmentFlowComponent
+              ),
+          },
+        ],
+      },
+      {
+        path: 'third-parties',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/third-parties/third-party-list').then(
+                (m) => m.ThirdPartyListComponent
+              ),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./pages/third-parties/third-party-view').then(
+                (m) => m.ThirdPartyViewComponent
+              ),
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import('./pages/third-parties/third-party-form').then(
+                (m) => m.ThirdPartyFormComponent
+              ),
+          },
+        ],
+      },
+      {
+        path: 'medical-records',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/medical-records/record-list').then(
+                (m) => m.RecordListComponent
+              ),
+          },
+        ],
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

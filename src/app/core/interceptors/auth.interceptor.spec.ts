@@ -51,11 +51,13 @@ describe('authInterceptor', () => {
     req.flush({});
   });
 
-  it('should clear session and redirect on 401 error', () => {
+  it('should clear session and redirect on 401 error without propagating error', () => {
     localStorage.setItem(TOKEN_KEY, 'my-token');
     const navigateSpy = vi.spyOn(router, 'navigate');
+    const errorSpy = vi.fn();
+    const completeSpy = vi.fn();
 
-    httpClient.get('/test').subscribe({ error: () => {} });
+    httpClient.get('/test').subscribe({ error: errorSpy, complete: completeSpy });
 
     const req = httpMock.expectOne('/test');
     req.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
@@ -63,6 +65,8 @@ describe('authInterceptor', () => {
     expect(localStorage.getItem(TOKEN_KEY)).toBeNull();
     expect(authService.isLoggedIn()).toBe(false);
     expect(navigateSpy).toHaveBeenCalledWith(['/login']);
+    expect(errorSpy).not.toHaveBeenCalled();
+    expect(completeSpy).toHaveBeenCalled();
   });
 
   it('should not clear session on non-401 errors', () => {

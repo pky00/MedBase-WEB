@@ -14,54 +14,174 @@
 @if (loading()) {
   <app-loading-spinner message="Loading..." />
 } @else if (partner(); as p) {
-  <div class="detail-card">
-    <div class="detail-section">
-      <h3 class="detail-section-title">Partner Information</h3>
-      <div class="detail-grid">
-        <div class="detail-item">
-          <span class="detail-label">Name</span>
-          <span class="detail-value">{{ p.name }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Partner Type</span>
-          <span class="detail-value">
-            <span class="badge" [class]="'badge-' + p.partner_type">
-              {{ formatPartnerType(p.partner_type) }}
+  <div class="view-layout">
+    <!-- Left: Partner Details -->
+    <div class="detail-card">
+      <div class="detail-section">
+        <h3 class="detail-section-title">Partner Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Name</span>
+            <span class="detail-value">{{ p.third_party?.name || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Partner Type</span>
+            <span class="detail-value">
+              <span class="badge" [class]="'badge-' + p.partner_type">
+                {{ formatPartnerType(p.partner_type) }}
+              </span>
             </span>
-          </span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Organization Type</span>
-          <span class="detail-value">{{ formatOrgType(p.organization_type) }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Contact Person</span>
-          <span class="detail-value">{{ p.contact_person || '—' }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Phone</span>
-          <span class="detail-value">{{ p.phone || '—' }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Email</span>
-          <span class="detail-value">{{ p.email || '—' }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Address</span>
-          <span class="detail-value">{{ p.address || '—' }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Status</span>
-          <span class="detail-value">
-            <span class="badge" [class]="p.is_active ? 'badge-active' : 'badge-inactive'">
-              {{ p.is_active ? 'Active' : 'Inactive' }}
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Organization Type</span>
+            <span class="detail-value">{{ formatOrgType(p.organization_type) }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Contact Person</span>
+            <span class="detail-value">{{ p.contact_person || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Phone</span>
+            <span class="detail-value">{{ p.third_party?.phone || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">{{ p.third_party?.email || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Address</span>
+            <span class="detail-value">{{ p.address || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Status</span>
+            <span class="detail-value">
+              <span class="badge" [class]="p.is_active ? 'badge-active' : 'badge-inactive'">
+                {{ p.is_active ? 'Active' : 'Inactive' }}
+              </span>
             </span>
-          </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Created</span>
+            <span class="detail-value">{{ formatDateTime(p.created_at) }}</span>
+          </div>
         </div>
-        <div class="detail-item">
-          <span class="detail-label">Created</span>
-          <span class="detail-value">{{ p.created_at }}</span>
-        </div>
+      </div>
+    </div>
+
+    <!-- Right: Tabs (Appointments, Donations, Treatments) -->
+    <div class="right-panel">
+      <div class="tabs">
+        <button
+          class="tab"
+          [class.tab-active]="activeTab() === 'appointments'"
+          (click)="setTab('appointments')"
+        >
+          Appointments
+        </button>
+        @if (isDonorType()) {
+          <button
+            class="tab"
+            [class.tab-active]="activeTab() === 'donations'"
+            (click)="setTab('donations')"
+          >
+            Donations
+          </button>
+        }
+        @if (isReferralType()) {
+          <button
+            class="tab"
+            [class.tab-active]="activeTab() === 'treatments'"
+            (click)="setTab('treatments')"
+          >
+            Treatments
+          </button>
+        }
+      </div>
+
+      <div class="tab-content">
+        <!-- Appointments Tab -->
+        @if (activeTab() === 'appointments') {
+          @if (appointmentsLoading()) {
+            <app-loading-spinner message="Loading appointments..." />
+          } @else if (appointments().length === 0) {
+            <div class="empty-state">
+              <p>No appointments found.</p>
+            </div>
+          } @else {
+            <div class="items-list">
+              @for (apt of appointments(); track apt.id) {
+                <div class="item-card clickable" (click)="viewAppointment(apt.id)">
+                  <div class="item-info">
+                    <span class="item-title">{{ formatDateTime(apt.appointment_date) }}</span>
+                    <span class="item-subtitle">{{ apt.patient_name || 'Unknown patient' }}</span>
+                    @if (apt.doctor_name) {
+                      <span class="item-meta">Dr. {{ apt.doctor_name }}</span>
+                    }
+                  </div>
+                  <div class="item-badges">
+                    <span class="badge" [class]="'badge-' + apt.status">{{ formatStatus(apt.status) }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        }
+
+        <!-- Donations Tab -->
+        @if (activeTab() === 'donations') {
+          @if (donationsLoading()) {
+            <app-loading-spinner message="Loading donations..." />
+          } @else if (donations().length === 0) {
+            <div class="empty-state">
+              <p>No donations found.</p>
+            </div>
+          } @else {
+            <div class="items-list">
+              @for (don of donations(); track don.id) {
+                <div class="item-card">
+                  <div class="item-info">
+                    <span class="item-title">{{ formatDate(don.transaction_date) }}</span>
+                    @if (don.notes) {
+                      <span class="item-subtitle">{{ don.notes }}</span>
+                    }
+                    @if (don.items && don.items.length > 0) {
+                      <span class="item-meta">{{ don.items.length }} item{{ don.items.length > 1 ? 's' : '' }}</span>
+                    }
+                  </div>
+                  <span class="badge badge-donation">Donation</span>
+                </div>
+              }
+            </div>
+          }
+        }
+
+        <!-- Treatments Tab -->
+        @if (activeTab() === 'treatments') {
+          @if (treatmentsLoading()) {
+            <app-loading-spinner message="Loading treatments..." />
+          } @else if (treatments().length === 0) {
+            <div class="empty-state">
+              <p>No treatments found.</p>
+            </div>
+          } @else {
+            <div class="items-list">
+              @for (trt of treatments(); track trt.id) {
+                <div class="item-card">
+                  <div class="item-info">
+                    <span class="item-title">{{ trt.treatment_type }}</span>
+                    <span class="item-subtitle">{{ trt.patient_name || 'Unknown patient' }}</span>
+                    @if (trt.treatment_date) {
+                      <span class="item-meta">{{ formatDate(trt.treatment_date) }}</span>
+                    }
+                  </div>
+                  <div class="item-badges">
+                    <span class="badge" [class]="'badge-' + trt.status">{{ formatStatus(trt.status) }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        }
       </div>
     </div>
   </div>

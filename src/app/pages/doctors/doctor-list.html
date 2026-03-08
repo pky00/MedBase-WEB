@@ -40,7 +40,7 @@
   [isOpen]="deleteModalOpen()"
   (closed)="cancelDelete()"
 >
-  <p>Are you sure you want to delete <strong>{{ itemToDelete()?.['name'] }}</strong>?</p>
+  <p>Are you sure you want to delete this doctor?</p>
   <p class="modal-warning">This action cannot be undone.</p>
   <div class="modal-actions">
     <app-button variant="secondary" (clicked)="cancelDelete()">Cancel</app-button>

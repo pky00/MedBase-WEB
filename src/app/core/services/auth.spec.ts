@@ -93,7 +93,7 @@ describe('AuthService', () => {
       const mockUser = {
         id: 1, username: 'admin', email: 'a@b.com',
         role: 'admin' as const, is_active: true, is_deleted: false, third_party_id: 1,
-        third_party: { id: 1, name: 'Admin', type: 'user', phone: null, email: null, is_active: true, is_deleted: false, created_by: null, created_at: '', updated_by: null, updated_at: '' },
+        third_party: { id: 1, name: 'Admin', phone: null, email: null, is_active: true, is_deleted: false, created_by: null, created_at: '', updated_by: null, updated_at: '' },
         created_by: null, created_at: '', updated_by: null, updated_at: '',
       };
 

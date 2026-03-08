@@ -30,7 +30,7 @@ export class UserListComponent implements OnInit {
   columns: TableColumn[] = [
     { key: 'username', label: 'Username', sortable: true },
     { key: 'third_party.name', label: 'Name', sortable: false },
-    { key: 'email', label: 'Email', sortable: true },
+    { key: 'third_party.email', label: 'Email', sortable: false },
     { key: 'role', label: 'Role', sortable: true },
     { key: 'is_active', label: 'Status', sortable: true, format: formatActiveStatus },
   ];
