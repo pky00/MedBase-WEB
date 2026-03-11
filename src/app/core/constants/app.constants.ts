@@ -19,8 +19,6 @@ export const ROUTES = {
   APPOINTMENTS: '/appointments',
   MEDICAL_RECORDS: '/medical-records',
   THIRD_PARTIES: '/third-parties',
-  INVENTORY_TRANSACTIONS: '/inventory-transactions',
-  TREATMENTS: '/treatments',
 } as const;
 
 // Display formatters
@@ -49,6 +47,5 @@ export const API = {
   MEDICAL_RECORDS: 'medical-records',
   THIRD_PARTIES: 'third-parties',
   INVENTORY_TRANSACTIONS: 'inventory-transactions',
-  INVENTORY_TRANSACTION_ITEMS: 'inventory-transaction-items',
   TREATMENTS: 'treatments',
 } as const;
