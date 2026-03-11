@@ -1,0 +1,63 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Treatments</h1>
+    <p class="page-subtitle">Manage external treatments via partners</p>
+  </div>
+  <app-button variant="primary" (clicked)="createTreatment()">+ New Treatment</app-button>
+</div>
+
+<div class="filters-bar">
+  <app-dropdown
+    placeholder="Filter by patient"
+    [options]="patientOptions()"
+    [hasMore]="patientHasMore()"
+    (loadMore)="onPatientLoadMore()"
+    (searchChanged)="onPatientSearch($event)"
+    [(ngModel)]="filterPatientId"
+    name="filterPatientId"
+    (ngModelChange)="onPatientSelected()"
+  />
+  <app-dropdown
+    placeholder="Filter by partner"
+    [options]="partnerOptions()"
+    [hasMore]="partnerHasMore()"
+    (loadMore)="onPartnerLoadMore()"
+    (searchChanged)="onPartnerSearch($event)"
+    [(ngModel)]="filterPartnerId"
+    name="filterPartnerId"
+    (ngModelChange)="onPartnerSelected()"
+  />
+  <select class="filter-select" (change)="table.onFilterChange(filterStatus, $event); loadTreatments()">
+    <option value="">All Status</option>
+    <option value="pending">Pending</option>
+    <option value="completed">Completed</option>
+  </select>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [data]="treatments()"
+  [actions]="actions"
+  [loading]="table.loading()"
+  [totalItems]="table.totalItems()"
+  [currentPage]="table.currentPage()"
+  [pageSize]="table.pageSize"
+  [sortColumn]="table.sortColumn()"
+  [sortOrder]="table.sortOrder()"
+  (sorted)="table.onSort($event); loadTreatments()"
+  (pageChanged)="table.onPageChange($event); loadTreatments()"
+  (actionClicked)="onAction($event)"
+/>
+
+<app-modal
+  title="Delete Treatment"
+  [isOpen]="deleteModalOpen()"
+  (closed)="cancelDelete()"
+>
+  <p>Are you sure you want to delete this treatment?</p>
+  <p class="modal-warning">This action cannot be undone.</p>
+  <div class="modal-actions">
+    <app-button variant="secondary" (clicked)="cancelDelete()">Cancel</app-button>
+    <app-button variant="danger" [loading]="deleting()" (clicked)="confirmDelete()">Delete</app-button>
+  </div>
+</app-modal>

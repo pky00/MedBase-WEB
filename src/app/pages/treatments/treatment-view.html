@@ -1,0 +1,70 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Treatment Details</h1>
+    <p class="page-subtitle">View treatment information</p>
+  </div>
+  <div class="header-actions">
+    <app-button variant="secondary" (clicked)="goBack()">Back</app-button>
+    @if (treatment()) {
+      <app-button variant="primary" (clicked)="editTreatment()">Edit Treatment</app-button>
+    }
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading-spinner message="Loading..." />
+} @else if (treatment(); as t) {
+  <div class="detail-card">
+    <div class="detail-section">
+      <h3 class="detail-section-title">Treatment Information</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">Patient</span>
+          <span class="detail-value">{{ t.patient_name || '—' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Partner</span>
+          <span class="detail-value">{{ t.partner_name || '—' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Treatment Type</span>
+          <span class="detail-value">{{ t.treatment_type }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Date</span>
+          <span class="detail-value">{{ formatDate(t.treatment_date) }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Status</span>
+          <span class="detail-value">
+            <span class="badge" [class]="'badge-' + t.status">
+              {{ formatStatus(t.status) }}
+            </span>
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Cost</span>
+          <span class="detail-value">{{ formatCost(t.cost) }}</span>
+        </div>
+        <div class="detail-item full-width">
+          <span class="detail-label">Description</span>
+          <span class="detail-value">{{ t.description || '—' }}</span>
+        </div>
+        <div class="detail-item full-width">
+          <span class="detail-label">Notes</span>
+          <span class="detail-value">{{ t.notes || '—' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Created</span>
+          <span class="detail-value">{{ formatDateTime(t.created_at) }}</span>
+        </div>
+        @if (t.created_by) {
+          <div class="detail-item">
+            <span class="detail-label">Created By</span>
+            <span class="detail-value">{{ t.created_by }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
