@@ -25,6 +25,10 @@
             <span class="detail-value">{{ p.third_party?.name || '—' }}</span>
           </div>
           <div class="detail-item">
+            <span class="detail-label">Code</span>
+            <span class="detail-value">{{ p.third_party?.code || '—' }}</span>
+          </div>
+          <div class="detail-item">
             <span class="detail-label">Partner Type</span>
             <span class="detail-value">
               <span class="badge" [class]="'badge-' + p.partner_type">

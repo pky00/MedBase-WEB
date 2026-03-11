@@ -2,6 +2,7 @@ import { Category } from './category.model';
 
 export interface MedicalDevice {
   id: number;
+  code: string;
   name: string;
   description: string | null;
   category_id: number | null;
@@ -17,6 +18,7 @@ export interface MedicalDevice {
 }
 
 export interface MedicalDeviceCreate {
+  code: string;
   name: string;
   category_id?: number | null;
   description?: string | null;
@@ -25,6 +27,7 @@ export interface MedicalDeviceCreate {
 }
 
 export interface MedicalDeviceUpdate {
+  code?: string | null;
   name?: string | null;
   category_id?: number | null;
   description?: string | null;

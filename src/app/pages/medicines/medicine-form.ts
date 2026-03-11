@@ -31,6 +31,7 @@ export class MedicineFormComponent implements OnInit {
   categoryHasMore = signal(false);
 
   medicineId: number | null = null;
+  code = '';
   name = '';
   description = '';
   categoryId: number | null = null;
@@ -100,6 +101,7 @@ export class MedicineFormComponent implements OnInit {
     this.loading.set(true);
     this.api.get<Medicine>(`${API.MEDICINES}/${this.medicineId}`).subscribe({
       next: (medicine) => {
+        this.code = medicine.code || '';
         this.name = medicine.name;
         this.description = medicine.description || '';
         this.categoryId = medicine.category_id;
@@ -118,8 +120,8 @@ export class MedicineFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.name || !this.categoryId) {
-      this.errorMessage.set('Name and category are required.');
+    if (!this.name || !this.categoryId || !this.code) {
+      this.errorMessage.set('Code, name and category are required.');
       return;
     }
 
@@ -128,6 +130,7 @@ export class MedicineFormComponent implements OnInit {
 
     if (this.isEdit()) {
       const data: MedicineUpdate = {
+        code: this.code || undefined,
         name: this.name,
         description: this.description || undefined,
         category_id: this.categoryId,
@@ -148,6 +151,7 @@ export class MedicineFormComponent implements OnInit {
       });
     } else {
       const data: MedicineCreate = {
+        code: this.code,
         name: this.name,
         description: this.description || undefined,
         category_id: this.categoryId,

@@ -60,22 +60,24 @@ describe('EquipmentFormComponent', () => {
       expect(component.isEdit()).toBe(false);
     });
 
-    it('should require name and category', () => {
+    it('should require code, name and category', () => {
       component.onSubmit();
-      expect(component.errorMessage()).toBe('Name and category are required.');
+      expect(component.errorMessage()).toBe('Code, name and category are required.');
     });
 
     it('should create equipment successfully', () => {
-      const mockEquipment = { id: 1, name: 'X-Ray Machine' };
+      const mockEquipment = { id: 1, code: 'EQ-001', name: 'X-Ray Machine' };
       api.post.mockReturnValue(of(mockEquipment));
       const navigateSpy = vi.spyOn(router, 'navigate');
 
+      component.code = 'EQ-001';
       component.name = 'X-Ray Machine';
       component.categoryId = 1;
       component.condition = 'new';
       component.onSubmit();
 
       expect(api.post).toHaveBeenCalledWith('equipment', expect.objectContaining({
+        code: 'EQ-001',
         name: 'X-Ray Machine',
         category_id: 1,
         condition: 'new',
@@ -88,6 +90,7 @@ describe('EquipmentFormComponent', () => {
       const error = new HttpErrorResponse({ error: { detail: 'Name already exists' }, status: 400 });
       api.post.mockReturnValue(throwError(() => error));
 
+      component.code = 'EQ-001';
       component.name = 'X-Ray Machine';
       component.categoryId = 1;
       component.onSubmit();
@@ -99,7 +102,7 @@ describe('EquipmentFormComponent', () => {
 
   describe('edit mode', () => {
     const mockEquipment = {
-      id: 3, name: 'Defibrillator', description: 'Heart defibrillator',
+      id: 3, code: 'EQ-003', name: 'Defibrillator', description: 'Heart defibrillator',
       category_id: 1, category_name: 'Emergency', condition: 'good' as const,
       is_active: true, quantity: 5, is_deleted: false, created_at: '', updated_at: '',
     };

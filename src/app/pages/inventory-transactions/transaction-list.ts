@@ -36,6 +36,7 @@ export class TransactionListComponent implements OnInit {
 
   actions: TableAction[] = [
     { label: 'View', action: 'view' },
+    { label: 'Edit', action: 'edit' },
     { label: 'Delete', action: 'delete', variant: 'danger' },
   ];
 
@@ -103,6 +104,9 @@ export class TransactionListComponent implements OnInit {
     switch (event.action) {
       case 'view':
         this.router.navigate([ROUTES.INVENTORY_TRANSACTIONS, id]);
+        break;
+      case 'edit':
+        this.router.navigate([ROUTES.INVENTORY_TRANSACTIONS, id, 'edit']);
         break;
       case 'delete':
         this.itemToDelete.set(event.item);

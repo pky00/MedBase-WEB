@@ -25,6 +25,10 @@
             <span class="detail-value">{{ p.third_party?.name || '—' }}</span>
           </div>
           <div class="detail-item">
+            <span class="detail-label">Code</span>
+            <span class="detail-value">{{ p.third_party?.code || '—' }}</span>
+          </div>
+          <div class="detail-item">
             <span class="detail-label">Date of Birth</span>
             <span class="detail-value">{{ formatDate(p.date_of_birth) }}</span>
           </div>

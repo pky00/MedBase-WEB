@@ -4,6 +4,7 @@ export type EquipmentCondition = 'new' | 'good' | 'fair' | 'poor';
 
 export interface Equipment {
   id: number;
+  code: string;
   name: string;
   description: string | null;
   category_id: number | null;
@@ -19,6 +20,7 @@ export interface Equipment {
 }
 
 export interface EquipmentCreate {
+  code: string;
   name: string;
   category_id?: number | null;
   description?: string | null;
@@ -27,6 +29,7 @@ export interface EquipmentCreate {
 }
 
 export interface EquipmentUpdate {
+  code?: string | null;
   name?: string | null;
   category_id?: number | null;
   description?: string | null;

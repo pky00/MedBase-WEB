@@ -65,21 +65,23 @@ describe('MedicineFormComponent', () => {
       expect(component.categoryOptions().length).toBe(1);
     });
 
-    it('should require name and category', () => {
+    it('should require code, name and category', () => {
       component.onSubmit();
-      expect(component.errorMessage()).toBe('Name and category are required.');
+      expect(component.errorMessage()).toBe('Code, name and category are required.');
     });
 
     it('should create medicine successfully', () => {
-      const mockMedicine = { id: 1, name: 'Amoxicillin' };
+      const mockMedicine = { id: 1, code: 'MED-001', name: 'Amoxicillin' };
       api.post.mockReturnValue(of(mockMedicine));
       const navigateSpy = vi.spyOn(router, 'navigate');
 
+      component.code = 'MED-001';
       component.name = 'Amoxicillin';
       component.categoryId = 1;
       component.onSubmit();
 
       expect(api.post).toHaveBeenCalledWith('medicines', expect.objectContaining({
+        code: 'MED-001',
         name: 'Amoxicillin',
         category_id: 1,
       }));
@@ -91,6 +93,7 @@ describe('MedicineFormComponent', () => {
       const error = new HttpErrorResponse({ error: { detail: 'Name already exists' }, status: 400 });
       api.post.mockReturnValue(throwError(() => error));
 
+      component.code = 'MED-001';
       component.name = 'Amoxicillin';
       component.categoryId = 1;
       component.onSubmit();
@@ -102,7 +105,7 @@ describe('MedicineFormComponent', () => {
 
   describe('edit mode', () => {
     const mockMedicine = {
-      id: 5, name: 'Ibuprofen', description: 'Pain reliever',
+      id: 5, code: 'MED-005', name: 'Ibuprofen', description: 'Pain reliever',
       category_id: 1, category_name: 'Antibiotics', is_active: true,
       quantity: 50, is_deleted: false, created_at: '', updated_at: '',
     };

@@ -31,6 +31,7 @@ export class EquipmentFormComponent implements OnInit {
   categoryHasMore = signal(false);
 
   equipmentId: number | null = null;
+  code = '';
   name = '';
   description = '';
   categoryId: number | null = null;
@@ -100,6 +101,7 @@ export class EquipmentFormComponent implements OnInit {
     this.loading.set(true);
     this.api.get<Equipment>(`${API.EQUIPMENT}/${this.equipmentId}`).subscribe({
       next: (equipment) => {
+        this.code = equipment.code || '';
         this.name = equipment.name;
         this.description = equipment.description || '';
         this.categoryId = equipment.category_id;
@@ -118,8 +120,8 @@ export class EquipmentFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.name || !this.categoryId) {
-      this.errorMessage.set('Name and category are required.');
+    if (!this.name || !this.categoryId || !this.code) {
+      this.errorMessage.set('Code, name and category are required.');
       return;
     }
 
@@ -128,6 +130,7 @@ export class EquipmentFormComponent implements OnInit {
 
     if (this.isEdit()) {
       const data: EquipmentUpdate = {
+        code: this.code || undefined,
         name: this.name,
         description: this.description || undefined,
         category_id: this.categoryId,
@@ -148,6 +151,7 @@ export class EquipmentFormComponent implements OnInit {
       });
     } else {
       const data: EquipmentCreate = {
+        code: this.code,
         name: this.name,
         description: this.description || undefined,
         category_id: this.categoryId,

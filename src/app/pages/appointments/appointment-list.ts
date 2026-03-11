@@ -44,6 +44,7 @@ export class AppointmentListComponent implements OnInit {
   deleting = signal(false);
 
   columns: TableColumn[] = [
+    { key: 'code', label: 'Code', sortable: true },
     { key: 'patient_name', label: 'Patient', sortable: true },
     { key: 'doctor_name', label: 'Doctor', sortable: true },
     { key: 'appointment_date', label: 'Date', sortable: true, format: this.formatDate },
