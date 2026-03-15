@@ -46,6 +46,8 @@ You are the Frontend Agent for MedBase. Your job is to build the Angular fronten
 | Appointment codes in prescription dropdown | Transaction form shows appointment codes in dropdown labels for prescription type. |
 | Dropdown autofill fix | Added `effect()` in DropdownComponent to re-resolve selected label when options change (fixes edit page autofill). |
 | Removed Medical Records list page | Removed route and sidebar nav item (records are accessed through appointments). |
+| Item parent model refactor | Added `item_id` field to Medicine, Equipment, and MedicalDevice interfaces to match new backend Item parent model. |
+| Transactions list on inventory view pages | Medicine, Equipment, and Medical Device view pages now show a two-column layout: details on left, paginated transactions list on right (using `GET /inventory-transactions/by-item/{item_id}`). Each transaction card shows date, third party, quantity, and type badge. Clickable to navigate to transaction view. |
 
 ---
 

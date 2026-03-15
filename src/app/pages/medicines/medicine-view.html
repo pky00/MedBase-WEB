@@ -14,46 +14,90 @@
 @if (loading()) {
   <app-loading-spinner message="Loading..." />
 } @else if (medicine(); as m) {
-  <div class="detail-card">
-    <div class="detail-section">
-      <h3 class="detail-section-title">Medicine Information</h3>
-      <div class="detail-grid">
-        <div class="detail-item">
-          <span class="detail-label">Code</span>
-          <span class="detail-value">{{ m.code }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Name</span>
-          <span class="detail-value">{{ m.name }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Category</span>
-          <span class="detail-value">{{ m.category?.name || '—' }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Description</span>
-          <span class="detail-value">{{ m.description || '—' }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Unit</span>
-          <span class="detail-value">{{ m.unit || '—' }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Quantity</span>
-          <span class="detail-value">{{ m.inventory_quantity ?? 0 }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Status</span>
-          <span class="detail-value">
-            <span class="badge" [class]="m.is_active ? 'badge-active' : 'badge-inactive'">
-              {{ m.is_active ? 'Active' : 'Inactive' }}
+  <div class="view-layout">
+    <!-- Left: Medicine Details -->
+    <div class="detail-card">
+      <div class="detail-section">
+        <h3 class="detail-section-title">Medicine Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Code</span>
+            <span class="detail-value">{{ m.code }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Name</span>
+            <span class="detail-value">{{ m.name }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Category</span>
+            <span class="detail-value">{{ m.category?.name || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Description</span>
+            <span class="detail-value">{{ m.description || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Unit</span>
+            <span class="detail-value">{{ m.unit || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Quantity</span>
+            <span class="detail-value">{{ m.inventory_quantity ?? 0 }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Status</span>
+            <span class="detail-value">
+              <span class="badge" [class]="m.is_active ? 'badge-active' : 'badge-inactive'">
+                {{ m.is_active ? 'Active' : 'Inactive' }}
+              </span>
             </span>
-          </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Created</span>
+            <span class="detail-value">{{ m.created_at }}</span>
+          </div>
         </div>
-        <div class="detail-item">
-          <span class="detail-label">Created</span>
-          <span class="detail-value">{{ m.created_at }}</span>
-        </div>
+      </div>
+    </div>
+
+    <!-- Right: Transactions -->
+    <div class="right-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Transactions</h3>
+        <span class="panel-count">{{ transactionsTotal() }} total</span>
+      </div>
+      <div class="panel-content">
+        @if (transactionsLoading()) {
+          <app-loading-spinner message="Loading transactions..." />
+        } @else if (transactions().length === 0) {
+          <div class="empty-state">
+            <p>No transactions found.</p>
+          </div>
+        } @else {
+          <div class="items-list">
+            @for (txn of transactions(); track txn.id) {
+              <div class="item-card clickable" (click)="viewTransaction(txn.id)">
+                <div class="item-info">
+                  <span class="item-title">{{ formatDate(txn.transaction_date) }}</span>
+                  @if (txn.third_party_name) {
+                    <span class="item-subtitle">{{ txn.third_party_name }}</span>
+                  }
+                  @if (txn.transaction_item) {
+                    <span class="item-meta">Qty: {{ txn.transaction_item.quantity }}</span>
+                  }
+                </div>
+                <span class="badge badge-{{ txn.transaction_type }}">{{ formatTransactionType(txn.transaction_type) }}</span>
+              </div>
+            }
+          </div>
+          @if (transactionsPages() > 1) {
+            <div class="pagination">
+              <button class="pagination-btn" [disabled]="transactionsPage() <= 1" (click)="goToTransactionsPage(transactionsPage() - 1)">&laquo; Prev</button>
+              <span class="pagination-info">Page {{ transactionsPage() }} of {{ transactionsPages() }}</span>
+              <button class="pagination-btn" [disabled]="transactionsPage() >= transactionsPages()" (click)="goToTransactionsPage(transactionsPage() + 1)">Next &raquo;</button>
+            </div>
+          }
+        }
       </div>
     </div>
   </div>

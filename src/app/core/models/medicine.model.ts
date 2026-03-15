@@ -2,6 +2,7 @@ import { Category } from './category.model';
 
 export interface Medicine {
   id: number;
+  item_id: number;
   code: string;
   name: string;
   description: string | null;

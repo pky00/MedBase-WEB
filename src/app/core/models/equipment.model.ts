@@ -4,6 +4,7 @@ export type EquipmentCondition = 'new' | 'good' | 'fair' | 'poor';
 
 export interface Equipment {
   id: number;
+  item_id: number;
   code: string;
   name: string;
   description: string | null;
