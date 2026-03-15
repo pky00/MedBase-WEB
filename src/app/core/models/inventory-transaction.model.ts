@@ -19,6 +19,7 @@ export interface InventoryTransaction {
   id: number;
   transaction_type: TransactionType;
   third_party_id: number;
+  appointment_id: number | null;
   transaction_date: string;
   notes: string | null;
   is_deleted: boolean;
@@ -39,6 +40,7 @@ export interface TransactionItemCreate {
 export interface InventoryTransactionCreate {
   transaction_type: TransactionType;
   third_party_id?: number | null;
+  appointment_id?: number | null;
   transaction_date: string;
   notes?: string | null;
   items?: TransactionItemCreate[] | null;
@@ -47,4 +49,21 @@ export interface InventoryTransactionCreate {
 export interface InventoryTransactionUpdate {
   transaction_date?: string | null;
   notes?: string | null;
+}
+
+export interface ItemTransaction {
+  id: number;
+  transaction_type: TransactionType;
+  third_party_id: number;
+  third_party_name: string | null;
+  appointment_id: number | null;
+  transaction_date: string;
+  notes: string | null;
+  is_deleted: boolean;
+  created_by: string | null;
+  created_at: string;
+  updated_by: string | null;
+  updated_at: string;
+  transaction_item_id: number;
+  transaction_item_quantity: number;
 }

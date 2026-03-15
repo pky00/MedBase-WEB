@@ -65,21 +65,23 @@ describe('DeviceFormComponent', () => {
       expect(component.categoryOptions().length).toBe(1);
     });
 
-    it('should require name and category', () => {
+    it('should require code, name and category', () => {
       component.onSubmit();
-      expect(component.errorMessage()).toBe('Name and category are required.');
+      expect(component.errorMessage()).toBe('Code, name and category are required.');
     });
 
     it('should create device successfully', () => {
-      const mockDevice = { id: 1, name: 'Blood Pressure Monitor' };
+      const mockDevice = { id: 1, code: 'MD-001', name: 'Blood Pressure Monitor' };
       api.post.mockReturnValue(of(mockDevice));
       const navigateSpy = vi.spyOn(router, 'navigate');
 
+      component.code = 'MD-001';
       component.name = 'Blood Pressure Monitor';
       component.categoryId = 1;
       component.onSubmit();
 
       expect(api.post).toHaveBeenCalledWith('medical-devices', expect.objectContaining({
+        code: 'MD-001',
         name: 'Blood Pressure Monitor',
         category_id: 1,
       }));
@@ -91,6 +93,7 @@ describe('DeviceFormComponent', () => {
       const error = new HttpErrorResponse({ error: { detail: 'Name already exists' }, status: 400 });
       api.post.mockReturnValue(throwError(() => error));
 
+      component.code = 'MD-001';
       component.name = 'Blood Pressure Monitor';
       component.categoryId = 1;
       component.onSubmit();
@@ -102,7 +105,7 @@ describe('DeviceFormComponent', () => {
 
   describe('edit mode', () => {
     const mockDevice = {
-      id: 4, name: 'Pulse Oximeter', description: 'Measures blood oxygen',
+      id: 4, code: 'MD-004', name: 'Pulse Oximeter', description: 'Measures blood oxygen',
       category_id: 1, category_name: 'Monitors', is_active: true,
       quantity: 15, is_deleted: false, created_at: '', updated_at: '',
     };

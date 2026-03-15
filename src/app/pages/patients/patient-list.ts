@@ -30,6 +30,7 @@ export class PatientListComponent implements OnInit {
   deleting = signal(false);
 
   columns: TableColumn[] = [
+    { key: 'third_party.code', label: 'Code', sortable: false },
     { key: 'third_party.name', label: 'Name', sortable: false },
     { key: 'gender', label: 'Gender', sortable: true, format: this.formatGender },
     { key: 'third_party.phone', label: 'Phone', sortable: false },

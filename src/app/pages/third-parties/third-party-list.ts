@@ -23,6 +23,7 @@ export class ThirdPartyListComponent implements OnInit {
   searchQuery = '';
 
   columns: TableColumn[] = [
+    { key: 'code', label: 'Code', sortable: true },
     { key: 'name', label: 'Name', sortable: true },
     { key: 'phone', label: 'Phone', sortable: true },
     { key: 'email', label: 'Email', sortable: true },

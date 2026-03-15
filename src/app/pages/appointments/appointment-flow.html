@@ -14,6 +14,10 @@
   <!-- Appointment summary bar -->
   <div class="summary-bar">
     <div class="summary-item">
+      <span class="summary-label">Code</span>
+      <span class="summary-value">{{ a.code }}</span>
+    </div>
+    <div class="summary-item">
       <span class="summary-label">Patient</span>
       <span class="summary-value">{{ a.patient_name || '—' }}</span>
     </div>
@@ -62,6 +66,16 @@
       <span class="step-number">3</span>
       <span class="step-label">Record</span>
     </button>
+    <div class="step-line" [class.step-line-done]="prescriptionSaved()"></div>
+    <button
+      class="step"
+      [class.step-active]="currentStep() === 'prescriptions'"
+      [class.step-done]="prescriptionSaved()"
+      (click)="setStep('prescriptions')"
+    >
+      <span class="step-number">4</span>
+      <span class="step-label">Prescriptions</span>
+    </button>
     <div class="step-line" [class.step-line-done]="a.status === 'completed'"></div>
     <button
       class="step"
@@ -69,7 +83,7 @@
       [class.step-done]="a.status === 'completed'"
       (click)="setStep('complete')"
     >
-      <span class="step-number">4</span>
+      <span class="step-number">5</span>
       <span class="step-label">Complete</span>
     </button>
   </div>
@@ -249,17 +263,90 @@
 
           @if (!isReadOnly) {
             <div class="step-actions">
-              <app-button variant="secondary" (clicked)="setStep('complete')">Skip to Complete</app-button>
+              <app-button variant="secondary" (clicked)="setStep('prescriptions')">Skip to Prescriptions</app-button>
               <app-button type="submit" variant="primary" [loading]="saving()">
                 {{ appointment()?.medical_record ? 'Update Record' : 'Save Record' }} & Next
               </app-button>
             </div>
           } @else {
             <div class="step-actions">
-              <app-button variant="secondary" (clicked)="setStep('complete')">Next: Complete</app-button>
+              <app-button variant="secondary" (clicked)="setStep('prescriptions')">Next: Prescriptions</app-button>
             </div>
           }
         </form>
+      </div>
+    }
+
+    @if (currentStep() === 'prescriptions') {
+      <div class="step-card">
+        <h3 class="step-title">Prescriptions</h3>
+        <p class="step-description">Prescribe medicines for this appointment. This is optional.</p>
+
+        @if (isReadOnly) {
+          <p class="step-description">This appointment is {{ isCompleted ? 'completed' : 'cancelled' }}.</p>
+          <div class="step-actions">
+            <app-button variant="secondary" (clicked)="setStep('complete')">Next: Complete</app-button>
+          </div>
+        } @else {
+          <div class="prescription-items">
+            <div class="section-header">
+              <h4>Medicines</h4>
+              <app-button variant="secondary" type="button" (clicked)="addPrescriptionItem()">+ Add Medicine</app-button>
+            </div>
+
+            @for (item of prescriptionItems; track $index; let i = $index) {
+              <div class="item-row">
+                <div class="item-fields">
+                  <app-dropdown
+                    label="Medicine"
+                    placeholder="Search and select medicine"
+                    [options]="item.itemOptions"
+                    [hasMore]="item.itemHasMore"
+                    (loadMore)="onMedicineLoadMore(i)"
+                    (searchChanged)="onMedicineSearch(i, $event)"
+                    [(ngModel)]="item.item_id"
+                    [name]="'medicine_' + i"
+                  />
+                  <app-input
+                    label="Quantity"
+                    type="number"
+                    placeholder="Enter quantity"
+                    [inputId]="'rx_qty_' + i"
+                    [(ngModel)]="item.quantity"
+                    [name]="'rx_qty_' + i"
+                  />
+                </div>
+                @if (prescriptionItems.length > 1) {
+                  <button type="button" class="remove-item-btn" (click)="removePrescriptionItem(i)" title="Remove">
+                    &times;
+                  </button>
+                }
+              </div>
+            }
+
+            @if (prescriptionItems.length === 0) {
+              <p class="empty-hint">No medicines added. Click "+ Add Medicine" to prescribe.</p>
+            }
+          </div>
+
+          <app-input
+            label="Prescription Notes"
+            type="textarea"
+            placeholder="Optional notes for the prescription"
+            inputId="prescriptionNotes"
+            [(ngModel)]="prescriptionNotes"
+            name="prescriptionNotes"
+          />
+
+          <div class="step-actions">
+            <app-button variant="secondary" (clicked)="setStep('complete')">Skip to Complete</app-button>
+            @if (prescriptionItems.length > 0) {
+              <app-button variant="primary" [loading]="saving()" (clicked)="savePrescription()">
+                Save Prescription & Next
+              </app-button>
+            }
+          </div>
+        }
       </div>
     }
 
@@ -297,10 +384,18 @@
                 <span class="completion-status completion-pending">Not recorded</span>
               }
             </div>
+            <div class="completion-item">
+              <span class="completion-label">Prescription</span>
+              @if (prescriptionSaved()) {
+                <span class="completion-status completion-done">Saved</span>
+              } @else {
+                <span class="completion-status completion-pending">Not prescribed</span>
+              }
+            </div>
           </div>
 
           <div class="step-actions">
-            <app-button variant="secondary" (clicked)="setStep('vitals')">Back to Vitals</app-button>
+            <app-button variant="secondary" (clicked)="setStep('prescriptions')">Back to Prescriptions</app-button>
             <app-button variant="primary" [loading]="saving()" (clicked)="completeAppointment()">
               Complete Appointment
             </app-button>

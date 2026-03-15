@@ -1,16 +1,17 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { API, ROUTES } from '../../core/constants/app.constants';
-import { PaginatedResponse, QueryParams } from '../../core/models/api.model';
-import { InventoryTransaction, InventoryTransactionCreate, ItemType, TransactionItemCreate, TransactionType } from '../../core/models/inventory-transaction.model';
+import { QueryParams } from '../../core/models/api.model';
+import { InventoryTransaction, InventoryTransactionCreate, InventoryTransactionUpdate, ItemType, TransactionItemCreate, TransactionType } from '../../core/models/inventory-transaction.model';
 import { ApiService } from '../../core/services/api';
 import { NotificationService } from '../../core/services/notification';
 import { ButtonComponent } from '../../shared/components/button/button';
 import { DropdownComponent, DropdownOption } from '../../shared/components/dropdown/dropdown';
 import { InputComponent } from '../../shared/components/input/input';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 
 interface FormItem {
   item_type: ItemType | '';
@@ -23,14 +24,17 @@ interface FormItem {
 
 @Component({
   selector: 'app-transaction-form',
-  imports: [FormsModule, InputComponent, ButtonComponent, DropdownComponent],
+  imports: [FormsModule, InputComponent, ButtonComponent, DropdownComponent, LoadingSpinnerComponent],
   templateUrl: './transaction-form.html',
   styleUrl: './transaction-form.scss',
 })
 export class TransactionFormComponent implements OnInit {
+  isEdit = signal(false);
+  loading = signal(false);
   saving = signal(false);
   errorMessage = signal('');
 
+  transactionId: number | null = null;
   transactionType: TransactionType | '' = '';
   transactionDate = '';
   notes = '';
@@ -41,18 +45,60 @@ export class TransactionFormComponent implements OnInit {
   thirdPartyHasMore = signal(false);
   thirdPartyId: number | null = null;
 
+  // Appointment dropdown (for prescription type)
+  appointmentOptions = signal<DropdownOption[]>([]);
+  appointmentPage = 1;
+  appointmentHasMore = signal(false);
+  appointmentId: number | null = null;
+
   // Items
   items: FormItem[] = [];
+
+  // Edit mode display
+  existingTransaction: InventoryTransaction | null = null;
 
   constructor(
     private api: ApiService,
     private router: Router,
+    private route: ActivatedRoute,
     private notification: NotificationService
   ) {}
 
   ngOnInit(): void {
-    this.transactionDate = new Date().toISOString().split('T')[0];
-    this.addItem();
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id && id !== 'new') {
+      this.isEdit.set(true);
+      this.transactionId = Number(id);
+      this.loadTransaction();
+    } else {
+      this.transactionDate = new Date().toISOString().split('T')[0];
+      this.addItem();
+    }
+  }
+
+  loadTransaction(): void {
+    this.loading.set(true);
+    this.api.get<InventoryTransaction>(`${API.INVENTORY_TRANSACTIONS}/${this.transactionId}`).subscribe({
+      next: (transaction) => {
+        this.existingTransaction = transaction;
+        this.transactionType = transaction.transaction_type;
+        this.transactionDate = transaction.transaction_date;
+        this.notes = transaction.notes || '';
+        this.thirdPartyId = transaction.third_party_id;
+        this.appointmentId = transaction.appointment_id;
+        this.loading.set(false);
+
+        // Load appointment options if it's a prescription with appointment
+        if (this.transactionType === 'prescription' && this.appointmentId) {
+          this.loadAppointments();
+        }
+      },
+      error: () => {
+        this.loading.set(false);
+        this.notification.error('Failed to load transaction.');
+        this.router.navigate([ROUTES.INVENTORY_TRANSACTIONS]);
+      },
+    });
   }
 
   get needsThirdParty(): boolean {
@@ -65,13 +111,23 @@ export class TransactionFormComponent implements OnInit {
     return 'Third Party';
   }
 
+  get showAppointmentDropdown(): boolean {
+    return this.transactionType === 'prescription';
+  }
+
   onTransactionTypeChange(event: Event): void {
     this.transactionType = (event.target as HTMLSelectElement).value as TransactionType;
     this.thirdPartyId = null;
     this.thirdPartyOptions.set([]);
     this.thirdPartyPage = 1;
+    this.appointmentId = null;
+    this.appointmentOptions.set([]);
+    this.appointmentPage = 1;
     if (this.needsThirdParty) {
       this.loadThirdParties();
+    }
+    if (this.showAppointmentDropdown) {
+      this.loadAppointments();
     }
   }
 
@@ -113,6 +169,54 @@ export class TransactionFormComponent implements OnInit {
   onThirdPartySearch(search: string): void {
     this.thirdPartyPage = 1;
     this.loadThirdParties(search);
+  }
+
+  // Appointment dropdown for prescription type
+  loadAppointments(search?: string): void {
+    const params: QueryParams = { page: this.appointmentPage, size: 50 };
+    if (search) params['search'] = search;
+
+    this.api.getList<Record<string, unknown>>(API.APPOINTMENTS, params).subscribe({
+      next: (response) => {
+        const options = response.items.map((a) => {
+          const code = a['code'] || '';
+          const patient = a['patient_name'] || 'Unknown';
+          const date = a['appointment_date'] ? new Date(a['appointment_date'] as string).toLocaleDateString() : '';
+          return { value: a['id'] as number, label: `${code} - ${patient} (${date})` };
+        });
+        if (this.appointmentPage === 1) {
+          this.appointmentOptions.set(options);
+        } else {
+          this.appointmentOptions.update((prev) => [...prev, ...options]);
+        }
+        this.appointmentHasMore.set(response.page * response.size < response.total);
+        this.ensureAppointmentOption();
+      },
+    });
+  }
+
+  onAppointmentLoadMore(): void {
+    this.appointmentPage++;
+    this.loadAppointments();
+  }
+
+  onAppointmentSearch(search: string): void {
+    this.appointmentPage = 1;
+    this.loadAppointments(search);
+  }
+
+  private loadedAppointmentLabel: string | null = null;
+
+  private ensureAppointmentOption(): void {
+    if (this.appointmentId && this.loadedAppointmentLabel) {
+      const exists = this.appointmentOptions().some((o) => o.value === this.appointmentId);
+      if (!exists) {
+        this.appointmentOptions.update((prev) => [
+          { value: this.appointmentId!, label: this.loadedAppointmentLabel! },
+          ...prev,
+        ]);
+      }
+    }
   }
 
   // Items management
@@ -184,7 +288,37 @@ export class TransactionFormComponent implements OnInit {
     this.loadItemOptions(index, search);
   }
 
+  formatItemType(type: string): string {
+    const map: Record<string, string> = {
+      medicine: 'Medicine',
+      equipment: 'Equipment',
+      medical_device: 'Medical Device',
+    };
+    return map[type] || type;
+  }
+
+  formatTransactionType(type: string): string {
+    const map: Record<string, string> = {
+      purchase: 'Purchase',
+      donation: 'Donation',
+      prescription: 'Prescription',
+      loss: 'Loss',
+      breakage: 'Breakage',
+      expiration: 'Expiration',
+      destruction: 'Destruction',
+    };
+    return map[type] || type;
+  }
+
   onSubmit(): void {
+    if (this.isEdit()) {
+      this.updateTransaction();
+    } else {
+      this.createTransaction();
+    }
+  }
+
+  private createTransaction(): void {
     if (!this.transactionType) {
       this.errorMessage.set('Transaction type is required.');
       return;
@@ -226,6 +360,10 @@ export class TransactionFormComponent implements OnInit {
       data.third_party_id = this.thirdPartyId;
     }
 
+    if (this.showAppointmentDropdown && this.appointmentId) {
+      data.appointment_id = this.appointmentId;
+    }
+
     this.api.post<InventoryTransaction>(API.INVENTORY_TRANSACTIONS, data).subscribe({
       next: (transaction) => {
         this.saving.set(false);
@@ -239,7 +377,38 @@ export class TransactionFormComponent implements OnInit {
     });
   }
 
+  private updateTransaction(): void {
+    if (!this.transactionDate) {
+      this.errorMessage.set('Transaction date is required.');
+      return;
+    }
+
+    this.saving.set(true);
+    this.errorMessage.set('');
+
+    const data: InventoryTransactionUpdate = {
+      transaction_date: this.transactionDate,
+      notes: this.notes || null,
+    };
+
+    this.api.put<InventoryTransaction>(`${API.INVENTORY_TRANSACTIONS}/${this.transactionId}`, data).subscribe({
+      next: () => {
+        this.saving.set(false);
+        this.notification.success('Transaction updated successfully.');
+        this.router.navigate([ROUTES.INVENTORY_TRANSACTIONS, this.transactionId]);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.saving.set(false);
+        this.errorMessage.set(error.error?.detail || 'Failed to update transaction.');
+      },
+    });
+  }
+
   cancel(): void {
-    this.router.navigate([ROUTES.INVENTORY_TRANSACTIONS]);
+    if (this.isEdit()) {
+      this.router.navigate([ROUTES.INVENTORY_TRANSACTIONS, this.transactionId]);
+    } else {
+      this.router.navigate([ROUTES.INVENTORY_TRANSACTIONS]);
+    }
   }
 }

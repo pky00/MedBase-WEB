@@ -20,6 +20,14 @@
         <h3 class="form-section-title">Equipment Information</h3>
         <div class="form-grid">
           <app-input
+            label="Code"
+            placeholder="Enter equipment code"
+            inputId="code"
+            [required]="true"
+            [(ngModel)]="code"
+            name="code"
+          />
+          <app-input
             label="Name"
             placeholder="Enter equipment name"
             inputId="name"

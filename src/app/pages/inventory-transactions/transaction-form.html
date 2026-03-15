@@ -1,123 +1,183 @@
-<div class="page-header">
-  <div>
-    <h1 class="page-title">Create Transaction</h1>
-    <p class="page-subtitle">Record a new inventory transaction</p>
+@if (loading()) {
+  <app-loading-spinner message="Loading transaction..." />
+} @else {
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ isEdit() ? 'Edit Transaction' : 'Create Transaction' }}</h1>
+      <p class="page-subtitle">{{ isEdit() ? 'Update transaction date and notes' : 'Record a new inventory transaction' }}</p>
+    </div>
   </div>
-</div>
 
-<div class="form-card">
-  @if (errorMessage()) {
-    <div class="alert-error">
-      {{ errorMessage() }}
-    </div>
-  }
-
-  <form (ngSubmit)="onSubmit()">
-    <div class="form-section">
-      <h3 class="form-section-title">Transaction Details</h3>
-      <div class="form-grid">
-        <div class="form-field">
-          <label class="form-label" for="transaction_type">Transaction Type <span class="required">*</span></label>
-          <select id="transaction_type" class="form-select" [value]="transactionType" (change)="onTransactionTypeChange($event)">
-            <option value="">— Select Type —</option>
-            <option value="purchase">Purchase</option>
-            <option value="donation">Donation</option>
-            <option value="prescription">Prescription</option>
-            <option value="loss">Loss</option>
-            <option value="breakage">Breakage</option>
-            <option value="expiration">Expiration</option>
-            <option value="destruction">Destruction</option>
-          </select>
-        </div>
-
-        <app-input
-          label="Transaction Date"
-          type="date"
-          placeholder="Select date"
-          inputId="transaction_date"
-          [required]="true"
-          [(ngModel)]="transactionDate"
-          name="transactionDate"
-        />
-
-        @if (needsThirdParty) {
-          <app-dropdown
-            [label]="thirdPartyLabel"
-            [placeholder]="'Search and select ' + thirdPartyLabel.toLowerCase()"
-            [options]="thirdPartyOptions()"
-            [hasMore]="thirdPartyHasMore()"
-            [required]="true"
-            (loadMore)="onThirdPartyLoadMore()"
-            (searchChanged)="onThirdPartySearch($event)"
-            [(ngModel)]="thirdPartyId"
-            name="thirdPartyId"
-          />
-        }
-
-        <app-input
-          label="Notes"
-          type="textarea"
-          placeholder="Enter notes (optional)"
-          inputId="notes"
-          [(ngModel)]="notes"
-          name="notes"
-        />
+  <div class="form-card">
+    @if (errorMessage()) {
+      <div class="alert-error">
+        {{ errorMessage() }}
       </div>
-    </div>
+    }
 
-    <div class="form-section">
-      <div class="section-header">
-        <h3 class="form-section-title">Items <span class="required">*</span></h3>
-        <app-button variant="secondary" type="button" (clicked)="addItem()">+ Add Item</app-button>
-      </div>
-
-      @for (item of items; track $index; let i = $index) {
-        <div class="item-row">
-          <div class="item-fields">
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-section">
+        <h3 class="form-section-title">Transaction Details</h3>
+        <div class="form-grid">
+          @if (isEdit()) {
             <div class="form-field">
-              <label class="form-label">Item Type</label>
-              <select class="form-select" [value]="item.item_type" (change)="onItemTypeChange(i, $event)">
-                <option value="">— Select —</option>
-                <option value="medicine">Medicine</option>
-                <option value="equipment">Equipment</option>
-                <option value="medical_device">Medical Device</option>
+              <label class="form-label">Transaction Type</label>
+              <div class="readonly-value">
+                <span class="badge" [class]="'badge-' + transactionType">
+                  {{ formatTransactionType(transactionType) }}
+                </span>
+              </div>
+            </div>
+          } @else {
+            <div class="form-field">
+              <label class="form-label" for="transaction_type">Transaction Type <span class="required">*</span></label>
+              <select id="transaction_type" class="form-select" [value]="transactionType" (change)="onTransactionTypeChange($event)">
+                <option value="">— Select Type —</option>
+                <option value="purchase">Purchase</option>
+                <option value="donation">Donation</option>
+                <option value="prescription">Prescription</option>
+                <option value="loss">Loss</option>
+                <option value="breakage">Breakage</option>
+                <option value="expiration">Expiration</option>
+                <option value="destruction">Destruction</option>
               </select>
             </div>
+          }
 
+          <app-input
+            label="Transaction Date"
+            type="date"
+            placeholder="Select date"
+            inputId="transaction_date"
+            [required]="true"
+            [(ngModel)]="transactionDate"
+            name="transactionDate"
+          />
+
+          @if (isEdit() && existingTransaction?.third_party_name) {
+            <div class="form-field">
+              <label class="form-label">{{ thirdPartyLabel }}</label>
+              <div class="readonly-value">{{ existingTransaction!.third_party_name }}</div>
+            </div>
+          } @else if (!isEdit() && needsThirdParty) {
             <app-dropdown
-              label="Item"
-              placeholder="Search and select item"
-              [options]="item.itemOptions"
-              [hasMore]="item.itemHasMore"
-              (loadMore)="onItemLoadMore(i)"
-              (searchChanged)="onItemSearch(i, $event)"
-              [(ngModel)]="item.item_id"
-              [name]="'item_id_' + i"
-              [disabled]="!item.item_type"
+              [label]="thirdPartyLabel"
+              [placeholder]="'Search and select ' + thirdPartyLabel.toLowerCase()"
+              [options]="thirdPartyOptions()"
+              [hasMore]="thirdPartyHasMore()"
+              [required]="true"
+              (loadMore)="onThirdPartyLoadMore()"
+              (searchChanged)="onThirdPartySearch($event)"
+              [(ngModel)]="thirdPartyId"
+              name="thirdPartyId"
             />
+          }
 
-            <app-input
-              label="Quantity"
-              type="number"
-              placeholder="Enter quantity"
-              [inputId]="'quantity_' + i"
-              [(ngModel)]="item.quantity"
-              [name]="'quantity_' + i"
+          @if (!isEdit() && showAppointmentDropdown) {
+            <app-dropdown
+              label="Appointment"
+              placeholder="Search and select appointment (optional)"
+              [options]="appointmentOptions()"
+              [hasMore]="appointmentHasMore()"
+              (loadMore)="onAppointmentLoadMore()"
+              (searchChanged)="onAppointmentSearch($event)"
+              [(ngModel)]="appointmentId"
+              name="appointmentId"
             />
+          } @else if (isEdit() && transactionType === 'prescription' && appointmentId) {
+            <app-dropdown
+              label="Appointment"
+              placeholder="Search and select appointment"
+              [options]="appointmentOptions()"
+              [hasMore]="appointmentHasMore()"
+              (loadMore)="onAppointmentLoadMore()"
+              (searchChanged)="onAppointmentSearch($event)"
+              [(ngModel)]="appointmentId"
+              name="appointmentId"
+              [disabled]="true"
+            />
+          }
+
+          <app-input
+            label="Notes"
+            type="textarea"
+            placeholder="Enter notes (optional)"
+            inputId="notes"
+            [(ngModel)]="notes"
+            name="notes"
+          />
+        </div>
+      </div>
+
+      @if (isEdit() && existingTransaction?.items?.length) {
+        <div class="form-section">
+          <h3 class="form-section-title">Items (read-only)</h3>
+          <div class="existing-items">
+            @for (item of existingTransaction!.items; track item.id) {
+              <div class="existing-item-row">
+                <span class="badge badge-item-type">{{ formatItemType(item.item_type) }}</span>
+                <span class="existing-item-name">{{ item.item_name || 'Unknown' }}</span>
+                <span class="existing-item-qty">Qty: {{ item.quantity }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      } @else if (!isEdit()) {
+        <div class="form-section">
+          <div class="section-header">
+            <h3 class="form-section-title">Items <span class="required">*</span></h3>
+            <app-button variant="secondary" type="button" (clicked)="addItem()">+ Add Item</app-button>
           </div>
 
-          @if (items.length > 1) {
-            <button type="button" class="remove-item-btn" (click)="removeItem(i)" title="Remove item">
-              &times;
-            </button>
+          @for (item of items; track $index; let i = $index) {
+            <div class="item-row">
+              <div class="item-fields">
+                <div class="form-field">
+                  <label class="form-label">Item Type</label>
+                  <select class="form-select" [value]="item.item_type" (change)="onItemTypeChange(i, $event)">
+                    <option value="">— Select —</option>
+                    <option value="medicine">Medicine</option>
+                    <option value="equipment">Equipment</option>
+                    <option value="medical_device">Medical Device</option>
+                  </select>
+                </div>
+
+                <app-dropdown
+                  label="Item"
+                  placeholder="Search and select item"
+                  [options]="item.itemOptions"
+                  [hasMore]="item.itemHasMore"
+                  (loadMore)="onItemLoadMore(i)"
+                  (searchChanged)="onItemSearch(i, $event)"
+                  [(ngModel)]="item.item_id"
+                  [name]="'item_id_' + i"
+                  [disabled]="!item.item_type"
+                />
+
+                <app-input
+                  label="Quantity"
+                  type="number"
+                  placeholder="Enter quantity"
+                  [inputId]="'quantity_' + i"
+                  [(ngModel)]="item.quantity"
+                  [name]="'quantity_' + i"
+                />
+              </div>
+
+              @if (items.length > 1) {
+                <button type="button" class="remove-item-btn" (click)="removeItem(i)" title="Remove item">
+                  &times;
+                </button>
+              }
+            </div>
           }
         </div>
       }
-    </div>
 
-    <div class="form-actions">
-      <app-button variant="secondary" (clicked)="cancel()">Cancel</app-button>
-      <app-button type="submit" variant="primary" [loading]="saving()">Create Transaction</app-button>
-    </div>
-  </form>
-</div>
+      <div class="form-actions">
+        <app-button variant="secondary" (clicked)="cancel()">Cancel</app-button>
+        <app-button type="submit" variant="primary" [loading]="saving()">{{ isEdit() ? 'Update Transaction' : 'Create Transaction' }}</app-button>
+      </div>
+    </form>
+  </div>
+}

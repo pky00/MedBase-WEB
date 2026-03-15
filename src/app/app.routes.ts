@@ -389,18 +389,6 @@ export const routes: Routes = [
         ],
       },
       {
-        path: 'medical-records',
-        children: [
-          {
-            path: '',
-            loadComponent: () =>
-              import('./pages/medical-records/record-list').then(
-                (m) => m.RecordListComponent
-              ),
-          },
-        ],
-      },
-      {
         path: 'inventory-transactions',
         children: [
           {
@@ -422,6 +410,13 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./pages/inventory-transactions/transaction-view').then(
                 (m) => m.TransactionViewComponent
+              ),
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import('./pages/inventory-transactions/transaction-form').then(
+                (m) => m.TransactionFormComponent
               ),
           },
         ],

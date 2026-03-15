@@ -1,5 +1,6 @@
 export interface ThirdParty {
   id: number;
+  code: string;
   name: string;
   phone: string | null;
   email: string | null;

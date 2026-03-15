@@ -31,6 +31,7 @@ export class DeviceFormComponent implements OnInit {
   categoryHasMore = signal(false);
 
   deviceId: number | null = null;
+  code = '';
   name = '';
   description = '';
   categoryId: number | null = null;
@@ -100,6 +101,7 @@ export class DeviceFormComponent implements OnInit {
     this.loading.set(true);
     this.api.get<MedicalDevice>(`${API.MEDICAL_DEVICES}/${this.deviceId}`).subscribe({
       next: (device) => {
+        this.code = device.code || '';
         this.name = device.name;
         this.description = device.description || '';
         this.categoryId = device.category_id;
@@ -118,8 +120,8 @@ export class DeviceFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.name || !this.categoryId) {
-      this.errorMessage.set('Name and category are required.');
+    if (!this.name || !this.categoryId || !this.code) {
+      this.errorMessage.set('Code, name and category are required.');
       return;
     }
 
@@ -128,6 +130,7 @@ export class DeviceFormComponent implements OnInit {
 
     if (this.isEdit()) {
       const data: MedicalDeviceUpdate = {
+        code: this.code || undefined,
         name: this.name,
         description: this.description || undefined,
         category_id: this.categoryId,
@@ -148,6 +151,7 @@ export class DeviceFormComponent implements OnInit {
       });
     } else {
       const data: MedicalDeviceCreate = {
+        code: this.code,
         name: this.name,
         description: this.description || undefined,
         category_id: this.categoryId,

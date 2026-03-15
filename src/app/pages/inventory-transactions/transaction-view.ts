@@ -79,6 +79,11 @@ export class TransactionViewComponent implements OnInit {
     return new Date(date).toLocaleString();
   }
 
+  editTransaction(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    this.router.navigate([ROUTES.INVENTORY_TRANSACTIONS, id, 'edit']);
+  }
+
   goBack(): void {
     this.router.navigate([ROUTES.INVENTORY_TRANSACTIONS]);
   }

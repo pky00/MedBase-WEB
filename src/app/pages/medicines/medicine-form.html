@@ -20,6 +20,14 @@
         <h3 class="form-section-title">Medicine Information</h3>
         <div class="form-grid">
           <app-input
+            label="Code"
+            placeholder="Enter medicine code"
+            inputId="code"
+            [required]="true"
+            [(ngModel)]="code"
+            name="code"
+          />
+          <app-input
             label="Name"
             placeholder="Enter medicine name"
             inputId="name"

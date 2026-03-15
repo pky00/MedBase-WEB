@@ -4,6 +4,7 @@ export type AppointmentLocation = 'internal' | 'external';
 
 export interface Appointment {
   id: number;
+  code: string;
   patient_id: number;
   doctor_id: number | null;
   partner_id: number | null;

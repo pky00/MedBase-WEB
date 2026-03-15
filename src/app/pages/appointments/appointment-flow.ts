@@ -13,17 +13,33 @@ import {
   VitalSignCreate,
   VitalSignUpdate,
 } from '../../core/models/appointment.model';
+import {
+  InventoryTransaction,
+  InventoryTransactionCreate,
+  ItemType,
+  TransactionItemCreate,
+} from '../../core/models/inventory-transaction.model';
+import { QueryParams } from '../../core/models/api.model';
 import { ApiService } from '../../core/services/api';
 import { NotificationService } from '../../core/services/notification';
 import { ButtonComponent } from '../../shared/components/button/button';
+import { DropdownComponent, DropdownOption } from '../../shared/components/dropdown/dropdown';
 import { InputComponent } from '../../shared/components/input/input';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 
-type FlowStep = 'overview' | 'vitals' | 'record' | 'complete';
+type FlowStep = 'overview' | 'vitals' | 'record' | 'prescriptions' | 'complete';
+
+interface PrescriptionItem {
+  item_id: number | null;
+  quantity: number;
+  itemOptions: DropdownOption[];
+  itemPage: number;
+  itemHasMore: boolean;
+}
 
 @Component({
   selector: 'app-appointment-flow',
-  imports: [FormsModule, InputComponent, ButtonComponent, LoadingSpinnerComponent],
+  imports: [FormsModule, InputComponent, ButtonComponent, LoadingSpinnerComponent, DropdownComponent],
   templateUrl: './appointment-flow.html',
   styleUrl: './appointment-flow.scss',
 })
@@ -49,6 +65,11 @@ export class AppointmentFlowComponent implements OnInit {
   diagnosis = '';
   treatmentNotes = '';
   followUpDate = '';
+
+  // Prescriptions form
+  prescriptionItems: PrescriptionItem[] = [];
+  prescriptionNotes = '';
+  prescriptionSaved = signal(false);
 
   private appointmentId: number | null = null;
 
@@ -204,7 +225,7 @@ export class AppointmentFlowComponent implements OnInit {
           this.saving.set(false);
           this.notification.success('Medical record updated.');
           this.loadAppointment();
-          this.setStep('complete');
+          this.setStep('prescriptions');
         },
         error: (error: HttpErrorResponse) => {
           this.saving.set(false);
@@ -217,7 +238,7 @@ export class AppointmentFlowComponent implements OnInit {
           this.saving.set(false);
           this.notification.success('Medical record saved.');
           this.loadAppointment();
-          this.setStep('complete');
+          this.setStep('prescriptions');
         },
         error: (error: HttpErrorResponse) => {
           this.saving.set(false);
@@ -225,6 +246,100 @@ export class AppointmentFlowComponent implements OnInit {
         },
       });
     }
+  }
+
+  // Prescription methods
+  addPrescriptionItem(): void {
+    this.prescriptionItems.push({
+      item_id: null,
+      quantity: 1,
+      itemOptions: [],
+      itemPage: 1,
+      itemHasMore: false,
+    });
+    this.loadMedicineOptions(this.prescriptionItems.length - 1);
+  }
+
+  removePrescriptionItem(index: number): void {
+    this.prescriptionItems.splice(index, 1);
+  }
+
+  loadMedicineOptions(index: number, search?: string): void {
+    const item = this.prescriptionItems[index];
+    const params: QueryParams = { page: item.itemPage, size: 50 };
+    if (search) params['search'] = search;
+
+    this.api.getList<Record<string, unknown>>(API.MEDICINES, params).subscribe({
+      next: (response) => {
+        const options = response.items.map((m) => ({
+          value: m['id'] as number,
+          label: String(m['name'] || 'Unknown'),
+        }));
+        if (item.itemPage === 1) {
+          item.itemOptions = options;
+        } else {
+          item.itemOptions = [...item.itemOptions, ...options];
+        }
+        item.itemHasMore = response.page * response.size < response.total;
+      },
+    });
+  }
+
+  onMedicineLoadMore(index: number): void {
+    this.prescriptionItems[index].itemPage++;
+    this.loadMedicineOptions(index);
+  }
+
+  onMedicineSearch(index: number, search: string): void {
+    this.prescriptionItems[index].itemPage = 1;
+    this.loadMedicineOptions(index, search);
+  }
+
+  savePrescription(): void {
+    if (!this.appointmentId) return;
+
+    const validItems = this.prescriptionItems.filter((i) => i.item_id && i.quantity > 0);
+    if (validItems.length === 0) {
+      this.errorMessage.set('Add at least one medicine to prescribe.');
+      return;
+    }
+
+    const apt = this.appointment();
+    if (!apt?.doctor_id) {
+      this.errorMessage.set('This appointment has no doctor assigned. A doctor is required for prescriptions.');
+      return;
+    }
+
+    this.saving.set(true);
+    this.errorMessage.set('');
+
+    const items: TransactionItemCreate[] = validItems.map((i) => ({
+      item_type: 'medicine' as ItemType,
+      item_id: i.item_id as number,
+      quantity: i.quantity,
+    }));
+
+    const data: InventoryTransactionCreate = {
+      transaction_type: 'prescription',
+      third_party_id: apt.doctor_id,
+      appointment_id: this.appointmentId,
+      transaction_date: new Date().toISOString().split('T')[0],
+      notes: this.prescriptionNotes || undefined,
+      items,
+    };
+
+    this.api.post<InventoryTransaction>(API.INVENTORY_TRANSACTIONS, data).subscribe({
+      next: () => {
+        this.saving.set(false);
+        this.prescriptionSaved.set(true);
+        this.notification.success('Prescription saved.');
+        this.setStep('complete');
+      },
+      error: (error: HttpErrorResponse) => {
+        this.saving.set(false);
+        this.errorMessage.set(error.error?.detail || 'Failed to save prescription.');
+      },
+    });
   }
 
   completeAppointment(): void {

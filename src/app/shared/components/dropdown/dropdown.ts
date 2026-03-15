@@ -1,4 +1,4 @@
-import { Component, ElementRef, forwardRef, HostListener, input, output, signal } from '@angular/core';
+import { Component, effect, ElementRef, forwardRef, HostListener, input, output, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export interface DropdownOption {
@@ -40,7 +40,18 @@ export class DropdownComponent implements ControlValueAccessor {
   private onChange: (value: unknown) => void = () => {};
   private onTouched: () => void = () => {};
 
-  constructor(private elementRef: ElementRef) {}
+  constructor(private elementRef: ElementRef) {
+    // Re-resolve selected label when options change (fixes autofill on edit pages)
+    effect(() => {
+      const opts = this.options();
+      if (this.value != null && !this.selectedLabel()) {
+        const option = opts.find((o) => o.value === this.value);
+        if (option) {
+          this.selectedLabel.set(option.label);
+        }
+      }
+    });
+  }
 
   writeValue(value: unknown): void {
     this.value = value;

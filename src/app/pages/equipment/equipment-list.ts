@@ -36,6 +36,7 @@ export class EquipmentListComponent implements OnInit {
   deleting = signal(false);
 
   columns: TableColumn[] = [
+    { key: 'code', label: 'Code', sortable: true },
     { key: 'name', label: 'Name', sortable: true },
     { key: 'category.name', label: 'Category', sortable: false },
     { key: 'condition', label: 'Condition', sortable: true },

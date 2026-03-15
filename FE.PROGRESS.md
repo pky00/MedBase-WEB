@@ -6,7 +6,7 @@ You are the Frontend Agent for MedBase. Your job is to build the Angular fronten
 
 ---
 
-## Current Phase: Phase 6 - Inventory Transactions & Treatments (Complete)
+## Current Phase: Phase 6 - Inventory Transactions & Treatments (Complete + Enhancements)
 
 ---
 
@@ -31,6 +31,23 @@ You are the Frontend Agent for MedBase. Your job is to build the Angular fronten
 | 16 | Appointment Flow | 2026-03-06 | Step-by-step appointment processing page with 4 steps: Begin (status to in_progress), Vitals (optional), Medical Record (optional), Complete (status to completed). Summary bar with patient/doctor/date/status. Visual step indicator with done/active states. Skip buttons for optional steps. Completion summary showing what was recorded. Read-only mode for completed/cancelled appointments |
 | 17 | Inventory Transactions | 2026-03-08 | Transaction list page with transaction_type filter, sortable table, pagination, delete modal. Create page with transaction type select, conditional third-party dropdown (donor for donations, doctor for prescriptions), date, notes, and dynamic items table (item_type/item/quantity with add/remove). View page with two-column layout: transaction details on left, items table on right. Transaction type badges with color coding. All 567 tests passing |
 | 18 | Treatments | 2026-03-08 | Treatment CRUD: list page with patient/partner dropdown filters, status filter, sortable table, pagination, delete modal. Create/edit form with patient dropdown (paginated, searchable), partner dropdown (referral/both only), optional appointment dropdown, treatment type, date, status, cost, description, notes. View page with treatment details and status badges. Status values: pending, completed |
+
+---
+
+## Phase 6 Enhancements (2026-03-11)
+
+| Enhancement | Notes |
+|------------|-------|
+| Prescription step in appointment flow | New step between Medical Record and Complete. Allows prescribing medicines (creates inventory transaction with type 'prescription'). Medicine dropdown per item with quantity. |
+| Transaction editing | Added `:id/edit` route, edit button on list and view pages. Edit mode shows read-only transaction type, third party, and items; only date and notes are editable. |
+| Code fields for medicines, equipment, medical devices | Code is required on create, editable on update, displayed in forms, views, and list pages. |
+| Code display for third-party entities | Non-editable code shown on ThirdParty, Doctor, Partner, and Patient view pages. |
+| Appointment code display | Code column in appointment list, code field in appointment view and flow pages. |
+| Appointment codes in prescription dropdown | Transaction form shows appointment codes in dropdown labels for prescription type. |
+| Dropdown autofill fix | Added `effect()` in DropdownComponent to re-resolve selected label when options change (fixes edit page autofill). |
+| Removed Medical Records list page | Removed route and sidebar nav item (records are accessed through appointments). |
+| Item parent model refactor | Added `item_id` field to Medicine, Equipment, and MedicalDevice interfaces to match new backend Item parent model. |
+| Transactions list on inventory view pages | Medicine, Equipment, and Medical Device view pages now show a two-column layout: details on left, paginated transactions list on right (using `GET /inventory-transactions/by-item/{item_id}`). Each transaction card shows date, third party, quantity, and type badge. Clickable to navigate to transaction view. |
 
 ---
 
