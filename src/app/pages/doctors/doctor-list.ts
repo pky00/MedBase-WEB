@@ -29,6 +29,7 @@ export class DoctorListComponent implements OnInit {
   deleting = signal(false);
 
   columns: TableColumn[] = [
+    { key: 'third_party.code', label: 'Code', sortable: false },
     { key: 'third_party.name', label: 'Name', sortable: false },
     { key: 'specialization', label: 'Specialization', sortable: true },
     { key: 'type', label: 'Type', sortable: true, format: this.formatDoctorType },

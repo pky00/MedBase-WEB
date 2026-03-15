@@ -35,6 +35,7 @@ export class DeviceListComponent implements OnInit {
   deleting = signal(false);
 
   columns: TableColumn[] = [
+    { key: 'code', label: 'Code', sortable: true },
     { key: 'name', label: 'Name', sortable: true },
     { key: 'category.name', label: 'Category', sortable: false },
     { key: 'inventory_quantity', label: 'Quantity', sortable: false },
