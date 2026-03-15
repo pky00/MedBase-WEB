@@ -28,9 +28,9 @@ All GET (list) endpoints support: `page`, `size`, `sort`, `search`, and resource
 | GET | `/third-parties/{id}` | Get third party by ID |
 
 **Notes:**
-- Filters: `type`, `is_active`
-- `type` values: `user`, `doctor`, `patient`, `partner`
+- Filters: `is_active`
 - Third party records are created automatically when creating users, doctors, patients, or partners
+- A third party can be linked to multiple entities simultaneously (user, doctor, patient, partner)
 - Read-only — no direct create/update/delete (managed through linked entities)
 
 ---
@@ -48,7 +48,7 @@ All GET (list) endpoints support: `page`, `size`, `sort`, `search`, and resource
 **Notes:**
 - Filters: `role`, `is_active`
 - Admin cannot delete themselves
-- Creating a user automatically creates a third_party record (type: `user`)
+- Creating a user automatically creates a third_party record
 
 ---
 
@@ -109,7 +109,8 @@ All GET (list) endpoints support: `page`, `size`, `sort`, `search`, and resource
 
 **Notes:**
 - Filters: `category_id`, `is_active`
-- Creating a medicine automatically creates an inventory record
+- Creating a medicine automatically creates an `item` record (parent) and an `inventory` record
+- Response includes `item_id` — the ID in the `items` table used for inventory references
 - Deleting only allowed if inventory quantity is 0
 
 ---
@@ -126,7 +127,9 @@ All GET (list) endpoints support: `page`, `size`, `sort`, `search`, and resource
 
 **Notes:**
 - Filters: `category_id`, `is_active`, `condition`
-- Creating equipment automatically creates an inventory record
+- Creating equipment automatically creates an `item` record (parent) and an `inventory` record
+- Response includes `item_id` — the ID in the `items` table used for inventory references
+- Equipment cannot be prescribed
 - Deleting only allowed if inventory quantity is 0
 
 ---
@@ -143,7 +146,8 @@ All GET (list) endpoints support: `page`, `size`, `sort`, `search`, and resource
 
 **Notes:**
 - Filters: `category_id`, `is_active`
-- Creating a device automatically creates an inventory record
+- Creating a device automatically creates an `item` record (parent) and an `inventory` record
+- Response includes `item_id` — the ID in the `items` table used for inventory references
 - Deleting only allowed if inventory quantity is 0
 
 ---
@@ -154,11 +158,12 @@ All GET (list) endpoints support: `page`, `size`, `sort`, `search`, and resource
 |--------|----------|-------------|
 | GET | `/inventory` | List all inventory records |
 | GET | `/inventory/{id}` | Get inventory record by ID |
-| GET | `/inventory/item/{item_type}/{item_id}` | Get inventory by item |
+| GET | `/inventory/item/{item_id}` | Get inventory by item ID |
 
 **Notes:**
 - Filters: `item_type`
 - `item_type` values: `medicine`, `equipment`, `medical_device`
+- `item_id` refers to the `items` table ID (parent table for all item types)
 - Inventory records are created automatically when an item (medicine/equipment/device) is created
 - Quantity is modified only through inventory transactions
 - Deleted automatically with the item when quantity is 0
@@ -170,6 +175,7 @@ All GET (list) endpoints support: `page`, `size`, `sort`, `search`, and resource
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/inventory-transactions` | List all transactions |
+| GET | `/inventory-transactions/by-item/{item_id}` | Get transactions containing a specific item |
 | GET | `/inventory-transactions/{id}` | Get transaction by ID (includes items) |
 | POST | `/inventory-transactions` | Create transaction with items (updates inventory) |
 | PUT | `/inventory-transactions/{id}` | Update transaction |
@@ -183,8 +189,11 @@ All GET (list) endpoints support: `page`, `size`, `sort`, `search`, and resource
   - **Prescription**: `third_party_id` must be a doctor — required in request
   - **Other types** (purchase, loss, breakage, expiration, destruction): `third_party_id` is automatically set to the logged-in user's third party
 - POST can include items array to create transaction with items in one request
+- Transaction items reference `item_id` from the `items` table (not the entity table ID)
+- Equipment cannot be prescribed — adding equipment to a prescription transaction is rejected
 - Creating a transaction automatically updates inventory quantity (+ for purchase/donation, - for others)
 - This is the only way to modify inventory quantities
+- `/by-item/{item_id}` returns transactions containing a specific item along with the transaction item details, supports `transaction_type` filter and pagination
 
 ---
 
@@ -198,8 +207,9 @@ All GET (list) endpoints support: `page`, `size`, `sort`, `search`, and resource
 | DELETE | `/inventory-transaction-items/{id}` | Delete transaction item |
 
 **Notes:**
-- `item_type` values: `medicine`, `equipment`, `medical_device`
+- Transaction items reference `item_id` from the `items` table
 - Adding/removing items updates inventory automatically
+- Equipment items cannot be added to prescription transactions
 
 ---
 
@@ -217,7 +227,7 @@ All GET (list) endpoints support: `page`, `size`, `sort`, `search`, and resource
 - Filters: `partner_type`, `organization_type`, `is_active`
 - `partner_type` values: `donor`, `referral`, `both`
 - `organization_type` values: `NGO`, `organization`, `individual`, `hospital`, `medical_center`
-- If no `third_party_id` is provided, automatically creates a third_party record (type: `partner`); if provided, links to the existing one
+- If no `third_party_id` is provided, automatically creates a third_party record; if provided, links to the existing one
 - GET by ID returns donation transactions (if donor) and treatments (if referral)
 
 ---
@@ -236,7 +246,7 @@ All GET (list) endpoints support: `page`, `size`, `sort`, `search`, and resource
 - Filters: `type`, `is_active`, `partner_id`
 - `type` values: `internal`, `external`, `partner_provided`
 - If `partner_provided`, must include `partner_id`
-- If no `third_party_id` is provided, automatically creates a third_party record (type: `doctor`); if provided, links to the existing one
+- If no `third_party_id` is provided, automatically creates a third_party record; if provided, links to the existing one
 
 ---
 
@@ -252,8 +262,8 @@ All GET (list) endpoints support: `page`, `size`, `sort`, `search`, and resource
 
 **Notes:**
 - Filters: `is_active`, `gender`
-- Search searches: `first_name`, `last_name`, `phone`, `email`
-- If no `third_party_id` is provided, automatically creates a third_party record (type: `patient`); if provided, links to the existing one
+- Search searches: `name` (via third_party), `phone`, `email`
+- If no `third_party_id` is provided, automatically creates a third_party record; if provided, links to the existing one
 
 ---
 
