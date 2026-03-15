@@ -21,7 +21,7 @@ describe('DeviceViewComponent', () => {
 
   const mockTransactionsResponse = {
     items: [
-      { id: 1, transaction_type: 'purchase', third_party_id: 1, third_party_name: 'Admin', transaction_date: '2024-01-01', notes: null, is_deleted: false, created_by: null, created_at: '', updated_by: null, updated_at: '', transaction_item: { id: 1, transaction_id: 1, item_id: 30, quantity: 10, is_deleted: false, created_by: null, created_at: '', updated_by: null, updated_at: '', item_name: 'Blood Pressure Monitor', item_type: 'medical_device' } },
+      { id: 1, transaction_type: 'purchase', third_party_id: 1, third_party_name: 'Admin', transaction_date: '2024-01-01', notes: null, is_deleted: false, created_by: null, created_at: '', updated_by: null, updated_at: '', transaction_item_id: 1, transaction_item_quantity: 10 },
     ],
     total: 1, page: 1, size: 10, pages: 1,
   };

@@ -22,7 +22,7 @@ describe('EquipmentViewComponent', () => {
 
   const mockTransactionsResponse = {
     items: [
-      { id: 1, transaction_type: 'purchase', third_party_id: 1, third_party_name: 'Admin', transaction_date: '2024-01-01', notes: null, is_deleted: false, created_by: null, created_at: '', updated_by: null, updated_at: '', transaction_item: { id: 1, transaction_id: 1, item_id: 20, quantity: 2, is_deleted: false, created_by: null, created_at: '', updated_by: null, updated_at: '', item_name: 'X-Ray Machine', item_type: 'equipment' } },
+      { id: 1, transaction_type: 'purchase', third_party_id: 1, third_party_name: 'Admin', transaction_date: '2024-01-01', notes: null, is_deleted: false, created_by: null, created_at: '', updated_by: null, updated_at: '', transaction_item_id: 1, transaction_item_quantity: 2 },
     ],
     total: 1, page: 1, size: 10, pages: 1,
   };

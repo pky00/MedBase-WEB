@@ -84,9 +84,7 @@
                   @if (txn.third_party_name) {
                     <span class="item-subtitle">{{ txn.third_party_name }}</span>
                   }
-                  @if (txn.transaction_item) {
-                    <span class="item-meta">Qty: {{ txn.transaction_item.quantity }}</span>
-                  }
+                  <span class="item-meta">Qty: {{ txn.transaction_item_quantity }}</span>
                 </div>
                 <span class="badge badge-{{ txn.transaction_type }}">{{ formatTransactionType(txn.transaction_type) }}</span>
               </div>

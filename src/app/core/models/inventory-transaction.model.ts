@@ -64,5 +64,6 @@ export interface ItemTransaction {
   created_at: string;
   updated_by: string | null;
   updated_at: string;
-  transaction_item: TransactionItem | null;
+  transaction_item_id: number;
+  transaction_item_quantity: number;
 }
