@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
+import { catchError, of } from 'rxjs';
 
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import { StatisticsService } from '../../core/services/statistics';
@@ -20,13 +22,16 @@ import {
   styleUrl: './dashboard.scss',
 })
 export class DashboardComponent implements OnInit {
-  summary: SummaryStats | null = null;
-  appointmentStats: AppointmentStats | null = null;
-  inventoryStats: InventoryStats | null = null;
-  transactionStats: TransactionStats | null = null;
+  summary = signal<SummaryStats | null>(null);
+  appointmentStats = signal<AppointmentStats | null>(null);
+  inventoryStats = signal<InventoryStats | null>(null);
+  transactionStats = signal<TransactionStats | null>(null);
 
-  loading = true;
-  error = '';
+  loading = signal(true);
+  error = signal('');
+
+  lowStockItems = computed(() => this.inventoryStats()?.low_stock_items || []);
+  recentTransactions = computed(() => this.transactionStats()?.recent_transactions || []);
 
   constructor(private statisticsService: StatisticsService) {}
 
@@ -35,43 +40,32 @@ export class DashboardComponent implements OnInit {
   }
 
   loadData(): void {
-    this.loading = true;
-    this.error = '';
+    this.loading.set(true);
+    this.error.set('');
 
-    let completed = 0;
-    const total = 4;
-    const checkDone = (): void => {
-      completed++;
-      if (completed === total) {
-        this.loading = false;
-      }
-    };
+    forkJoin({
+      summary: this.statisticsService.getSummary().pipe(catchError(() => of(null))),
+      appointments: this.statisticsService.getAppointmentStats().pipe(catchError(() => of(null))),
+      inventory: this.statisticsService.getInventoryStats().pipe(catchError(() => of(null))),
+      transactions: this.statisticsService.getTransactionStats().pipe(catchError(() => of(null))),
+    }).subscribe({
+      next: (results) => {
+        this.summary.set(results.summary);
+        this.appointmentStats.set(results.appointments);
+        this.inventoryStats.set(results.inventory);
+        this.transactionStats.set(results.transactions);
 
-    this.statisticsService.getSummary().subscribe({
-      next: (data) => (this.summary = data),
-      error: (err) => {
-        this.error = 'Failed to load summary statistics.';
-        checkDone();
+        if (!results.summary) {
+          this.error.set('Failed to load summary statistics.');
+        }
       },
-      complete: () => checkDone(),
-    });
-
-    this.statisticsService.getAppointmentStats().subscribe({
-      next: (data) => (this.appointmentStats = data),
-      error: () => checkDone(),
-      complete: () => checkDone(),
-    });
-
-    this.statisticsService.getInventoryStats().subscribe({
-      next: (data) => (this.inventoryStats = data),
-      error: () => checkDone(),
-      complete: () => checkDone(),
-    });
-
-    this.statisticsService.getTransactionStats().subscribe({
-      next: (data) => (this.transactionStats = data),
-      error: () => checkDone(),
-      complete: () => checkDone(),
+      error: () => {
+        this.error.set('Failed to load dashboard data.');
+        this.loading.set(false);
+      },
+      complete: () => {
+        this.loading.set(false);
+      },
     });
   }
 
@@ -120,13 +114,5 @@ export class DashboardComponent implements OnInit {
 
   formatLabel(value: string): string {
     return value.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-  }
-
-  get lowStockItems(): LowStockItem[] {
-    return this.inventoryStats?.low_stock_items || [];
-  }
-
-  get recentTransactions(): RecentTransaction[] {
-    return this.transactionStats?.recent_transactions || [];
   }
 }

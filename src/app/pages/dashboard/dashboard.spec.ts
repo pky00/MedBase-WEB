@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
@@ -121,23 +121,23 @@ describe('DashboardComponent', () => {
   });
 
   it('should set loading to false after all data loads', () => {
-    expect(component.loading).toBe(false);
+    expect(component.loading()).toBe(false);
   });
 
   it('should populate summary stats', () => {
-    expect(component.summary).toEqual(mockSummary);
+    expect(component.summary()).toEqual(mockSummary);
   });
 
   it('should populate appointment stats', () => {
-    expect(component.appointmentStats).toEqual(mockAppointmentStats);
+    expect(component.appointmentStats()).toEqual(mockAppointmentStats);
   });
 
   it('should populate inventory stats', () => {
-    expect(component.inventoryStats).toEqual(mockInventoryStats);
+    expect(component.inventoryStats()).toEqual(mockInventoryStats);
   });
 
   it('should populate transaction stats', () => {
-    expect(component.transactionStats).toEqual(mockTransactionStats);
+    expect(component.transactionStats()).toEqual(mockTransactionStats);
   });
 
   it('should display summary cards', () => {
@@ -219,19 +219,19 @@ describe('DashboardComponent', () => {
   });
 
   it('should get low stock items from inventory stats', () => {
-    expect(component.lowStockItems.length).toBe(2);
-    expect(component.lowStockItems[0].item_name).toBe('Aspirin');
+    expect(component.lowStockItems().length).toBe(2);
+    expect(component.lowStockItems()[0].item_name).toBe('Aspirin');
   });
 
   it('should get recent transactions from transaction stats', () => {
-    expect(component.recentTransactions.length).toBe(2);
+    expect(component.recentTransactions().length).toBe(2);
   });
 
   it('should return empty arrays when stats are null', () => {
-    component.inventoryStats = null;
-    component.transactionStats = null;
-    expect(component.lowStockItems).toEqual([]);
-    expect(component.recentTransactions).toEqual([]);
+    component.inventoryStats.set(null);
+    component.transactionStats.set(null);
+    expect(component.lowStockItems()).toEqual([]);
+    expect(component.recentTransactions()).toEqual([]);
   });
 
   describe('error handling', () => {
@@ -256,8 +256,8 @@ describe('DashboardComponent', () => {
       const errorComponent = errorFixture.componentInstance;
       errorFixture.detectChanges();
 
-      expect(errorComponent.error).toBe('Failed to load summary statistics.');
-      expect(errorComponent.loading).toBe(false);
+      expect(errorComponent.error()).toBe('Failed to load summary statistics.');
+      expect(errorComponent.loading()).toBe(false);
     });
   });
 });
