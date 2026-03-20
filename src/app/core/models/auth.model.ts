@@ -24,3 +24,8 @@ export interface CurrentUser {
   updated_by: string | null;
   updated_at: string;
 }
+
+export interface PasswordUpdate {
+  current_password: string;
+  new_password: string;
+}

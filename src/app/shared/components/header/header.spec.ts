@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 
 import { CurrentUser } from '../../../core/models/auth.model';
 import { AuthService } from '../../../core/services/auth';
@@ -11,6 +11,7 @@ describe('HeaderComponent', () => {
   let fixture: ComponentFixture<HeaderComponent>;
   let mockCurrentUser: ReturnType<typeof signal<CurrentUser | null>>;
   let authService: { currentUser: ReturnType<typeof signal<CurrentUser | null>>; logout: ReturnType<typeof vi.fn> };
+  let router: Router;
 
   beforeEach(async () => {
     mockCurrentUser = signal<CurrentUser | null>(null);
@@ -27,6 +28,7 @@ describe('HeaderComponent', () => {
       ],
     }).compileComponents();
 
+    router = TestBed.inject(Router);
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -57,6 +59,14 @@ describe('HeaderComponent', () => {
     component.logout();
     expect(component.menuOpen()).toBe(false);
     expect(authService.logout).toHaveBeenCalled();
+  });
+
+  it('should navigate to change-password and close menu', () => {
+    const navigateSpy = vi.spyOn(router, 'navigate');
+    component.menuOpen.set(true);
+    component.changePassword();
+    expect(component.menuOpen()).toBe(false);
+    expect(navigateSpy).toHaveBeenCalledWith(['/change-password']);
   });
 
   it('should return ? for userInitials when no user', () => {

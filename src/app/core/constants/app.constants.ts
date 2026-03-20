@@ -21,6 +21,7 @@ export const ROUTES = {
   THIRD_PARTIES: '/third-parties',
   INVENTORY_TRANSACTIONS: '/inventory-transactions',
   TREATMENTS: '/treatments',
+  CHANGE_PASSWORD: '/change-password',
 } as const;
 
 // Display formatters
@@ -31,7 +32,9 @@ export const formatActiveStatus = (value: unknown): string =>
 export const API = {
   AUTH_LOGIN: 'auth/login',
   AUTH_LOGOUT: 'auth/logout',
+  AUTH_REFRESH: 'auth/refresh',
   AUTH_ME: 'auth/me',
+  AUTH_PASSWORD: 'auth/password',
   USERS: 'users',
   MEDICINE_CATEGORIES: 'medicine-categories',
   EQUIPMENT_CATEGORIES: 'equipment-categories',

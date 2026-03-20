@@ -21,6 +21,11 @@ export const routes: Routes = [
           import('./pages/dashboard/dashboard').then((m) => m.DashboardComponent),
       },
       {
+        path: 'change-password',
+        loadComponent: () =>
+          import('./pages/change-password/change-password').then((m) => m.ChangePasswordComponent),
+      },
+      {
         path: 'users',
         canActivate: [adminGuard],
         children: [

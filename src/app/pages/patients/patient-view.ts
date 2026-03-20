@@ -7,6 +7,7 @@ import { PaginatedResponse, QueryParams } from '../../core/models/api.model';
 import { Appointment, MedicalRecord } from '../../core/models/appointment.model';
 import { PatientDetail, PatientDocument, PatientDocumentType } from '../../core/models/patient.model';
 import { ApiService } from '../../core/services/api';
+import { FileValidationService } from '../../core/services/file-validation';
 import { NotificationService } from '../../core/services/notification';
 import { ButtonComponent } from '../../shared/components/button/button';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
@@ -56,7 +57,8 @@ export class PatientViewComponent implements OnInit {
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private notification: NotificationService
+    private notification: NotificationService,
+    private fileValidation: FileValidationService
   ) {}
 
   ngOnInit(): void {
@@ -124,7 +126,15 @@ export class PatientViewComponent implements OnInit {
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
-      this.selectedFile = input.files[0];
+      const file = input.files[0];
+      const result = this.fileValidation.validate(file);
+      if (!result.valid) {
+        this.notification.error(result.error!);
+        input.value = '';
+        this.selectedFile = null;
+        return;
+      }
+      this.selectedFile = file;
     }
   }
 

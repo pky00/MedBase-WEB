@@ -3,6 +3,7 @@ import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { ApiService } from '../../core/services/api';
+import { FileValidationService } from '../../core/services/file-validation';
 import { NotificationService } from '../../core/services/notification';
 import { PatientViewComponent } from './patient-view';
 
@@ -11,6 +12,7 @@ describe('PatientViewComponent', () => {
   let fixture: ComponentFixture<PatientViewComponent>;
   let api: { get: ReturnType<typeof vi.fn>; getList: ReturnType<typeof vi.fn>; delete: ReturnType<typeof vi.fn>; postFormData: ReturnType<typeof vi.fn> };
   let notification: { success: ReturnType<typeof vi.fn>; error: ReturnType<typeof vi.fn> };
+  let fileValidation: FileValidationService;
   let router: Router;
 
   const mockPatient = {
@@ -58,6 +60,7 @@ describe('PatientViewComponent', () => {
         provideRouter([]),
         { provide: ApiService, useValue: api },
         { provide: NotificationService, useValue: notification },
+        FileValidationService,
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: () => '1' } } },
@@ -66,6 +69,7 @@ describe('PatientViewComponent', () => {
     }).compileComponents();
 
     router = TestBed.inject(Router);
+    fileValidation = TestBed.inject(FileValidationService);
     fixture = TestBed.createComponent(PatientViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -181,11 +185,19 @@ describe('PatientViewComponent', () => {
     expect(component.selectedFile).toBeNull();
   });
 
-  it('should set selectedFile on file selection', () => {
-    const file = new File(['test'], 'test.pdf');
+  it('should set selectedFile on valid file selection', () => {
+    const file = new File(['test'], 'test.pdf', { type: 'application/pdf' });
     const event = { target: { files: [file] } } as unknown as Event;
     component.onFileSelected(event);
     expect(component.selectedFile).toBe(file);
+  });
+
+  it('should reject invalid file type on selection', () => {
+    const file = new File(['test'], 'test.exe', { type: 'application/octet-stream' });
+    const event = { target: { files: [file], value: 'test.exe' } } as unknown as Event;
+    component.onFileSelected(event);
+    expect(component.selectedFile).toBeNull();
+    expect(notification.error).toHaveBeenCalledWith(expect.stringContaining('Invalid file type'));
   });
 
   it('should not set selectedFile when no files selected', () => {
