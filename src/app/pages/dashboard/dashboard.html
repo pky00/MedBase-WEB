@@ -5,37 +5,227 @@
   </div>
 </div>
 
-<div class="dashboard-grid">
-  <div class="stat-card">
-    <div class="stat-icon stat-icon-blue">📊</div>
-    <div class="stat-info">
-      <span class="stat-value">--</span>
-      <span class="stat-label">Total Patients</span>
-    </div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon stat-icon-green">📅</div>
-    <div class="stat-info">
-      <span class="stat-value">--</span>
-      <span class="stat-label">Appointments Today</span>
-    </div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon stat-icon-orange">📦</div>
-    <div class="stat-info">
-      <span class="stat-value">--</span>
-      <span class="stat-label">Inventory Items</span>
-    </div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon stat-icon-purple">🤝</div>
-    <div class="stat-info">
-      <span class="stat-value">--</span>
-      <span class="stat-label">Partners</span>
-    </div>
-  </div>
-</div>
+@if (loading()) {
+  <app-loading-spinner message="Loading dashboard..." />
+} @else {
+  @if (error()) {
+    <div class="alert-error">{{ error() }}</div>
+  }
 
-<div class="placeholder-message">
-  Dashboard statistics will be available in Phase 7.
-</div>
+  <!-- Summary Cards -->
+  @if (summary()) {
+    <div class="dashboard-grid">
+      <a class="stat-card" routerLink="/patients">
+        <div class="stat-icon stat-icon-blue">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ summary()!.total_patients }}</span>
+          <span class="stat-label">Total Patients</span>
+          <span class="stat-sub">{{ summary()!.active_patients }} active</span>
+        </div>
+      </a>
+
+      <a class="stat-card" routerLink="/appointments">
+        <div class="stat-icon stat-icon-green">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ appointmentStats()?.today_count ?? 0 }}</span>
+          <span class="stat-label">Appointments Today</span>
+          <span class="stat-sub">{{ appointmentStats()?.upcoming_count ?? 0 }} upcoming</span>
+        </div>
+      </a>
+
+      <a class="stat-card" routerLink="/medicines">
+        <div class="stat-icon stat-icon-orange">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ summary()!.total_inventory_items }}</span>
+          <span class="stat-label">Inventory Items</span>
+          <span class="stat-sub">{{ inventoryStats()?.total_quantity ?? 0 }} total qty</span>
+        </div>
+      </a>
+
+      <a class="stat-card" routerLink="/partners">
+        <div class="stat-icon stat-icon-purple">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ summary()!.total_partners }}</span>
+          <span class="stat-label">Partners</span>
+          <span class="stat-sub">{{ summary()!.active_partners }} active</span>
+        </div>
+      </a>
+
+      <a class="stat-card" routerLink="/doctors">
+        <div class="stat-icon stat-icon-teal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ summary()!.total_doctors }}</span>
+          <span class="stat-label">Doctors</span>
+          <span class="stat-sub">{{ summary()!.active_doctors }} active</span>
+        </div>
+      </a>
+
+      <a class="stat-card" routerLink="/inventory-transactions">
+        <div class="stat-icon stat-icon-red">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ summary()!.total_transactions }}</span>
+          <span class="stat-label">Transactions</span>
+        </div>
+      </a>
+    </div>
+  }
+
+  <!-- Sections Row -->
+  <div class="dashboard-sections">
+    <!-- Appointments by Status -->
+    @if (appointmentStats()) {
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">Appointments by Status</h2>
+          <a routerLink="/appointments" class="section-link">View All</a>
+        </div>
+        <div class="status-grid">
+          @for (item of appointmentStats()!.by_status; track item.status) {
+            <div class="status-item">
+              <span class="badge" [ngClass]="getStatusBadgeClass(item.status)">{{ formatLabel(item.status) }}</span>
+              <span class="status-count">{{ item.count }}</span>
+            </div>
+          }
+        </div>
+        <div class="stats-row">
+          <div class="stat-mini">
+            <span class="stat-mini-value">{{ appointmentStats()!.total_completed }}</span>
+            <span class="stat-mini-label">Completed</span>
+          </div>
+          <div class="stat-mini">
+            <span class="stat-mini-value">{{ appointmentStats()!.total_cancelled }}</span>
+            <span class="stat-mini-label">Cancelled</span>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Inventory by Type -->
+    @if (inventoryStats()) {
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">Inventory by Type</h2>
+        </div>
+        <div class="inventory-type-list">
+          @for (item of inventoryStats()!.items_by_type; track item.item_type) {
+            <div class="inventory-type-row">
+              <span class="inventory-type-label">{{ getItemTypeLabel(item.item_type) }}</span>
+              <div class="inventory-type-stats">
+                <span class="inventory-type-count">{{ item.count }} items</span>
+                <span class="inventory-type-qty">{{ item.total_quantity }} qty</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Transactions by Type -->
+    @if (transactionStats()) {
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">Transactions by Type</h2>
+          <a routerLink="/inventory-transactions" class="section-link">View All</a>
+        </div>
+        <div class="transaction-type-list">
+          @for (item of transactionStats()!.by_type; track item.transaction_type) {
+            <div class="transaction-type-row">
+              <span class="badge" [ngClass]="getTransactionTypeClass(item.transaction_type)">{{ formatLabel(item.transaction_type) }}</span>
+              <div class="transaction-type-stats">
+                <span class="transaction-type-count">{{ item.count }}</span>
+                <span class="transaction-type-items">{{ item.total_items }} items</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Bottom Row -->
+  <div class="dashboard-sections">
+    <!-- Low Stock Alerts -->
+    @if (inventoryStats()) {
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">Low Stock Alerts</h2>
+        </div>
+        @if (lowStockItems().length === 0) {
+          <div class="empty-state">No low stock items</div>
+        } @else {
+          <div class="low-stock-list">
+            @for (item of lowStockItems(); track item.item_id) {
+              <div class="low-stock-row">
+                <div class="low-stock-info">
+                  <span class="low-stock-name">{{ item.item_name }}</span>
+                  <span class="low-stock-type">{{ getItemTypeLabel(item.item_type) }}</span>
+                </div>
+                <span class="low-stock-qty" [class.critical]="item.quantity === 0">{{ item.quantity }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Recent Transactions -->
+    @if (transactionStats()) {
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">Recent Transactions</h2>
+          <a routerLink="/inventory-transactions" class="section-link">View All</a>
+        </div>
+        @if (recentTransactions().length === 0) {
+          <div class="empty-state">No recent transactions</div>
+        } @else {
+          <div class="recent-list">
+            @for (tx of recentTransactions(); track tx.id) {
+              <a class="recent-row" [routerLink]="['/inventory-transactions', tx.id]">
+                <div class="recent-info">
+                  <span class="badge" [ngClass]="getTransactionTypeClass(tx.transaction_type)">{{ formatLabel(tx.transaction_type) }}</span>
+                  <span class="recent-date">{{ formatDate(tx.transaction_date) }}</span>
+                </div>
+                <div class="recent-details">
+                  <span class="recent-party">{{ tx.third_party_name || 'System' }}</span>
+                  <span class="recent-items">{{ tx.item_count }} item{{ tx.item_count !== 1 ? 's' : '' }}</span>
+                </div>
+              </a>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Appointments by Month -->
+    @if (appointmentStats() && appointmentStats()!.by_month.length > 0) {
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">Appointments by Month</h2>
+        </div>
+        <div class="month-list">
+          @for (item of appointmentStats()!.by_month; track item.month) {
+            <div class="month-row">
+              <span class="month-label">{{ formatMonth(item.month) }}</span>
+              <div class="month-bar-container">
+                <div class="month-bar" [style.width.%]="appointmentStats()!.by_month.length > 0 ? (item.count / appointmentStats()!.by_month[0].count) * 100 : 0"></div>
+              </div>
+              <span class="month-count">{{ item.count }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}
