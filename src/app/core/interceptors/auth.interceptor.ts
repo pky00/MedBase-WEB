@@ -45,6 +45,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           );
         }
 
+        if (isAuthEndpoint) {
+          return throwError(() => error);
+        }
+
         localStorage.removeItem(TOKEN_KEY);
         authService.isLoggedIn.set(false);
         authService.currentUser.set(null);

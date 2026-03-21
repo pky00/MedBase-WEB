@@ -54,7 +54,7 @@ describe('authInterceptor', () => {
     req.flush({});
   });
 
-  it('should clear session and redirect on 401 error for auth endpoints', () => {
+  it('should re-throw 401 error for auth endpoints so components can handle it', () => {
     localStorage.setItem(TOKEN_KEY, 'my-token');
     const navigateSpy = vi.spyOn(router, 'navigate');
     const errorSpy = vi.fn();
@@ -65,10 +65,22 @@ describe('authInterceptor', () => {
     const req = httpMock.expectOne('/api/v1/auth/login');
     req.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
 
-    expect(localStorage.getItem(TOKEN_KEY)).toBeNull();
-    expect(authService.isLoggedIn()).toBe(false);
+    expect(errorSpy).toHaveBeenCalled();
+    expect(errorSpy.mock.calls[0][0].status).toBe(401);
+    expect(completeSpy).not.toHaveBeenCalled();
+    expect(navigateSpy).not.toHaveBeenCalledWith(['/login']);
+  });
+
+  it('should clear session and redirect on 401 for non-auth endpoints without token', () => {
+    const navigateSpy = vi.spyOn(router, 'navigate');
+    const completeSpy = vi.fn();
+
+    httpClient.get('/api/v1/users').subscribe({ error: () => {}, complete: completeSpy });
+
+    const req = httpMock.expectOne('/api/v1/users');
+    req.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+
     expect(navigateSpy).toHaveBeenCalledWith(['/login']);
-    expect(errorSpy).not.toHaveBeenCalled();
     expect(completeSpy).toHaveBeenCalled();
   });
 
