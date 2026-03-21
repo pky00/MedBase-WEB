@@ -53,6 +53,23 @@ You are the Frontend Agent for MedBase. Your job is to build the Angular fronten
 
 ---
 
+## Security Enhancements (2026-03-20)
+
+| Enhancement | Notes |
+|------------|-------|
+| Session timeout | Auto-logout after 30 minutes of inactivity. SessionTimeoutService listens to mousedown, keydown, scroll, touchstart events. Resets timer on activity. Integrated into LayoutComponent. |
+| File upload validation | FileValidationService restricts uploads to PDF, JPEG, PNG (max 5MB). Integrated into patient document upload. |
+| Production environment | Created environment.prod.ts with production API URL (api.medbaseclinic.com). Updated environment.ts to use production URL by default. |
+| JWT expiration validation | Auth guard now decodes JWT and checks exp claim before allowing navigation. Expired tokens trigger clearSession and redirect to login. |
+| CSP meta tag | Added Content-Security-Policy meta tag to index.html restricting scripts, styles, fonts, images, and API connections. |
+| 403 handling in interceptor | Interceptor now catches 403 responses and shows "Permission denied" notification via NotificationService. |
+| Error message sanitization | Server errors (5xx) are logged to console but users see generic "unexpected server error" message. |
+| Login attempt limiting | After 5 failed login attempts, login button is disabled for 30 seconds with countdown display. Counter resets on success or after cooldown. |
+| Refresh token support | AuthService.refreshToken() calls POST /auth/refresh. Interceptor attempts token refresh on 401 before clearing session. |
+| Change password page | New /change-password route with form for current password, new password, and confirmation. Accessible from header user dropdown menu. |
+
+---
+
 ## In Progress
 
 | # | Feature | Started | Notes |
@@ -73,3 +90,4 @@ You are the Frontend Agent for MedBase. Your job is to build the Angular fronten
 - Phase 5 complete — ready for PR
 - Phase 6 complete — ready for PR
 - Phase 7 complete — ready for PR
+- Security enhancements complete — 645 tests passing across 64 test files

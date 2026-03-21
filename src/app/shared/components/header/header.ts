@@ -1,5 +1,7 @@
 import { Component, output, signal } from '@angular/core';
+import { Router } from '@angular/router';
 
+import { ROUTES } from '../../../core/constants/app.constants';
 import { AuthService } from '../../../core/services/auth';
 
 @Component({
@@ -13,7 +15,10 @@ export class HeaderComponent {
 
   menuOpen = signal(false);
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   get currentUser() {
     return this.authService.currentUser;
@@ -37,6 +42,11 @@ export class HeaderComponent {
 
   toggleMenu(): void {
     this.menuOpen.update((v) => !v);
+  }
+
+  changePassword(): void {
+    this.menuOpen.set(false);
+    this.router.navigate([ROUTES.CHANGE_PASSWORD]);
   }
 
   logout(): void {

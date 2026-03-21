@@ -88,6 +88,21 @@ describe('AuthService', () => {
     });
   });
 
+  describe('refreshToken', () => {
+    it('should post to refresh endpoint and update token', () => {
+      service.refreshToken().subscribe((res) => {
+        expect(res.access_token).toBe('new-token');
+      });
+
+      const req = httpMock.expectOne(`${baseUrl}/auth/refresh`);
+      expect(req.request.method).toBe('POST');
+      req.flush({ access_token: 'new-token', token_type: 'bearer' });
+
+      expect(localStorage.getItem(TOKEN_KEY)).toBe('new-token');
+      expect(service.isLoggedIn()).toBe(true);
+    });
+  });
+
   describe('loadCurrentUser', () => {
     it('should fetch current user and set signal', () => {
       const mockUser = {
@@ -105,6 +120,17 @@ describe('AuthService', () => {
       req.flush(mockUser);
 
       expect(service.currentUser()).toEqual(mockUser);
+    });
+  });
+
+  describe('updatePassword', () => {
+    it('should call the password endpoint', () => {
+      service.updatePassword({ current_password: 'old', new_password: 'new123456' }).subscribe();
+
+      const req = httpMock.expectOne(`${baseUrl}/auth/password`);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual({ current_password: 'old', new_password: 'new123456' });
+      req.flush(null);
     });
   });
 
@@ -137,6 +163,44 @@ describe('AuthService', () => {
 
     it('should return false when no user', () => {
       expect(service.isAdmin()).toBe(false);
+    });
+  });
+
+  describe('isTokenExpired', () => {
+    it('should return false for valid non-expired token', () => {
+      const payload = { exp: Math.floor(Date.now() / 1000) + 3600 };
+      const token = `header.${btoa(JSON.stringify(payload))}.signature`;
+      expect(service.isTokenExpired(token)).toBe(false);
+    });
+
+    it('should return true for expired token', () => {
+      const payload = { exp: Math.floor(Date.now() / 1000) - 3600 };
+      const token = `header.${btoa(JSON.stringify(payload))}.signature`;
+      expect(service.isTokenExpired(token)).toBe(true);
+    });
+
+    it('should return true for malformed token', () => {
+      expect(service.isTokenExpired('invalid-token')).toBe(true);
+    });
+
+    it('should return false when no exp claim', () => {
+      const payload = { sub: 'user' };
+      const token = `header.${btoa(JSON.stringify(payload))}.signature`;
+      expect(service.isTokenExpired(token)).toBe(false);
+    });
+  });
+
+  describe('clearSession', () => {
+    it('should clear token and navigate to login', () => {
+      localStorage.setItem(TOKEN_KEY, 'token');
+      const navigateSpy = vi.spyOn(router, 'navigate');
+
+      service.clearSession();
+
+      expect(localStorage.getItem(TOKEN_KEY)).toBeNull();
+      expect(service.isLoggedIn()).toBe(false);
+      expect(service.currentUser()).toBeNull();
+      expect(navigateSpy).toHaveBeenCalledWith(['/login']);
     });
   });
 });

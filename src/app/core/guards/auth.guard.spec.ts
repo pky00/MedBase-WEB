@@ -5,25 +5,28 @@ import { AuthService } from '../services/auth';
 import { authGuard } from './auth.guard';
 
 describe('authGuard', () => {
-  let authService: AuthService;
+  let authService: { getToken: ReturnType<typeof vi.fn>; isTokenExpired: ReturnType<typeof vi.fn>; clearSession: ReturnType<typeof vi.fn> };
   let router: Router;
 
   beforeEach(() => {
+    authService = {
+      getToken: vi.fn(),
+      isTokenExpired: vi.fn(),
+      clearSession: vi.fn(),
+    };
+
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        {
-          provide: AuthService,
-          useValue: { getToken: vi.fn() },
-        },
+        { provide: AuthService, useValue: authService },
       ],
     });
-    authService = TestBed.inject(AuthService);
     router = TestBed.inject(Router);
   });
 
-  it('should allow access when token exists', () => {
-    vi.spyOn(authService, 'getToken').mockReturnValue('valid-token');
+  it('should allow access when token exists and is not expired', () => {
+    authService.getToken.mockReturnValue('valid-token');
+    authService.isTokenExpired.mockReturnValue(false);
 
     const result = TestBed.runInInjectionContext(() => authGuard({} as never, {} as never));
 
@@ -31,12 +34,24 @@ describe('authGuard', () => {
   });
 
   it('should redirect to login when no token', () => {
-    vi.spyOn(authService, 'getToken').mockReturnValue(null);
+    authService.getToken.mockReturnValue(null);
     const navigateSpy = vi.spyOn(router, 'navigate');
 
     const result = TestBed.runInInjectionContext(() => authGuard({} as never, {} as never));
 
     expect(result).toBe(false);
+    expect(navigateSpy).toHaveBeenCalledWith(['/login']);
+  });
+
+  it('should redirect to login and clear session when token is expired', () => {
+    authService.getToken.mockReturnValue('expired-token');
+    authService.isTokenExpired.mockReturnValue(true);
+    const navigateSpy = vi.spyOn(router, 'navigate');
+
+    const result = TestBed.runInInjectionContext(() => authGuard({} as never, {} as never));
+
+    expect(result).toBe(false);
+    expect(authService.clearSession).toHaveBeenCalled();
     expect(navigateSpy).toHaveBeenCalledWith(['/login']);
   });
 });

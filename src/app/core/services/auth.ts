@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
 import { API, ROUTES, TOKEN_KEY } from '../constants/app.constants';
-import { CurrentUser, LoginResponse } from '../models/auth.model';
+import { CurrentUser, LoginResponse, PasswordUpdate } from '../models/auth.model';
 import { ApiService } from './api';
 
 @Injectable({
@@ -41,10 +41,23 @@ export class AuthService {
     });
   }
 
+  refreshToken(): Observable<LoginResponse> {
+    return this.api.post<LoginResponse>(API.AUTH_REFRESH, {}).pipe(
+      tap((response) => {
+        this.setToken(response.access_token);
+        this.isLoggedIn.set(true);
+      })
+    );
+  }
+
   loadCurrentUser(): Observable<CurrentUser> {
     return this.api.get<CurrentUser>(API.AUTH_ME).pipe(
       tap((user) => this.currentUser.set(user))
     );
+  }
+
+  updatePassword(data: PasswordUpdate): Observable<void> {
+    return this.api.put<void>(API.AUTH_PASSWORD, data);
   }
 
   getToken(): string | null {
@@ -55,14 +68,24 @@ export class AuthService {
     return this.currentUser()?.role === 'admin';
   }
 
-  private setToken(token: string): void {
-    localStorage.setItem(TOKEN_KEY, token);
+  isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (!payload.exp) return false;
+      return Date.now() >= payload.exp * 1000;
+    } catch {
+      return true;
+    }
   }
 
-  private clearSession(): void {
+  clearSession(): void {
     localStorage.removeItem(TOKEN_KEY);
     this.currentUser.set(null);
     this.isLoggedIn.set(false);
     this.router.navigate([ROUTES.LOGIN]);
+  }
+
+  private setToken(token: string): void {
+    localStorage.setItem(TOKEN_KEY, token);
   }
 }

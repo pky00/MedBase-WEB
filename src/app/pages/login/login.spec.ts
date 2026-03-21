@@ -32,6 +32,10 @@ describe('LoginComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    component.ngOnDestroy();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
@@ -98,5 +102,75 @@ describe('LoginComponent', () => {
     component.onSubmit();
 
     expect(component.errorMessage()).toBe('An error occurred. Please try again.');
+  });
+
+  it('should disable login after 5 failed attempts', () => {
+    vi.useFakeTimers();
+    const error = new HttpErrorResponse({ status: 401 });
+    authService.login.mockReturnValue(throwError(() => error));
+
+    for (let i = 0; i < 5; i++) {
+      component.username = 'admin';
+      component.password = 'wrong';
+      component.onSubmit();
+    }
+
+    expect(component.loginDisabled()).toBe(true);
+    expect(component.cooldownRemaining()).toBe(30);
+    expect(component.errorMessage()).toContain('Too many failed attempts');
+
+    // Should not submit while disabled
+    authService.login.mockClear();
+    component.onSubmit();
+    expect(authService.login).not.toHaveBeenCalled();
+
+    vi.useRealTimers();
+  });
+
+  it('should re-enable login after cooldown', () => {
+    vi.useFakeTimers();
+    const error = new HttpErrorResponse({ status: 401 });
+    authService.login.mockReturnValue(throwError(() => error));
+
+    for (let i = 0; i < 5; i++) {
+      component.username = 'admin';
+      component.password = 'wrong';
+      component.onSubmit();
+    }
+
+    expect(component.loginDisabled()).toBe(true);
+    vi.advanceTimersByTime(30000);
+    expect(component.loginDisabled()).toBe(false);
+    expect(component.cooldownRemaining()).toBe(0);
+
+    vi.useRealTimers();
+  });
+
+  it('should reset failed attempts on successful login', () => {
+    const error = new HttpErrorResponse({ status: 401 });
+    authService.login.mockReturnValue(throwError(() => error));
+
+    // Fail 3 times
+    for (let i = 0; i < 3; i++) {
+      component.username = 'admin';
+      component.password = 'wrong';
+      component.onSubmit();
+    }
+
+    // Succeed
+    authService.login.mockReturnValue(of({ access_token: 'token', token_type: 'bearer' }));
+    component.username = 'admin';
+    component.password = 'correct';
+    component.onSubmit();
+
+    // After success, counter should be reset (internally)
+    // Re-fail should count from 0 again
+    authService.login.mockReturnValue(throwError(() => error));
+    for (let i = 0; i < 4; i++) {
+      component.username = 'admin';
+      component.password = 'wrong';
+      component.onSubmit();
+    }
+    expect(component.loginDisabled()).toBe(false); // Only 4, not 5
   });
 });
