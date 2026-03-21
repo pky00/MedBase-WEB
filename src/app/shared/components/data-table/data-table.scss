@@ -98,8 +98,11 @@
 }
 
 .actions-cell {
-  display: flex;
-  gap: var(--space-xs);
+  white-space: nowrap;
+
+  .action-btn + .action-btn {
+    margin-left: var(--space-xs);
+  }
 }
 
 .action-btn {
